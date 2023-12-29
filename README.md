@@ -1,35 +1,32 @@
-# Illiquid Labs Frontend
+## Getting Started
 
-Illiquid Labs Frontend is UI for website https://www.illiquidlabs.io/ written in NextJS framework.
-
-## Installation
-
-Use the yarn package manager [yarn](https://yarnpkg.com/) to node modules.
+First, run the development server:
 
 ```bash
-# install node modules
-yarn
-# install husky
-yarn husky install
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## Usage
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-```bash
-# for starting starting project
-yarn run dev
-# for building project
-yarn run build
-```
+## Contracts 
 
-## Additional Requirement
+Contract configuration can be found in `constants/addresses.ts`
 
-[Terra Station Wallet Chrome Extension](https://chrome.google.com/webstore/detail/terra-station-wallet/aiifbnbfobpmeekipheeijimdpnlpgpp)
+## Clients 
+We can expect to rely on ts-codegen generated interfaces to interact with our contracts.
 
-## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+### Query Client Provider
 
-## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+## Theme
+
+Currently the theme values are located at `constants/theme.ts`, and imported by wrapping our app with a `RootLayout` compenent, providing a `ThemeUIProvider` into the app.  
+
+## Services

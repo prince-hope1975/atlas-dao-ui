@@ -1,8 +1,7 @@
-/* eslint-disable no-param-reassign */
-module.exports = {
-	trailingSlash: true,
-	pageExtensions: ['page.tsx', 'page.ts', 'page.jsx', 'page.js'],
-	webpack(config) {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  webpack(config) {
 		config.module.rules.push({
 			test: /\.svg$/,
 			use: ['@svgr/webpack'],
@@ -16,3 +15,5 @@ module.exports = {
 		return config
 	},
 }
+
+module.exports = nextConfig
