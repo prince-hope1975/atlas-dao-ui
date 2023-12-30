@@ -30,6 +30,7 @@ export interface LoanNotification {
 	status: READ_STATUS
 	notificationPreview?: {
 		cw721Coin?: NFT
+		sg721Coin?: NFT
 	}
 }
 

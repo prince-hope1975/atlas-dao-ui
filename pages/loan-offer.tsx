@@ -133,7 +133,7 @@ export default function LoanCounter() {
 	const [loanPreview, setLoanPreview] = React.useState<{
 		coin?: Coin
 		cw721Coin?: NFT
-		cw1155Coin?: any
+		sg721Token?: NFT
 	} | null>(null)
 
 	React.useEffect(() => {

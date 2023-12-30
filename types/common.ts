@@ -17,11 +17,11 @@ export type Cw20Coin = {
 	address: string
 	amount: number
 }
-export interface HumanCw20Coin {
-	amount: string
-	currency: string
-	address: string
-}
+// export interface HumanCw20Coin {
+// 	amount: string
+// 	currency: string
+// 	address: string
+// }
 
 export interface HumanCoin {
 	amount: string
@@ -38,7 +38,7 @@ export type Cw721Coin = {
 	tokenId: string
 }
 
-export type Cw1155Coin = {
+export type Sg721Token = {
 	address: string
 	tokenId: string
 }

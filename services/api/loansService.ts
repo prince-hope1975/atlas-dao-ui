@@ -40,7 +40,8 @@ export type Loan = {
 	loanInfo: {
 		associatedAssets: [
 			{
-				cw721Coin: NFT
+				cw721Coin: NFT,
+				sg721Token: NFT,
 			}
 		]
 		listDate: string

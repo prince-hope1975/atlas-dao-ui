@@ -252,14 +252,23 @@ function RaffleOffers({
 													state={state}
 													raffle={raffle}
 													description={
-														raffleOptions?.rafflePreview?.cw721Coin?.description ?? ''
+														raffleOptions?.rafflePreview?.cw721Coin?.description ?? 
+														raffleOptions?.rafflePreview?.sg721Token?.description ?? 
+														''
 													}
 													attributes={
-														raffleOptions?.rafflePreview?.cw721Coin?.attributes ?? []
+														raffleOptions?.rafflePreview?.cw721Coin?.attributes ?? 
+														raffleOptions?.rafflePreview?.sg721Token?.attributes ?? 
+														[]
 													}
-													tokenId={raffleOptions?.rafflePreview?.cw721Coin?.tokenId ?? ''}
+													tokenId={
+														raffleOptions?.rafflePreview?.cw721Coin?.tokenId ??
+														raffleOptions?.rafflePreview?.sg721Token?.tokenId ??
+														 ''
+													}
 													collectionAddress={
-														raffleOptions?.rafflePreview?.cw721Coin?.collectionAddress ?? ''
+														raffleOptions?.rafflePreview?.cw721Coin?.collectionAddress ?? 
+														raffleOptions?.rafflePreview?.sg721Token?.collectionAddress ?? ''
 													}
 													href={`${ROUTES.RAFFLE_LISTING_DETAILS}?raffleId=${raffleId}`}
 													nfts={(allAssociatedAssets || [])
@@ -269,11 +278,15 @@ function RaffleOffers({
 													name={raffleOptions?.rafflePreview?.cw721Coin?.name ?? ''}
 													verified={(verifiedCollections ?? []).some(
 														({ collectionAddress }) =>
-															raffleOptions?.rafflePreview?.cw721Coin?.collectionAddress ===
+															raffleOptions?.rafflePreview?.cw721Coin?.collectionAddress  ?? 
+															raffleOptions?.rafflePreview?.sg721Token?.collectionAddress
+															===
 															collectionAddress
 													)}
 													collectionName={
-														raffleOptions?.rafflePreview?.cw721Coin?.collectionName || ''
+														raffleOptions?.rafflePreview?.cw721Coin?.collectionName ||
+														raffleOptions?.rafflePreview?.sg721Token?.collectionName
+														|| ''
 													}
 													ticketPrice={
 														raffleTicketPrice?.coin?.amount ??

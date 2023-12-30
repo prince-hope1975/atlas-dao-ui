@@ -78,7 +78,8 @@ export const RaffleHeaderActionsRow = ({
 			//  ?? raffle?.raffleInfo?.raffleTicketPrice?.cw20Coin?.amount
 		}`
 
-		const initialTicketPriceCurrency = 'Luna'
+		//TODO: configure based on chainConfig
+		const initialTicketPriceCurrency = 'Stars' 
 
 		const [, result] = await asyncAction<EditModalResult>(
 			NiceModal.show(EditModal, {
@@ -97,7 +98,7 @@ export const RaffleHeaderActionsRow = ({
 				ticketSupply,
 				comment,
 				ticketPrice,
-				ticketPriceCurrency = 'Luna',
+				ticketPriceCurrency,  //= 'Luna',
 			} = result
 
 			const end = moment(

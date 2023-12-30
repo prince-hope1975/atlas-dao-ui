@@ -174,7 +174,7 @@ export default function LoanListingDetails() {
 
 	const [loanPreview, setLoanPreview] = React.useState<{
 		cw721Coin?: NFT
-		cw1155Coin?: any
+		// cw1155Coin?: any
 	} | null>(null)
 
 	React.useEffect(() => {

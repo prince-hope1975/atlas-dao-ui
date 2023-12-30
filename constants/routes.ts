@@ -9,12 +9,18 @@ export const ACCOUNT = '/account'
 // export const TRADE_CREATE_COUNTER_LISTING = '/trade-counter'
 // export const SEND = '/send'
 // export const SEND_TRANSACTIONS = '/send-transactions'
-// export const ANALYTICS = '/analytics'
 
 export const RAFFLE_LISTINGS = '/raffle-listings'
 export const RAFFLE_LISTING_DETAILS = '/raffle-listing-details'
 export const RAFFLE_CREATE_LISTING = '/raffle'
 
+// export const ANALYTICS = '/analytics'
+export const LOAN_LISTINGS = '/loan-listings'
+export const LOAN_LISTING_DETAILS = '/loan-listing-details'
+export const LOAN_CREATE_LISTING = '/loan'
+export const LOAN_OFFER = '/loan-offer'
+export const DASHBOARD = '/'
+export const DASHBOARD_NOTIFICATIONS = '/dashboard-notifications'
 
 // EXTERNAL LINKS
 export const GITHUB = 'https://github.com/AtlasDA0'

@@ -34,7 +34,7 @@ export interface Raffle {
 	raffleInfo: {
 		id: number
 		owner: string
-		allAssociatedAssets: { cw721Coin?: NFT; cw1155Coin?: any }[]
+		allAssociatedAssets: { cw721Coin?: NFT; sg721Token?: NFT }[]
 		raffleTicketPrice: {
 			// cw20Coin: HumanCw20Coin & { rawAmount: string }
 			coin: HumanCoin & { rawAmount: string }
@@ -51,7 +51,8 @@ export interface Raffle {
 			maxParticipantNumber: number
 			maxTicketPerAddress?: number
 			rafflePreview: {
-				cw721Coin: NFT
+				cw721Coin?: NFT
+				sg721Token?: NFT
 			}
 		}
 	}
@@ -116,6 +117,11 @@ export class RafflesService {
 									$in: filters?.collections,
 								},
 							},
+							// {
+							// 	'sg721Assets_collection_join.collectionAddress': {
+							// 		$in: filters?.collections,
+							// 	},
+							// },
 					  ]
 					: []),
 
@@ -174,6 +180,11 @@ export class RafflesService {
 									$cont: filters?.search,
 								},
 							},
+							// {
+							// 	'sg721Assets.allNftInfo': {
+							// 		$cont: filters?.search,
+							// 	},
+							// },
 					  ]
 					: []),
 				...(filters?.excludeRaffles

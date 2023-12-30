@@ -1,6 +1,6 @@
 import React from 'react'
 import { Flex, IconButton } from 'theme-ui'
-import { useTranslation } from 'next-i18next'
+// import { useTranslation } from 'next-i18next'
 
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { useTheme } from '@emotion/react'
@@ -65,7 +65,8 @@ const BuyRaffleReviewModal = NiceModal.create(
 								<Flex sx={{ flexDirection: 'column', gap: '12px' }}>
 									<DescriptionCard>
 										<DescriptionCardLabel>
-											{t('raffle-listings:buy-raffle-review-modal.raffle-start-date')}
+											{/* {t('raffle-listings:buy-raffle-review-modal.raffle-start-date')} */}
+											Raffle Start Date
 										</DescriptionCardLabel>
 										<DescriptionCardContent>
 											{`${raffleStartDate.format(
@@ -76,7 +77,8 @@ const BuyRaffleReviewModal = NiceModal.create(
 
 									<DescriptionCard>
 										<DescriptionCardLabel>
-											{t('raffle-listings:buy-raffle-review-modal.raffle-ends-in')}
+											{/* {t('raffle-listings:buy-raffle-review-modal.raffle-ends-in')} */}
+											Ends in
 										</DescriptionCardLabel>
 										<DescriptionCardContent>{`${endsIn.format(
 											'MMMM Do YYYY'
@@ -85,45 +87,49 @@ const BuyRaffleReviewModal = NiceModal.create(
 
 									<DescriptionCard>
 										<DescriptionCardLabel>
-											{t('raffle-listings:buy-raffle-review-modal.amount-of-tickets')}
+											{/* {t('raffle-listings:buy-raffle-review-modal.amount-of-tickets')} */}
+											Amount of Tickets
 										</DescriptionCardLabel>
 										<DescriptionCardContent>
-											{t('raffle-listings:buy-raffle-review-modal.tickets', {
+											{/* {t('raffle-listings:buy-raffle-review-modal.tickets', {
 												count: ticketNumber,
-											})}
+											})} */}
+											{ticketNumber} Tickets
 										</DescriptionCardContent>
 									</DescriptionCard>
 
 									<DescriptionCard>
 										<DescriptionCardLabel>
-											{t('raffle-listings:buy-raffle-review-modal.ticket-cost')}
+											{/* {t('raffle-listings:buy-raffle-review-modal.ticket-cost')} */}
+											Ticket Cost
 										</DescriptionCardLabel>
 										<DescriptionCardContent>
 											{`${
 												raffle?.raffleInfo?.raffleTicketPrice?.coin?.amount ??
-												raffle?.raffleInfo?.raffleTicketPrice?.cw20Coin?.amount ??
+												// raffle?.raffleInfo?.raffleTicketPrice?.cw20Coin?.amount ??
 												0
 											} ${
-												raffle?.raffleInfo?.raffleTicketPrice?.coin?.currency ??
-												raffle?.raffleInfo?.raffleTicketPrice?.cw20Coin?.currency
+												raffle?.raffleInfo?.raffleTicketPrice?.coin?.currency 
+												// ?? raffle?.raffleInfo?.raffleTicketPrice?.cw20Coin?.currency
 											}`}
 										</DescriptionCardContent>
 									</DescriptionCard>
 
 									<DescriptionCard>
 										<DescriptionCardLabel>
-											{t('raffle-listings:buy-raffle-review-modal.total-cost')}
+											{/* {t('raffle-listings:buy-raffle-review-modal.total-cost')} */}
+											Total Cost
 										</DescriptionCardLabel>
 										<DescriptionCardContent>
 											{`${(
 												Number(
 													raffle?.raffleInfo?.raffleTicketPrice?.coin?.amount ??
-														raffle?.raffleInfo?.raffleTicketPrice?.cw20Coin?.amount ??
+														// raffle?.raffleInfo?.raffleTicketPrice?.cw20Coin?.amount ??
 														0
 												) * ticketNumber
 											).toFixed(3)} ${
-												raffle?.raffleInfo?.raffleTicketPrice?.coin?.currency ??
-												raffle?.raffleInfo?.raffleTicketPrice?.cw20Coin?.currency
+												raffle?.raffleInfo?.raffleTicketPrice?.coin?.currency 
+												//?? raffle?.raffleInfo?.raffleTicketPrice?.cw20Coin?.currency
 											}`}
 										</DescriptionCardContent>
 									</DescriptionCard>
@@ -137,7 +143,8 @@ const BuyRaffleReviewModal = NiceModal.create(
 											modal.remove()
 										}}
 									>
-										{t('raffle-listings:buy-raffle-review-modal.buy-ticket')}
+										{/* {t('raffle-listings:buy-raffle-review-modal.buy-ticket')} */} 
+										Buy Raffle Ticket
 									</Button>
 								</Flex>
 							</ModalBody>

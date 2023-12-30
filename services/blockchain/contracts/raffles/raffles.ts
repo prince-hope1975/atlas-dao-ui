@@ -2,7 +2,7 @@ import { CONTRACT_NAME } from '@/constants/addresses'
 import { DrandResponse } from '@/services/api/drandService'
 import { NFT } from '@/services/api/walletNFTsService'
 import { TxReceipt } from '@/services/blockchain/blockchain.interface'
-import { HumanCw20Coin } from '@/types'
+// import { HumanCw20Coin } from '@/types'
 import networkUtils, {
 	amountConverter as converter,
 } from '@/utils/blockchain/networkUtils'
@@ -154,28 +154,28 @@ class RafflesContract extends Contract {
 		raffleId: number,
 		ticketNumber: number,
 		rawAmount: string,
-		cw20Coin?: HumanCw20Coin
+		// cw20Coin?: HumanCw20Coin
 	): Promise<TxReceipt> {
 		const raffleContractAddress = networkUtils.getContractAddress(
 			CONTRACT_NAME.raffle
 		)
 
 		return networkUtils.postManyTransactions([
-			...(cw20Coin
-				? [
-						{
-							contractAddress: cw20Coin.address,
-							message: {
-								increase_allowance: {
-									spender: raffleContractAddress,
-									amount: amountConverter.userFacingToBlockchainValue(
-										(+cw20Coin.amount * ticketNumber).toFixed(6)
-									),
-								},
-							},
-						},
-				  ]
-				: []),
+			// ...(cw20Coin
+			// 	? [
+			// 			{
+			// 				contractAddress: cw20Coin.address,
+			// 				message: {
+			// 					increase_allowance: {
+			// 						spender: raffleContractAddress,
+			// 						amount: amountConverter.userFacingToBlockchainValue(
+			// 							(+cw20Coin.amount * ticketNumber).toFixed(6)
+			// 						),
+			// 					},
+			// 				},
+			// 			},
+			// 	  ]
+			// 	: []),
 
 			{
 				contractAddress: raffleContractAddress,
@@ -184,21 +184,21 @@ class RafflesContract extends Contract {
 						raffle_id: raffleId,
 						ticket_number: ticketNumber,
 						sent_assets: {
-							...(cw20Coin
-								? {
-										cw20_coin: {
-											amount: amountConverter.userFacingToBlockchainValue(
-												(+cw20Coin.amount * ticketNumber).toFixed(6)
-											),
-											address: cw20Coin.address,
-										},
-								  }
-								: {}),
+							// ...(cw20Coin
+							// 	? {
+							// 			cw20_coin: {
+							// 				amount: amountConverter.userFacingToBlockchainValue(
+							// 					(+cw20Coin.amount * ticketNumber).toFixed(6)
+							// 				),
+							// 				address: cw20Coin.address,
+							// 			},
+							// 	  }
+							// 	: {}),
 							...(rawAmount
 								? {
 										coin: {
 											amount: String(+rawAmount * ticketNumber),
-											denom: networkUtils.getDefaultChainDenom(),
+											denom: networkUtils.getDefaultChainDenom(), // TODO: update to handle all ibc denoms
 										},
 								  }
 								: {}),

@@ -6,13 +6,12 @@ export * from './app'
 export type {
 	APIGetAllResponse,
 	APIPagination,
-	HumanCw20Coin,
+	// HumanCw20Coin,
 	HumanCoin,
-	Cw20Coin,
 	Coin,
 	ContractName,
 	ChainId,
 	NetworkName,
 	Cw721Coin,
-	Cw1155Coin,
+	Sg721Token,
 } from './common'

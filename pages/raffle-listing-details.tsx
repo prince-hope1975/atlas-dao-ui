@@ -158,7 +158,7 @@ export default function ListingDetails() {
 
 	const [rafflePreview, setRafflePreview] = React.useState<{
 		cw721Coin?: NFT
-		cw1155Coin?: any
+		sg721Token?: NFT
 	} | null>(null)
 
 	React.useEffect(() => {
