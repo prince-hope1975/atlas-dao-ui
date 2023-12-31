@@ -136,7 +136,7 @@ class LoansContract extends Contract {
 				},
 			},
 			coins: {
-				luna: amountConverter.default.userFacingToBlockchainValue(amountNative),
+				denom: amountConverter.default.userFacingToBlockchainValue(amountNative),
 			},
 		})
 	}
@@ -211,7 +211,7 @@ class LoansContract extends Contract {
 				},
 			},
 			coins: {
-				luna: amountConverter.default.userFacingToBlockchainValue(amountNative),
+				denom: amountConverter.default.userFacingToBlockchainValue(amountNative),
 			},
 		})
 	}
@@ -229,7 +229,7 @@ class LoansContract extends Contract {
 				},
 			},
 			coins: {
-				luna: String(Number(totalAmountToRepay) + REPAY_TOLERANCE),
+				denom: String(Number(totalAmountToRepay) + REPAY_TOLERANCE),
 			},
 		})
 	}

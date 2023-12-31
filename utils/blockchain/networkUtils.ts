@@ -44,7 +44,7 @@ export const CHAIN_ID = 'elgafar-1'
 export const NETWORK_NAME: string = 'stargazetestnet'
 
 interface CoinsDetails {
-	luna?: string
+	denom?: string
 }
 
 
@@ -260,3 +260,5 @@ export default {
 	getContractAddress,
 	// getAverageBlockTime,
 }
+
+export type { TransactionDetails }

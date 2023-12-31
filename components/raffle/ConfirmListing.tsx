@@ -47,12 +47,15 @@ interface Props {
 }
 
 const StepHeader = ({ children, onEditClick }: StepHeaderProps) => {
-	const { t } = useTranslation(['common'])
+	// const { t } = useTranslation(['common'])
 
 	return (
 		<Flex style={{ justifyContent: 'space-between', alignItems: 'baseline' }}>
 			{children}
-			<EditButton onClick={onEditClick}>{t('common:edit')}</EditButton>
+			<EditButton onClick={onEditClick}>
+				{/* {t('common:edit')} */}
+				Edit
+				</EditButton>
 		</Flex>
 	)
 }
@@ -74,9 +77,13 @@ const SuccessScreen = ({ setStep }: SuccessScreenProps) => {
 					}}
 				>
 					<ConfirmListingSuccessImage />
-					<SuccessTitle>{t('raffle:confirm-listing.congratulations')}</SuccessTitle>
+					<SuccessTitle>
+						{/* {t('raffle:confirm-listing.congratulations')} */}
+						Congratulations!
+						</SuccessTitle>
 					<SuccessMessage>
-						{t('raffle:confirm-listing.congratulations-message')}
+						{/* {t('raffle:confirm-listing.congratulations-message')} */}
+						Your Raffle has been successfully created
 					</SuccessMessage>
 					<Flex sx={{ justifyContent: 'center', gap: '12px' }}>
 						<Button
@@ -86,7 +93,8 @@ const SuccessScreen = ({ setStep }: SuccessScreenProps) => {
 								setStep(CREATE_RAFFLE_LISTING_FORM_STEPS.SELECT_NFTS)
 							}}
 						>
-							{t('common:create-another')}
+							{/* {t('common:create-another')} */}
+							Create Another
 						</Button>
 						{/* <TwitterShareButton
 							title={t('common:checkout-my-raffle')}
@@ -111,11 +119,19 @@ const SuccessScreen = ({ setStep }: SuccessScreenProps) => {
 				}}
 			>
 				<Box>
-					<SuccessLabel>{t('raffle:confirm-listing.your-listing-url')}</SuccessLabel>
+					<SuccessLabel>
+						
+						{/* {t('raffle:confirm-listing.your-listing-url')} */}
+						Your Raffle URL
+						
+						</SuccessLabel>
 					<CopyField data={`${watch('raffleDetailsUrl')}`} />
 				</Box>
 				<Box>
-					<SuccessLabel>{t('raffle:confirm-listing.transaction-id')}</SuccessLabel>
+					<SuccessLabel>
+						{/* {t('raffle:confirm-listing.transaction-id')} */}
+						Transaction ID
+						</SuccessLabel>
 					<CopyField data={`${watch('explorerUrl')}`} />
 				</Box>
 			</ContentCard>
@@ -128,7 +144,7 @@ export const ConfirmListing = ({
 	setStep,
 	canGoToNextStep,
 }: Props) => {
-	const { t } = useTranslation(['common', 'raffle'])
+	// const { t } = useTranslation(['common', 'raffle'])
 	const { getValues, setValue, watch, handleSubmit } =
 		useFormContext<RaffleFormStepsProps>()
 
@@ -151,10 +167,12 @@ export const ConfirmListing = ({
 				<If.Else>
 					<ContentCard>
 						<ContentCardTitle>
-							{t('raffle:confirm-listing.title-message')}
+							{/* {t('raffle:confirm-listing.title-message')} */}
+							Confirm Raff
 						</ContentCardTitle>
 						<ContentCardSubtitle>
-							{t('raffle:confirm-listing.instruction')}
+							{/* {t('raffle:confirm-listing.instruction')} */}
+							Review the details below and make any adjustments
 						</ContentCardSubtitle>
 
 						{/* WHAT YOU ARE RAFFLING */}
@@ -165,8 +183,13 @@ export const ConfirmListing = ({
 								}
 							>
 								<StepTitle>
-									{t('raffle:confirm-listing.what-are-you-raffling')}
-									<span>{t('common:nft', { count: selectedNFTs.length })}</span>
+									{/* {t('raffle:confirm-listing.what-are-you-raffling')} */}
+									What you're raffling
+									<span>
+										
+										{/* {t('common:nft', { count: selectedNFTs.length })} */}
+										{selectedNFTs.length} NFTs
+										</span>
 								</StepTitle>
 							</StepHeader>
 
@@ -197,7 +220,8 @@ export const ConfirmListing = ({
 								}
 							>
 								<StepTitle>
-									{t('raffle:confirm-listing.raffle-end-time-and-start-time')}
+									{/* {t('raffle:confirm-listing.raffle-end-time-and-start-time')} */}
+									Raffle end date and end time 
 								</StepTitle>
 							</StepHeader>
 							<Box pb='24px' style={{ width: 'fit-content' }}>
@@ -218,7 +242,8 @@ export const ConfirmListing = ({
 								}
 							>
 								<StepTitle>
-									{t('raffle:confirm-listing.raffle-ticket-supply-label')}
+									{/* {t('raffle:confirm-listing.raffle-ticket-supply-label')} */}
+									Ticket supply
 								</StepTitle>
 							</StepHeader>
 							<Box pb='24px' style={{ width: 'fit-content' }}>
@@ -236,7 +261,8 @@ export const ConfirmListing = ({
 								}
 							>
 								<StepTitle>
-									{t('raffle:confirm-listing.raffle-ticket-price-label')}
+									{/* {t('raffle:confirm-listing.raffle-ticket-price-label')} */}
+									Ticket price
 								</StepTitle>
 							</StepHeader>
 							<Box pb='24px' style={{ width: 'fit-content' }}>
@@ -254,14 +280,18 @@ export const ConfirmListing = ({
 									setStep(CREATE_RAFFLE_LISTING_FORM_STEPS.RAFFLE_DETAILS)
 								}
 							>
-								<StepTitle>{t('raffle:confirm-listing.comments')}</StepTitle>
+								<StepTitle>
+									{/* {t('raffle:confirm-listing.comments')} */}
+									Comments
+								</StepTitle>
 							</StepHeader>
 							<Box pb='24px' style={{ width: 'fit-content' }}>
 								{comment ? (
 									<Chip isViewMode>{`"${comment}"`}</Chip>
 								) : (
 									<NoContent>
-										{t('raffle:confirm-listing.no-content-comments')}
+										{/* {t('raffle:confirm-listing.no-content-comments')} */}
+										No comments specified
 									</NoContent>
 								)}
 							</Box>

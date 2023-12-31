@@ -2,8 +2,8 @@ import { TxReceipt } from '@/services/blockchain/blockchain.interface'
 
 import networkUtils from '@/utils/blockchain/networkUtils'
 
-import type { TransactionDetails } from '@/utils/blockchain/networkUtils'
-import { NFT } from 'services/api/walletNFTsService'
+import type { TransactionDetails } from '../../../../utils/blockchain/networkUtils'
+import { NFT } from '@/services/api/walletNFTsService'
 import { Contract } from '../shared'
 
 class Sg721Contract extends Contract {

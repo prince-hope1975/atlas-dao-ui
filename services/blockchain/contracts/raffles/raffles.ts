@@ -40,7 +40,7 @@ class RafflesContract extends Contract {
 
 	static async createRaffleListing(
 		nfts: NFT[],
-		ticketPriceLuna: string | number,
+		ticketPrice: string | number,
 		raffleOptions: RaffleOptions
 	): Promise<TxReceipt> {
 		const raffleContractAddress = networkUtils.getContractAddress(
@@ -77,8 +77,10 @@ class RafflesContract extends Contract {
 						raffle_options: keysToSnake(raffleOptions),
 						raffle_ticket_price: {
 							coin: {
-								amount: amountConverter.userFacingToBlockchainValue(ticketPriceLuna),
-								denom: 'uluna',
+								 // TODO: convert to display available raffle price denoms
+								amount: amountConverter.userFacingToBlockchainValue(ticketPrice),
+								// TODO: convert to display available raffle price denoms
+								denom: 'ustars', 
 							},
 						},
 					},
@@ -208,7 +210,7 @@ class RafflesContract extends Contract {
 				...(rawAmount
 					? {
 							coins: {
-								luna: String(+rawAmount * ticketNumber),
+								denom: String(+rawAmount * ticketNumber),
 							},
 					  }
 					: {}),

@@ -49,7 +49,8 @@ const ListOfSelectedNFTs = ({
 							</ContentCardTitleChip>
 						</ContentCardTitle>
 						<ContentCardSubtitle sx={{ textAlign: 'left' }}>
-							{t('raffle:select-NFTs.selected-nfts-description')}
+							{/* {t('raffle:select-NFTs.selected-nfts-description')} */}
+							These items will be included in the raffle listing
 						</ContentCardSubtitle>
 					</div>
 					<Button
@@ -64,8 +65,8 @@ const ListOfSelectedNFTs = ({
 							const [, NFTs] = await asyncAction<NFT[]>(
 								NiceModal.show(MyNFTsModal, {
 									selectedNFTs: getValues('selectedNFTs'),
-									title: t('common:my-nfts'),
-									addNFTsButtonLabel: t('raffle:select-NFTs.add-nfts-to-raffle'),
+									title: "My NFTs", // t('common:my-nfts'),
+									addNFTsButtonLabel: "Add NFTs to Raffle", // t('raffle:select-NFTs.add-nfts-to-raffle'),
 								} as MyNFTsModalProps)
 							)
 

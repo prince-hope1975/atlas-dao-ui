@@ -100,7 +100,7 @@ export default function Raffle() {
 		defaultValues: {
 			selectedNFTs: [],
 			isSuccessScreen: false,
-			ticketPriceCurrency: 'Luna',
+			ticketPriceCurrency: 'Stars', // TODO: set current chain native denom as default value
 		},
 	})
 
@@ -162,7 +162,7 @@ export default function Raffle() {
 	}
 
 	return (
-		<Page title="Title" // {t('common:title')}
+		<Page title="New Raffle" // {t('common:title')}
         >
 			<LayoutContainer>
 				<TradeBackgroundLogoContainer>
