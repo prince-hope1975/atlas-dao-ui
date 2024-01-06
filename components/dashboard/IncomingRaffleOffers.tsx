@@ -2,11 +2,11 @@ import { useQuery } from '@tanstack/react-query'
 
 // import { useTranslation } from 'next-i18next'
 import React from 'react'
-import useAddress from '../../hooks/useAddress'
-import { OUTGOING_RAFFLES, RAFFLES } from '../../constants/useQueryKeys'
+import useAddress from '@/hooks/useAddress'
+import { OUTGOING_RAFFLES, RAFFLES } from '@/constants/useQueryKeys'
 import { MultiSelectAccordionInputOption } from '../ui/multi-select-accordion-input/MultiSelectAccordionInput'
-import { RafflesService, RAFFLE_STATE } from '../../services/api/rafflesService'
-import { getNetworkName } from '../../utils/blockchain/networkUtils'
+import { RafflesService, RAFFLE_STATE } from '@/services/api/rafflesService'
+import { getNetworkName } from '@/utils/blockchain/networkUtils'
 import RaffleOffers from './RafflesOffers'
 
 function IncomingRaffleOffers() {

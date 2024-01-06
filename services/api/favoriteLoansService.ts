@@ -1,6 +1,6 @@
 import { RequestQueryBuilder } from '@nestjsx/crud-request'
 import { axios } from '@/services/axios'
-import { NetworkName } from 'types'
+import { NetworkName } from '@/types'
 
 export type FavoriteLoanRequest = {
 	network: NetworkName
@@ -49,7 +49,7 @@ export class FavoriteLoansService {
 
 	static async getFavoriteLoans(
 		{ network }: { network: NetworkName },
-		filters
+		filters: { users: any }
 	): Promise<FavoriteLoanResponse[]> {
 		const queryBuilder = RequestQueryBuilder.create()
 

@@ -23,7 +23,7 @@ import { useQuery } from '@tanstack/react-query'
 import { MultiSelectAccordionInputOption } from '@/components/ui/multi-select-accordion-input/MultiSelectAccordionInput'
 import { RafflesResponse } from '@/services/api/rafflesService'
 import moment from 'moment'
-import { NETWORK_NAME, getNetworkName } from '../../utils/blockchain/networkUtils'
+import { NETWORK_NAME, getNetworkName } from '@/utils/blockchain/networkUtils'
 import { ConnectWalletModal } from '@/components/shared/modals/connect-wallet-modal/ConnectWalletModal'
 import {
 	AccordionContentWrapper,

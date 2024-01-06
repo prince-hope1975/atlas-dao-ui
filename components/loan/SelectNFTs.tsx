@@ -3,15 +3,14 @@ import { Box, Flex, Text } from 'theme-ui'
 // import { useTranslation } from 'next-i18next'
 import { useFormContext } from 'react-hook-form'
 
-import LoanAssetImage from '../../assets/images/TradeAsset'
-import { Button } from '../../components/ui'
-import { NFT } from '../../services/api/walletNFTsService'
-import { NFTCard } from '../../components/shared'
-import { MyNFTsModal } from '../../components/shared/modals/my-nfts-modal'
-import { MyNFTsModalProps } from '../../components/shared/modals/my-nfts-modal/MyNFTsModal'
-import { asyncAction } from '../../utils/js/asyncAction'
-import { LoanFormStepsProps } from '../../types'
-import { NavigationFooter } from '../../components/shared/navigation-footer'
+import LoanAssetImage from '@/assets/images/TradeAsset'
+import { Button } from '@/components/ui'
+import { NFT } from '@/services/api/walletNFTsService'
+import { NFTCard } from '@/components/shared'
+import { MyNFTsModal, MyNFTsModalProps } from '@/components/shared/modals/my-nfts-modal'
+import { asyncAction } from '@/utils/js/asyncAction'
+import { LoanFormStepsProps } from '@/types'
+import { NavigationFooter } from '@/components/shared/navigation-footer'
 import {
 	ContentCard,
 	ContentCardSubtitle,

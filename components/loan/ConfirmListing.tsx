@@ -1,11 +1,11 @@
-import { LunaIcon, TwitterIcon } from '../../assets/icons/mixed'
-import ConfirmListingSuccessImage from '../../assets/images/ConfirmListingSuccessImage'
-import If from '../../components/core/if-statement'
-import { theme } from '../../constants/theme'
-import { Button } from '../../components/ui/button'
-import { Chip } from '../../components/ui/chip'
-import { CopyField } from '../../components/shared'
-import { NFTCard } from '../../components/shared/nft-card'
+import { LunaIcon, TwitterIcon } from '@/assets/icons/mixed'
+import ConfirmListingSuccessImage from '@/assets/images/ConfirmListingSuccessImage'
+import If from '@/components/core/if-statement'
+import { theme } from '@/constants/theme'
+import { Button } from '@/components/ui/button'
+import { Chip } from '@/components/ui/chip'
+import { CopyField } from '@/components/shared'
+import { NFTCard } from '@/components/shared/nft-card'
 // import { useTranslation } from 'next-i18next'
 import { Dispatch, ReactNode, SetStateAction } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -16,10 +16,10 @@ import { noop } from 'lodash'
 import {
 	CREATE_LOAN_LISTING_FORM_STEPS,
 	CREATE_TRADE_LISTING_FORM_STEPS,
-} from '../../constants/steps'
-import { LoanFormStepsProps } from '../../types'
-import { NavigationFooter } from '../../components/shared/navigation-footer'
-import {} from '../../constants/trade'
+} from '@/constants/steps'
+import { LoanFormStepsProps } from '@/types'
+import { NavigationFooter } from '@/components/shared/navigation-footer'
+import {} from '@/constants/trade'
 import {
 	ContentCard,
 	ContentCardSubtitle,
@@ -94,6 +94,7 @@ const SuccessScreen = ({ setStep }: SuccessScreenProps) => {
 								setStep(CREATE_LOAN_LISTING_FORM_STEPS.SELECT_NFTS)
 							}}
 						>
+							Create Another
 							{/* {t('common:create-another')} */}
 						</Button>
 						{/* <TwitterShareButton

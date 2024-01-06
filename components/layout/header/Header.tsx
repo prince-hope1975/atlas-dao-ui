@@ -127,7 +127,11 @@ function Header() {
 							alignItems: 'center',
 						}}
 					>
+				
+				{/* Wallet & New Raffle & Loan Button */}
 				<Flex>{headerActions || <DefaultActions />}</Flex>
+
+
 						<Flex sx={{ marginLeft: '14px', display: ['flex', 'flex', 'none'] }}>
 							<Button
 								sx={{ padding: 0 }}

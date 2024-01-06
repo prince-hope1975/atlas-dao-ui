@@ -1,9 +1,9 @@
 import NiceModal from '@ebay/nice-modal-react'
-import EmptyBox from '../../assets/images/EmptyBox'
-import { LinkButton } from '../../components/link'
+import EmptyBox from '@/assets/images/EmptyBox'
+import { LinkButton } from '@/components/link'
 import React from 'react'
 import { Box, Flex } from 'theme-ui'
-import * as ROUTES from '../../constants/routes'
+import * as ROUTES from '@/constants/routes'
 
 import {
 	Accordion,
@@ -13,18 +13,18 @@ import {
 	MultiSelectAccordionInput,
 	Pagination,
 } from '@/components/ui'
-import { CollectionsBoxesIcon, TargetIcon } from '../../assets/icons/mixed'
-import { NFT } from '../../services/api/walletNFTsService'
+import { CollectionsBoxesIcon, TargetIcon } from '@/assets/icons/mixed'
+import { NFT } from '@/services/api/walletNFTsService'
 // import { useTranslation } from 'next-i18next'
-import { LATEST_BLOCK, VERIFIED_COLLECTIONS } from '../../constants/useQueryKeys'
+import { LATEST_BLOCK, VERIFIED_COLLECTIONS } from '@/constants/useQueryKeys'
 // import { useWallet, WalletStatus } from '@terra-money/wallet-kit'
-import { SupportedCollectionsService } from '../../services/api'
+import { SupportedCollectionsService } from '@/services/api'
 import { useQuery } from '@tanstack/react-query'
 import { MultiSelectAccordionInputOption } from '../ui/multi-select-accordion-input/MultiSelectAccordionInput'
-import { LoansResponse, LOAN_STATE } from '../../services/api/loansService'
-import { BLOCKS_PER_DAY } from '../../constants/core'
-import { calculateRangePercentage } from '../../utils/js/calculateRangePercentage'
-import networkUtils, { getNetworkName } from '../../utils/blockchain/networkUtils'
+import { LoansResponse, LOAN_STATE } from '@/services/api/loansService'
+import { BLOCKS_PER_DAY } from '@/constants/core'
+import { calculateRangePercentage } from '@/utils/js/calculateRangePercentage'
+import networkUtils, { getNetworkName } from '@/utils/blockchain/networkUtils'
 import { ConnectWalletModal } from '../shared/modals/connect-wallet-modal/ConnectWalletModal'
 import LoanOfferCard from './LoanOfferCard'
 import {

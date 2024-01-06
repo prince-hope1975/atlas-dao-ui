@@ -90,7 +90,7 @@ export default function Loan() {
 		defaultValues: {
 			selectedNFTs: [],
 			isSuccessScreen: false,
-			tokenName: 'Luna',
+			tokenName: 'Stars',
 		},
 	})
 

@@ -8,7 +8,7 @@ import {
 import {
 	Title,
 	SectionTitle,
-	WatchListTrade,
+	// WatchListTrade,
 	WatchListRaffles,
 	OutgoingRaffleOffers,
 	IncomingRaffleOffers,
@@ -16,8 +16,8 @@ import {
 	IncomingLoanOffers,
 	OutgoingLoanOffers,
 } from '../components/dashboard'
-import IncomingTradeOffers from '../components/dashboard/IncomingTradeOffers'
-import OutgoingTradeOffers from '../components/dashboard/OutgoingTradeOffers'
+// import IncomingTradeOffers from '../components/dashboard/IncomingTradeOffers'
+// import OutgoingTradeOffers from '../components/dashboard/OutgoingTradeOffers'
 import If from '../components/core/if-statement'
 import { LayoutContainer, Page } from '../components/layout'
 import { Tab, Tabs } from '../components/ui'
@@ -41,7 +41,7 @@ export enum ACTIVITY_TYPE {
 }
 
 export enum FEATURE_TYPE {
-	trade = 'Trade',
+	// trade = 'Trade',
 	raffle = 'Raffle',
 	loan = 'Loan',
 }
@@ -59,7 +59,7 @@ export default function Dashboard() {
 		'featureType',
 		queryTypes
 			.stringEnum<FEATURE_TYPE>(Object.values(FEATURE_TYPE))
-			.withDefault(FEATURE_TYPE.trade)
+			.withDefault(FEATURE_TYPE.raffle)
 	)
 
 	return (
@@ -92,9 +92,9 @@ export default function Dashboard() {
 						</Tabs>
 					</Flex>
 					<Flex sx={{ mb: ['24px', '24px'] }}>
-						<If condition={feature === FEATURE_TYPE.trade}>
+						{/* <If condition={feature === FEATURE_TYPE.trade}>
 							<WatchListTrade />
-						</If>
+						</If> */}
 						<If condition={feature === FEATURE_TYPE.raffle}>
 							<WatchListRaffles />
 						</If>

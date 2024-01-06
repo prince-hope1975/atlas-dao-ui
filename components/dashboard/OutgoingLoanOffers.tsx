@@ -2,12 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 
 // import { useTranslation } from 'next-i18next'
 import React from 'react'
-import useAddress from '../../hooks/useAddress'
-import { LoansService } from '../../services/api'
-import { ALL_LOANS, LOANS } from '../../constants/useQueryKeys'
+import useAddress from '@/hooks/useAddress'
+import { LoansService } from '@/services/api'
+import { ALL_LOANS, LOANS } from '@/constants/useQueryKeys'
 import { MultiSelectAccordionInputOption } from '../ui/multi-select-accordion-input/MultiSelectAccordionInput'
 import { LOAN_STATE } from '@/services/api/loansService'
-import { getNetworkName } from '../../utils/blockchain/networkUtils'
+import { getNetworkName } from '@/utils/blockchain/networkUtils'
 import LoanOffers from './LoanOffers'
 
 function OutgoingLoanOffers() {

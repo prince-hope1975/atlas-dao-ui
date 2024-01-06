@@ -6,7 +6,7 @@ import useAddress from '@/hooks/useAddress'
 import { OUTGOING_RAFFLES, RAFFLES } from '@/constants/useQueryKeys'
 import { MultiSelectAccordionInputOption } from '@/components/ui/multi-select-accordion-input/MultiSelectAccordionInput'
 import { RafflesService, RAFFLE_STATE } from '@/services/api/rafflesService'
-import { getNetworkName } from '../../utils/blockchain/networkUtils'
+import { getNetworkName } from '@/utils/blockchain/networkUtils'
 import RaffleOffers from './RafflesOffers'
 
 function OutgoingRaffleOffers() {

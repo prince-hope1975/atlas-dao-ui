@@ -254,7 +254,7 @@ function LoanOfferCard({
 							</Flex>
 						</Flex>
 					</CardContainer>
-				{/* {/* </a> */} */}
+			 {/* </a> */}
 			</Link>
 
 			<Flex sx={{ flex: 1, maxHeight: '40px' }}>

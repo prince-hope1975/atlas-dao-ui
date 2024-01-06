@@ -9,8 +9,8 @@ interface RootLayoutProps {
 }
 
 export function RootLayout({ children }: RootLayoutProps) {
-  const wallet = useChain(NETWORK_NAME)
-    blockchain.setWallet(wallet);
+  const {wallet } = useChain(NETWORK_NAME)
+    blockchain.setWallet(wallet!);
   return (
     <ThemeUIProvider theme={theme}>
       <div className="bg-background text-foreground p-10 relative">

@@ -15,7 +15,10 @@ import { assets } from 'chain-registry';
 import { toUtf8 } from '@cosmjs/encoding'
 
 export type NativeCurrency = typeof CHAIN_DENOMS[ChainId]
+export const STARGAZE_INDEXER_TOKENS_LIMIT = 100
+
 const txRaw = cosmos.tx.v1beta1.TxRaw;
+
 
 interface TransactionDetails {
 	contractAddress: string
@@ -56,20 +59,14 @@ let connectedWallet: SimpleAccount | undefined
 let client: SigningStargateClient
 let cosmwasmClient: SigningCosmWasmClient
 
-// let wallet: WalletResponse | undefined
-// let connectedWallet: ConnectResponse | undefined
-// let client: LCDClient
-
 // RETURN NETWORK TYPE FOR STARGAZE
 export function getNetworkName(): NetworkName {
 
 	if (CHAIN_ID == 'elgafar-1') {
-		return 'testnet'
-	}
+		return 'testnet'}
 
 	if (CHAIN_ID == 'stargaze-1') {
-		return 'mainnet'
-	}
+		return 'mainnet'}
 
 	return 'testnet'
 }
@@ -77,12 +74,10 @@ export function getNetworkName(): NetworkName {
 // RETURN CHAIN-ID FOR STARGAZE 
 export function getChainId(): ChainId {
 	if (NETWORK_TYPE === 'testnet') {
-		return 'elgafar-1'
-	}
+		return 'elgafar-1'}
 
 	if (getNetworkName() === 'mainnet') {
-		return 'stargaze-1'
-	}
+		return 'stargaze-1'}
 
 	return 'elgafar-1'
 }

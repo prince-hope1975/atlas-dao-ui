@@ -1,1 +1,3 @@
-export { MyNFTsModal } from './MyNFTsModal'
+export { MyNFTsModal } from './MyNFTsModal';
+export type { MyNFTsModalProps } from './MyNFTsModal';
+

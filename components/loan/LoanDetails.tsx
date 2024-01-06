@@ -1,10 +1,10 @@
-import { TextAreaField, TextInputField, TokenInputField } from '../../components/form'
-import { NavigationFooter } from '../../components/shared/navigation-footer'
+import { TextAreaField, TextInputField, TokenInputField } from '@/components/form'
+import { NavigationFooter } from '@/components/shared/navigation-footer'
 // import { useTranslation } from 'next-i18next'
 import React from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Flex } from 'theme-ui'
-import { LoanFormStepsProps } from '../../types'
+import { LoanFormStepsProps } from '@/types'
 import {
 	ContentCard,
 	ContentCardSubtitle,
@@ -63,11 +63,11 @@ export const LoanDetails = ({ goNextStep, goBackStep }: LoanDetailsProps) => {
 						}
 						iconRight={<div>%</div>}
 						error={!!errors.interestRate}
-						placeholder={t('loan:loan-details.interest-rate-placeholder')}
+						placeholder="" // {t('loan:loan-details.interest-rate-placeholder')}
 					/>
 
 					<TextInputField
-						label={t('loan:loan-details.loan-period-label')}
+						label="" // {t('loan:loan-details.loan-period-label')}
 						id='loanPeriod'
 						{...register('loanPeriod')}
 						fieldError={
@@ -75,16 +75,16 @@ export const LoanDetails = ({ goNextStep, goBackStep }: LoanDetailsProps) => {
 							// t(`common:errors.${errors?.loanPeriod?.message}`)
 						}
 						error={!!errors.loanPeriod}
-						placeholder={t('loan:loan-details.loan-period-placeholder')}
+						placeholder="" // {t('loan:loan-details.loan-period-placeholder')}
 					/>
 				</Flex>
 
 				<TextAreaField
-					label={t('loan:loan-details.text-area-label')}
+					label="" // {t('loan:loan-details.text-area-label')}
 					id='comment'
 					{...register('comment')}
 					style={{ height: '128px' }}
-					placeholder={t('loan:loan-details.text-area-placeholder')}
+					placeholder="" // {t('loan:loan-details.text-area-placeholder')}
 				/>
 			</ContentCard>
 

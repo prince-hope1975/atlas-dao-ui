@@ -46,7 +46,7 @@ export class FavoriteRafflesService {
 
 	static async getFavoriteRaffles(
 		{ network }: { network: NetworkName },
-		filters
+		filters: { users: any }
 	): Promise<FavoriteRaffleResponse[]> {
 		const queryBuilder = RequestQueryBuilder.create()
 
