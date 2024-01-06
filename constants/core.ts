@@ -20,7 +20,7 @@ export const CHAIN_CURRENCIES: { [key in ChainId]: string } = {
 	'stargaze-1': 'stars',
 }
 
-export const API_URL = '' // https://api.illiquidlabs.io/
+export const API_URL = 'http://localhost:3000' // https://api.illiquidlabs.io/
 
 export const ASSETS_URL = '' // https://assets.terra.dev/
 

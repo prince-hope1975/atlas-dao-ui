@@ -9,6 +9,6 @@ export const assetsAxios = client.create({
 	baseURL: ASSETS_URL,
 })
 
-export const dRandAxios = client.create({
-	baseURL: DRAND_URL,
-})
+// export const dRandAxios = client.create({
+// 	baseURL: DRAND_URL,
+// })

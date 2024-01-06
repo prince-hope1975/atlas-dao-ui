@@ -1,32 +1,38 @@
-import { AccountData } from '@cosmjs/amino'
-import { SigningCosmWasmClient, ExecuteInstruction } from '@cosmjs/cosmwasm-stargate'
+// import { AccountData } from '@cosmjs/amino'
+import { SigningCosmWasmClient, ExecuteInstruction, MsgExecuteContractEncodeObject, JsonObject } from '@cosmjs/cosmwasm-stargate'
 import { ContractName, ChainId, NetworkName } from '../../types'
 import { contractAddresses } from '@/constants/addresses'
-import { ConnectResponse, WalletResponse } from '@terra-money/wallet-kit'
 import { txExplorerFactory } from '@/constants/transactions'
-import { CHAIN_CURRENCIES, CHAIN_DENOMS } from '@/constants/core'
-import {  MsgExecuteContractResponse } from 'juno-network/types/codegen/cosmwasm/wasm/v1/tx';
-import {
-	MsgExecuteContract,
-	Coins,
-	Coin,
-	TxInfo,
-	LCDClient,
-	ExtensionOptions,
-	Msg,
-} from '@terra-money/feather.js'
-// import {MsgExecuteContract} from 'cosmjs-types/cosmwasm/wasm/v1/tx'
+import { CHAIN_CURRENCIES, CHAIN_DENOMS,  } from '@/constants/core'
+import { cosmos } from 'interchain-query'
 import { TxReceipt } from '@/services/blockchain/blockchain.interface'
-import { ChainContext, Wallet, WalletAccount, WalletBase, WalletClient, WalletClientContext, WalletContext } from '@cosmos-kit/core'
-import { useWallet } from '@cosmos-kit/react'
+import { ChainContext, SimpleAccount, Wallet } from '@cosmos-kit/core'
+import { useWallet, useChain } from '@cosmos-kit/react'
+import {  Coin, SigningStargateClient, StdFee, coins, isDeliverTxSuccess } from '@cosmjs/stargate'
+import { Coins } from '@terra-money/feather.js'
+import { TxRaw } from 'interchain-query/cosmos/tx/v1beta1/tx'
+import { assets } from 'chain-registry';
+import { toUtf8 } from '@cosmjs/encoding'
 
 export type NativeCurrency = typeof CHAIN_DENOMS[ChainId]
+const txRaw = cosmos.tx.v1beta1.TxRaw;
 
 interface TransactionDetails {
 	contractAddress: string
-	message: object
-	coins?: CoinsDetails
+	message: JsonObject
+	coins?: Coin[]
 }
+
+interface Msg {
+	typeUrl: string;
+	value: any;
+  }
+
+  interface TxOptions {
+	gas: string | number;
+	// toast?: Partial<CustomToast>;
+	onSuccess?: () => void;
+  }
 
 
 const CHAIN_NAMES = [
@@ -43,14 +49,12 @@ export const NETWORK_TYPE = 'testnet'
 export const CHAIN_ID = 'elgafar-1'
 export const NETWORK_NAME: string = 'stargazetestnet'
 
-interface CoinsDetails {
-	denom?: string
-}
 
 
-let wallet: ChainContext  | undefined
-let connectedWallet: WalletAccount | undefined
-let client: LCDClient
+let wallet: Wallet  | undefined
+let connectedWallet: SimpleAccount | undefined
+let client: SigningStargateClient
+let cosmwasmClient: SigningCosmWasmClient
 
 // let wallet: WalletResponse | undefined
 // let connectedWallet: ConnectResponse | undefined
@@ -85,8 +89,8 @@ export function getChainId(): ChainId {
 
 // RETURN LATEST BLOCK HEIGHT
 async function getLatestBlockHeight() {
-	const chainId = getChainId()
-	const blockInfo = await client.tendermint.blockInfo(chainId)
+	// const chainId = getChainId()
+	const blockInfo = await client.getBlock()
 
 	return blockInfo
 }
@@ -111,17 +115,17 @@ function checkWallet(parentFunctionName: string): void {
 }
 
 async function getWalletAddress(): Promise<string> {
-	const chainId = getChainId()
+	// const chainId = getChainId()
 	const wallet = useWallet()
 
 	return connectedWallet?.address ?? ''
 }
-function setWallet(newWallet: ChainContext) {
+function setWallet(newWallet: Wallet) {
 	// console.log(`Setting a new wallet in blockchain.ts module`, { newWallet });
 	wallet = newWallet
 }
 
-function setConnectedWallet(newWallet?: WalletAccount) {
+function setConnectedWallet(newWallet?: SimpleAccount) {
 	connectedWallet = newWallet
 }
 
@@ -141,20 +145,25 @@ function getCurrencyForDenom(denom: string): NativeCurrency {
 	return `${denom.substring(1).toUpperCase()}`
 }
 
-function getCoinsConfig(coins?: CoinsDetails): Coins.Input | undefined {
-	if (coins) {
-		const coinObjects: Coin[] = Object.entries(coins).map(([currency, amount]) =>
-			Coin.fromData({ denom: getDenomForCurrency(currency), amount })
-		)
+// function getCoinsConfig(all_coins?: CoinsDetails): Coins.Input | undefined {
+// 	if (all_coins) {
+// 		const coinObjects: Coin[] = Object.entries(all_coins).map(([currency, amount]) =>
+// 			Coin.fromData({ denom: getDenomForCurrency(currency), amount })
+// 		)
 
-		return new Coins(coinObjects)
-	}
-	return undefined
-}
+// 		return new Coins(coinObjects)
+// 	}
+// 	return undefined
+// }
+
+export const STARGATE_ASSETS = assets.find(
+	(chain) => chain.chain_name === CHAIN_NAMES[1]
+  )!.assets;
+
 
 // QUERY CONTRACT
 async function sendQuery(contractAddress: string, query: object): Promise<any> {
-	return client.wasm.contractQuery(contractAddress, query)
+	return cosmwasmClient.queryContractSmart(contractAddress, query)
 }
 
 // ESTIMATE FEE
@@ -186,28 +195,43 @@ async function sendQuery(contractAddress: string, query: object): Promise<any> {
 // SIGN & BROADCAST MULTIPLE TX
 async function postManyTransactions(
 	txs: TransactionDetails[],
-	memo?: string
+	options: TxOptions,
 ): Promise<TxReceipt> {
 	checkWallet('postManyTransactions')
 
 	const address = await getWalletAddress()
+	const {sign, getSigningCosmWasmClient  } = useChain(CHAIN_NAMES[1])
 
-	const msgs = txs.map(tx => {
-		const coins = getCoinsConfig(tx.coins)
-		return new MsgExecuteContract(address, tx.contractAddress, tx.message, coins)
-	})
+	const msgs: MsgExecuteContractEncodeObject[] = txs.map(tx => ({
+		typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+		value: {
+		sender: address,
+		contract: tx.contractAddress,
+		msg: toUtf8(JSON.stringify(tx.message)),
+		funds: [...(tx.coins || [])],
+		}
+	}))
 
-	const fee = await estimateTxFee(msgs)
+	const fee: StdFee = {
+		amount: coins(0, "ustars"),
+		gas:  String(options.gas),
+	  };
+  
+	  let signed: TxRaw;
+	  let client: SigningCosmWasmClient;
 
 
+	  client = await getSigningCosmWasmClient();
 
-	const tx = await wallet?.post({
-		chainID: getChainId(),
+	  const result = await client.signAndBroadcast(
+		address,
 		msgs,
-		memo,
 		fee,
-	})
-	const txId = tx?.txhash ?? ''
+		"",
+	  )
+
+
+	const txId = result?.transactionHash ?? ''
 
 	const explorerUrl = getTxExplorer(txId)
 
@@ -220,9 +244,9 @@ async function postManyTransactions(
  // SIGN & BROADCAST SINGLE TRANSACTION
 async function postTransaction(
 	tx: TransactionDetails,
-	memo?: string
-): Promise<TxReceipt> {
-	return postManyTransactions([tx], memo)
+	options: TxOptions,
+)  {
+	return postManyTransactions([tx],options )
 }
 
 // RETURN BLOCK EXPLORER LINK

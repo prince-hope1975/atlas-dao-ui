@@ -129,16 +129,7 @@ export default function Dashboard() {
 						</Tabs>
 					</Flex>
 					<SectionTitle />
-					<If condition={feature === FEATURE_TYPE.trade}>
-						<>
-							{activityType === ACTIVITY_TYPE.incomingActivity && (
-								<IncomingTradeOffers />
-							)}
-							{activityType === ACTIVITY_TYPE.outgoingActivity && (
-								<OutgoingTradeOffers />
-							)}
-						</>
-					</If>
+				
 					<If condition={feature === FEATURE_TYPE.raffle}>
 						<>
 							{activityType === ACTIVITY_TYPE.incomingActivity && (
