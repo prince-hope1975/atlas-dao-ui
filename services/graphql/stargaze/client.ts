@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client'
-import {STARGAZE_GQL_INDEXER_URI} from '../../../constants/core'
+import {STARGAZE_GRAPHQL_ENDPOINT} from '../../../constants/core'
 
 export const stargazeIndexerClient = new ApolloClient({
-  uri: STARGAZE_GQL_INDEXER_URI,
+  uri: STARGAZE_GRAPHQL_ENDPOINT,
   cache: new InMemoryCache(),
 })

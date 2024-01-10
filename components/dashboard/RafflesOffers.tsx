@@ -23,7 +23,7 @@ import { useQuery } from '@tanstack/react-query'
 import { MultiSelectAccordionInputOption } from '@/components/ui/multi-select-accordion-input/MultiSelectAccordionInput'
 import { RafflesResponse } from '@/services/api/rafflesService'
 import moment from 'moment'
-import { NETWORK_NAME, getNetworkName } from '@/utils/blockchain/networkUtils'
+import { CHAIN_NAME, getNetworkName } from '@/utils/blockchain/networkUtils'
 import { ConnectWalletModal } from '@/components/shared/modals/connect-wallet-modal/ConnectWalletModal'
 import {
 	AccordionContentWrapper,
@@ -69,7 +69,7 @@ function RaffleOffers({
 }: RaffleOffersProps) {
 	// const { t } = useTranslation()
 	// const wallet = useWallet()
-	const {wallet, status } = useChain(NETWORK_NAME)
+	const {wallet, status } = useChain(CHAIN_NAME)
 	const networkName = getNetworkName()
 
 	const { data: verifiedCollections } = useQuery(

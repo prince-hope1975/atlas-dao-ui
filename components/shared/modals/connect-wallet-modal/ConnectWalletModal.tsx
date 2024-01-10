@@ -15,10 +15,10 @@ import {
 	ModalHeader,
 	SectionCard,
 } from './ConnectWalletModal.styled'
-import { NETWORK_NAME } from '@/utils/blockchain/networkUtils'
+import { CHAIN_NAME } from '@/utils/blockchain/networkUtils'
 
 export const ConnectWalletModal = NiceModal.create(() => {
-	const { connect } = useChain(NETWORK_NAME)
+	const { connect } = useChain(CHAIN_NAME)
 	const modal = useModal()
 	const theme = useTheme()
 	// 	const { t } = useTranslation()

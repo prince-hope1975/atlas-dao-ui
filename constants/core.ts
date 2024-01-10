@@ -24,7 +24,7 @@ export const API_URL = 'http://atlas.terp.network:443' // https://api.illiquidla
 
 export const STARGAZE_URL_BASE = ''
 
-export const STARGAZE_GQL_INDEXER_URI=`https://galaxy-graphql-testnet.fly.dev/graphql`
+export const STARGAZE_GRAPHQL_ENDPOINT=`https://galaxy-graphql-testnet.fly.dev/graphql`
 
 
 export const ASSETS_URL = '' // https://assets.terra.dev/

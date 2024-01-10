@@ -9,12 +9,12 @@ import { OverflowTip } from '@/components/ui'
 import { NotificationsBell } from '../notifications-bell'
 import { Profile } from '../profile'
 import { useChain } from '@cosmos-kit/react'
-import { NETWORK_NAME } from '@/utils/blockchain/networkUtils'
+import { CHAIN_NAME } from '@/utils/blockchain/networkUtils'
 
 export default function CreateTradeListing() {
 	// const { t } = useTranslation(['common'])
 	// const wallet = useWallet()
-	const {status} = useChain(NETWORK_NAME) 
+	const {status} = useChain(CHAIN_NAME) 
 	return ( <></>
 		// <Flex sx={{ gap: ['6px', '8px'] }}>
 		// 	<Profile />

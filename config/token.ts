@@ -1,5 +1,10 @@
 import { NETWORK_TYPE as NETWORK } from '../utils/blockchain/networkUtils'
+import { TokensQuery, CollectionsQuery } from '@/services/graphql'
 
+
+export type Trait = NonNullable<Token['traits']>[0];
+export type Token = TokensQuery['tokens']['tokens'][0];
+export type Collection = CollectionsQuery['collections']['collections'][0];
 export interface TokenInfo {
   id: string
   denom: string

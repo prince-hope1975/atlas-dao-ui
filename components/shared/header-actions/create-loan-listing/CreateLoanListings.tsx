@@ -9,11 +9,11 @@ import { OverflowTip } from '@/components/ui'
 import { Profile } from '../profile'
 import { NotificationsBell } from '../notifications-bell'
 import { useChain } from '@cosmos-kit/react'
-import { NETWORK_NAME } from '@/utils/blockchain/networkUtils'
+import { CHAIN_NAME } from '@/utils/blockchain/networkUtils'
 
 export default function CreateLoanListing() {
 	// const { t } = useTranslation(['common'])
-	const {status} = useChain(NETWORK_NAME)
+	const {status} = useChain(CHAIN_NAME)
 	return (
 		<Flex sx={{ gap: ['6px', '8px'] }}>
 			<Profile />

@@ -25,7 +25,7 @@ import getShortText from '@/utils/js/getShortText'
 import { MyNFTsModal } from '@/components/shared/modals'
 import { ConnectWalletModal } from '@/components/shared/modals/connect-wallet-modal/ConnectWalletModal'
 import { useChain, useWallet } from '@cosmos-kit/react'
-import { NETWORK_NAME } from '@/utils/blockchain/networkUtils'
+import { CHAIN_NAME } from '@/utils/blockchain/networkUtils'
 
 const ProfileTitle = styled(Box)`
 	font-family: 'Inter';
@@ -103,7 +103,7 @@ export default function Profile() {
 	const myAddress = useAddress()
 
 	// const wallet = useWallet()
-	const {wallet, disconnect, isWalletConnected} = useChain(NETWORK_NAME)
+	const {wallet, disconnect, isWalletConnected} = useChain(CHAIN_NAME)
 
 	const [nameServiceInfo] = useNameService([myAddress])
 
