@@ -22,7 +22,7 @@
 // import { SupportedCollectionsService } from '@/services/api'
 // import { useQuery } from '@tanstack/react-query'
 // import { MultiSelectAccordionInputOption } from '@/components/ui/multi-select-accordion-input/MultiSelectAccordionInput'
-// import { NETWORK_NAME, getNetworkName } from '@/utils/blockchain/networkUtils'
+// import { CHAIN_NAME, getNetworkName } from '@/utils/blockchain/networkUtils'
 // import { ConnectWalletModal } from '@/components/shared/modals/connect-wallet-modal/ConnectWalletModal'
 // import TradeOfferCard from './TradeOfferCard'
 // import {
@@ -71,7 +71,7 @@
 // // 	const { t } = useTranslation()
 // 	const networkName = getNetworkName()
 // 	// const wallet = useWallet()
-// 	const {chain, status} = useChain(NETWORK_NAME)
+// 	const {chain, status} = useChain(CHAIN_NAME)
 
 // 	const { data: verifiedCollections } = useQuery(
 // 		[VERIFIED_COLLECTIONS, networkName],

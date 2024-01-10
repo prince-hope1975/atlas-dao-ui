@@ -16,10 +16,10 @@
 // 	WatchListEmptyContainer,
 // 	WatchListAssetImageContainer,
 // } from './WatchList.styled'
-// import { NETWORK_NAME } from '@/utils/blockchain/networkUtils';
+// import { CHAIN_NAME } from '@/utils/blockchain/networkUtils';
 
 // function WatchListTrade() {
-// 	const {wallet, status} = useChain(NETWORK_NAME)
+// 	const {wallet, status} = useChain(CHAIN_NAME)
 
 // // 	const { t } = useTranslation(['common', 'dashboard'])
 
