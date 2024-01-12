@@ -17,6 +17,8 @@ import {
 	Subtitle,
 	Title,
 } from './NFTCard.styled'
+import { Token } from '@/services/api/gqlWalletSercice'
+import { getImageUrl } from '@/lib/getImageUrl'
 
 type SizeVariants = 'small' | 'medium'
 
@@ -48,6 +50,63 @@ const verifiedMarginTopBySizeVariant = {
 	medium: '6px',
 }
 
+export function StargazeNFTCard({
+	checked,
+	verified,
+	onCardClick,
+	name,
+	collectionName,
+	size = 'medium',
+imageUrl	
+}: Pick<NFTCardProps,"verified"|"onCardClick"|"checked"|"size"|"collectionName"> & Token) {
+	// const { t } = useTranslation('common')
+	return (
+    <CardContainer checked={checked} onClick={onCardClick} isCover={false}>
+      <ImageSection>
+        {!imageUrl ? (
+          <ImagePlaceholder width="85px" height="80px" />
+        ) : (
+          <Image alt='img' width={500} height={500} objectFit='cover' objectPosition='center'   src={getImageUrl(imageUrl) ?? []}  style={{
+			width:"100%",
+			height:"100%"
+		  }}/>
+        )}
+        {checked && (
+          <RightImageArea>
+            <CheckedOutlineIcon {...checkedIconSizeBySizeVariant[size]} />
+          </RightImageArea>
+        )}
+
+        {/* {hasCoverSelector && (
+					<CoverLabel className='coverLabel' isCover={isCover}>
+						{isCover ?
+						//  t('common:cover')
+								'cover'
+						 :
+						//   t('common:set-as-cover')
+						  'set-as-cover'
+						  }
+					</CoverLabel>
+				)} */}
+      </ImageSection>
+      <DescriptionSection size={size}>
+        <OverflowTip>
+          <Title size={size}>{name}</Title>
+        </OverflowTip>
+        <Flex>
+          <OverflowTip>
+            <Subtitle size={size}>{collectionName}</Subtitle>
+          </OverflowTip>
+          {verified && (
+            <Box ml={["4px"]} mt={verifiedMarginTopBySizeVariant[size]}>
+              <VerifiedIcon />
+            </Box>
+          )}
+        </Flex>
+      </DescriptionSection>
+    </CardContainer>
+  );
+}
 function NFTCard({
 	checked,
 	verified,

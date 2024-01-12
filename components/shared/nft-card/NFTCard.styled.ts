@@ -1,7 +1,8 @@
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { theme } from '@/constants/theme'
-import { Img } from 'react-image'
+// import { Img } from 'react-image'
+import Img from "next/image"
 import { Flex, Text } from 'theme-ui'
 
 export const Title = styled(Text)<{ size?: string }>`
