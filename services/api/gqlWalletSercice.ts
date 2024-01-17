@@ -41,9 +41,10 @@ interface CollectionNode {
   collections: Collection[];
 }
 
-interface Collection {
+export interface Collection {
   __typename: string;
   name: string;
+  description?:string
   mintedAt: string;
   createdByAddr: string;
   collectionAddr: string;
@@ -96,6 +97,16 @@ export const WALLET_DATA = gql`
         createdByAddr
         collectionAddr
       }
+    }
+  }
+`;
+export const COLLECTION_DATA = gql`
+  query Collection($collectionAddr: String!) {
+    collection(collectionAddr: $collectionAddr) {
+      name
+      description
+      createdByAddr
+      collectionAddr
     }
   }
 `;

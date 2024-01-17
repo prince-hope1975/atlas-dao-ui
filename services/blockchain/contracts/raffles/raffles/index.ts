@@ -7,7 +7,8 @@ import networkUtils, {
 	amountConverter as converter,
 } from '@/utils/blockchain/networkUtils'
 import { keysToSnake } from '@/utils/js/keysToSnake'
-import { Contract } from '../shared'
+import { Contract } from '../../shared'
+import { Token } from '@/services/api/gqlWalletSercice'
 
 const amountConverter = converter.default
 
@@ -39,7 +40,7 @@ class RafflesContract extends Contract {
 	}
 
 	static async createRaffleListing(
-		nfts: NFT[],
+		nfts: Token[],
 		ticketPrice: string | number,
 		raffleOptions: RaffleOptions
 	): Promise<TxReceipt> {

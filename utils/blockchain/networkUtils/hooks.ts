@@ -1,14 +1,15 @@
 // import { AccountData } from '@cosmjs/amino'
 import { SigningCosmWasmClient, MsgExecuteContractEncodeObject, JsonObject } from '@cosmjs/cosmwasm-stargate'
-import { ContractName, ChainId, NetworkName } from '../../types'
+import { ContractName, ChainId, NetworkName } from '../../../types'
 import { contractAddresses } from '@/constants/addresses'
 import { txExplorerFactory } from '@/constants/transactions'
 import { CHAIN_CURRENCIES, CHAIN_DENOMS } from '@/constants/core'
 import { cosmos } from 'interchain-query'
 import { TxReceipt } from '@/services/blockchain/blockchain.interface'
-import { SimpleAccount, Wallet } from '@cosmos-kit/core'
+import { SimpleAccount, Wallet,} from '@cosmos-kit/core'
+import {  } from '@cosmos-kit/keplr'
 import { useWallet, useChain } from '@cosmos-kit/react'
-import { Coin, SigningStargateClient, StdFee, coins } from '@cosmjs/stargate'
+import { Coin, SigningStargateClient, StdFee, coins ,GasPrice} from '@cosmjs/stargate'
 import { TxRaw } from 'interchain-query/cosmos/tx/v1beta1/tx'
 import { assets } from 'chain-registry';
 import { toUtf8 } from '@cosmjs/encoding'
@@ -257,6 +258,27 @@ function createAmountConverter(decimals: number) {
 
 export const amountConverter = {
 	default: createAmountConverter(DEFAULT_DECIMALS),
+}
+export const useNetworkUtils=()=>{
+	return {
+    getLatestBlockHeight,
+    sendQuery,
+    setConnectedWallet,
+    // setLcdClient,
+    // sendIndependentQuery,
+    postTransaction,
+    postManyTransactions,
+    getChainId,
+    getWalletAddress,
+    setWallet,
+    getDefaultChainDenom,
+    getCurrencyForDenom,
+    getDenomForCurrency,
+    amountConverter,
+    // getTxResult,
+    getTxExplorer,
+    getContractAddress,
+  };
 }
 export default {
 	getLatestBlockHeight,

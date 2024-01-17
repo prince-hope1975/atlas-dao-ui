@@ -29,7 +29,7 @@ import { VERIFIED_COLLECTIONS } from "@/constants/useQueryKeys";
 import { OnlyMobileAndTablet } from "@/components/layout";
 import { NFTCard } from "@/components/shared/nft-card";
 import { getNetworkName } from "@/utils/blockchain/networkUtils";
-import useSelectedNFTs, {
+import  {
   useSelectedStargazeNFTs,
 } from "./hooks/useSelectedNFTs";
 import {
@@ -46,13 +46,15 @@ import {
 } from "./MyNFTsModal.styled";
 import { ModalTitle } from "../common";
 import { StargazeNFTCard } from "../../nft-card/NFTCard";
+import { StargazeSelectCard } from "@/components/ui/select-card/SelectCard";
+import { Token } from "@/services/api/gqlWalletSercice";
 
 export interface MyNFTsModalProps {
   title?: string;
   children?: React.ReactNode;
   addNFTsButtonLabel?: string;
   inViewMode?: boolean;
-  selectedNFTs?: NFT[];
+  selectedNFTs?: Token[];
 }
 
 export const MyNFTsModal = NiceModal.create(
@@ -99,6 +101,7 @@ export const MyNFTsModal = NiceModal.create(
       ownedCollections,
       fetchMyNFTs,
       walletQueryData,
+      collectionQueries
     } = useMyNFTs({
       collectionAddresses: selectedCollections.map(({ value }) => value),
       name: searchName,
@@ -114,13 +117,12 @@ export const MyNFTsModal = NiceModal.create(
       }
     );
 
-    const { selectedNFTs, addSelectedNFT, removeSelectedNFT } =
-      useSelectedNFTs(defaultSelectedNFTs);
+
     const {
       selectedNFTs: _selectedNFTs,
       addSelectedNFT: _addSelectedNFT,
       removeSelectedNFT: _removeSelectedNFT,
-    } = useSelectedStargazeNFTs(walletQueryData?.data?.tokens?.tokens!);
+    } = useSelectedStargazeNFTs(defaultSelectedNFTs! ?? ownedNFTs);
 
     React.useEffect(() => {
       if (modal.visible) {
@@ -158,7 +160,7 @@ export const MyNFTsModal = NiceModal.create(
                           }}
                           fullWidth
                           onClick={() => {
-                            modal.resolve(selectedNFTs);
+                            modal.resolve(_selectedNFTs ?? []);
                             modal.remove();
                           }}
                         >
@@ -236,8 +238,11 @@ export const MyNFTsModal = NiceModal.create(
                           onChange={(collections) =>
                             setSelectedCollections(collections)
                           }
-                          options={ownedCollections.map(
-                            ({ collectionName, collectionAddress }) => ({
+                          options={ownedCollections?.map(
+                            ({
+                              name: collectionName,
+                              collectionAddr: collectionAddress,
+                            }) => ({
                               label: collectionName,
                               value: collectionAddress,
                             })
@@ -274,7 +279,7 @@ export const MyNFTsModal = NiceModal.create(
                           sx={{ p: "12px 0", fontWeight: 400 }}
                           fullWidth
                           onClick={() => {
-                            modal.resolve(selectedNFTs);
+                            modal.resolve(_selectedNFTs);
                             modal.remove();
                           }}
                         >
@@ -392,8 +397,7 @@ export const MyNFTsModal = NiceModal.create(
                   )} */}
                   {/* TODO Fix later */}
                   {walletQueryData.loading ||
-                  (walletQueryData.data &&
-                    isEmpty(walletQueryData.data?.tokens?.tokens)) ? (
+                  (!walletQueryData?.data && isEmpty(ownedNFTs)) ? (
                     <Flex
                       sx={{
                         flex: 1,
@@ -417,12 +421,15 @@ export const MyNFTsModal = NiceModal.create(
                       }}
                     >
                       <FiltersSection>
-                        {walletQueryData.data?.collections?.collections?.map(
+                        {(
+                          collectionQueries?.data ??
+                          walletQueryData.data?.collections?.collections
+                        )?.map(
                           (
                             {
                               createdByAddr: collectionAddress,
                               name: collectionName,
-							  collectionAddr,
+                              collectionAddr,
                             },
                             idx
                           ) => {
@@ -474,21 +481,30 @@ export const MyNFTsModal = NiceModal.create(
                         }}
                       >
                         <NFTCardsGrid>
-                          {walletQueryData?.data?.tokens?.tokens?.map((nft) => {
-                            const checked = selectedNFTs.some(
-                              ({ collectionAddress, tokenId }) =>
+                          {ownedNFTs?.map((nft) => {
+                            const inSelectedCollection =
+                              selectedCollections?.length
+                                ? !!selectedCollections?.find(
+                                    (res) => res.value == nft.collectionAddr
+                                  )
+                                : true;
+                            if (!inSelectedCollection) return <></>;
+
+                            const checked = !!_selectedNFTs.find(
+                              ({
+                                collectionAddr: collectionAddress,
+                                tokenId,
+                              }) =>
                                 collectionAddress === nft.collectionAddr &&
                                 tokenId === nft.tokenId
                             );
-                            const creatorAddr =
-                              walletQueryData.data?.collections?.collections?.find(
-                                (res) => {
-									console.log({collect:res.collectionAddr ,nft:nft?.collectionAddr})
-                                  return (
-                                    res.collectionAddr == nft?.collectionAddr
-                                  );
-                                }
-                              );
+                            const creatorAddr = (
+                              collectionQueries?.data ??
+                              walletQueryData.data?.collections?.collections
+                            )?.find((res) => {
+                              return res.collectionAddr == nft?.collectionAddr;
+                            });
+
                             return (
                               <Box key={`${nft.collectionAddr}_${nft.tokenId}`}>
                                 <StargazeNFTCard
@@ -515,11 +531,11 @@ export const MyNFTsModal = NiceModal.create(
                 </Flex>
               </Flex>
 
-              {selectedNFTs.length > 0 && (
+              {_selectedNFTs?.length > 0 && (
                 <NFTSelectionOverlay>
-                  <SelectCard
-                    items={selectedNFTs}
-                    onRemove={removeSelectedNFT}
+                  <StargazeSelectCard
+                    items={_selectedNFTs}
+                    onRemove={_removeSelectedNFT}
                   />
                 </NFTSelectionOverlay>
               )}

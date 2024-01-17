@@ -1,20 +1,20 @@
-import { NFT } from 'services/api/walletNFTsService'
+import { Token } from "@/services/api/gqlWalletSercice";
 
 export interface RaffleFormStepsProps {
-	raffleDetailsUrl: string
-	explorerUrl: string
-	// SELECT_NFTS STEP
-	coverNFT: NFT
-	selectedNFTs: NFT[]
+  raffleDetailsUrl: string;
+  explorerUrl: string;
+  // SELECT_NFTS STEP
+  coverNFT: Token;
+  selectedNFTs: Token[];
 
-	// RAFFLE DETAILS STEP
-	endDate: Date
-	endTime: Date
-	ticketSupply: number
-	ticketPrice: number
-	ticketPriceCurrency: string
-	comment: string
+  // RAFFLE DETAILS STEP
+  endDate: Date;
+  endTime: Date;
+  ticketSupply: number;
+  ticketPrice: number;
+  ticketPriceCurrency: string;
+  comment: string;
 
-	// CONFIRM
-	isSuccessScreen: boolean
+  // CONFIRM
+  isSuccessScreen: boolean;
 }

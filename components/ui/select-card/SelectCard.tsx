@@ -4,6 +4,7 @@ import { ModalCloseIcon } from '@/assets/icons/modal'
 import { Img } from 'react-image'
 import { NFT } from '@/services/api/walletNFTsService'
 import { Box, Flex, IconButton, ThemeUIStyleObject } from 'theme-ui'
+import { Token } from '@/services/api/gqlWalletSercice'
 
 const Container = styled(Flex)`
 	display: flex;
@@ -35,11 +36,54 @@ const StyledBox = styled(Box)`
 `
 
 interface SelectCardProps {
-	items: NFT[]
-	onRemove: (NFT: NFT) => void
+	items: Token[]
+	onRemove: (NFT: Token) => void
 	sx?: ThemeUIStyleObject
 }
 
+export function StargazeSelectCard({ items, onRemove, sx }: SelectCardProps) {
+	const theme = useTheme()
+
+	return (
+		<Container sx={sx}>
+			<Grid>
+				{items.map(nft => {
+					const { collectionAddr:collectionAddress, tokenId, imageUrl } = nft
+
+					return (
+						<StyledBox
+							key={`${collectionAddress}_${tokenId}`}
+							sx={{
+								height: '60px',
+								width: '60px',
+								position: 'relative',
+								overflow: 'hidden',
+							}}
+						>
+							<Box
+								sx={{
+									position: 'absolute',
+									inset: 0,
+									display: 'flex',
+									justifyContent: 'flex-end',
+								}}
+							>
+								<IconButton onClick={() => onRemove(nft)}>
+									<ModalCloseIcon
+										fill={theme.colors.dark500}
+										width='24px'
+										height='24px'
+									/>
+								</IconButton>
+							</Box>
+							<Img width='100%' height='100%' src={imageUrl} />
+						</StyledBox>
+					)
+				})}
+			</Grid>
+		</Container>
+	)
+}
 function SelectCard({ items, onRemove, sx }: SelectCardProps) {
 	const theme = useTheme()
 

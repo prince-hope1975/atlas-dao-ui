@@ -1,4 +1,4 @@
-import { NFT } from 'services/api/walletNFTsService'
+import { Token } from '@/services/api/gqlWalletSercice'
 
 export interface LoanFormStepsProps {
 	// SHARED
@@ -6,8 +6,8 @@ export interface LoanFormStepsProps {
 	explorerUrl: string
 
 	// SELECT_NFTS STEP
-	coverNFT: NFT
-	selectedNFTs: NFT[]
+	coverNFT: Token
+	selectedNFTs: Token[]
 	isSuccessScreen: boolean
 
 	// LOAN_DETAILS STEP

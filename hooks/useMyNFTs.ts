@@ -16,7 +16,12 @@ import { asyncAction } from "../utils/js/asyncAction";
 import { getNetworkName } from "../utils/blockchain/networkUtils";
 import useAddress from "./useAddress";
 import { GET_TOKENS } from "@/config/documents";
-import { ApiResponse, WALLET_DATA } from "@/services/api/gqlWalletSercice";
+import {
+  ApiResponse,
+  COLLECTION_DATA,
+  WALLET_DATA,
+} from "@/services/api/gqlWalletSercice";
+import { Collection, stargazeIndexerClient } from "@/services/graphql";
 
 export type UseMyNFTsFilters = {
   collectionAddresses: string[];
@@ -54,46 +59,66 @@ export function useMyNFTs(filters: UseMyNFTsFilters) {
       sortBy: "ACQUIRED_ASC",
     },
   });
-  console.log({ DATA: walletQueryData.data});
-  const { data: fullData, isLoading: fullyLoading } = useQuery(
-    [FULL_WALLET_NFTS, myAddress, partialData],
-    async () => {
-      const data = await WalletNFTsService.requestNFTs(networkName, myAddress);
-
-      if (data.state === WALLET_NFT_STATE.isUpdating) {
-        return Promise.reject(new Error("Not loaded fully reject!"));
-      }
-
-      if (data.state === WALLET_NFT_STATE.Partial) {
-        refetchPartial();
-        return Promise.reject(new Error("Loaded partially return!"));
-      }
-
-      return data;
+  const collectionQueries = useQuery({
+    queryFn: async () => {
+      if (!walletQueryData?.data?.tokens?.total) return null;
+      const tokCollectionAddr = walletQueryData?.data?.tokens?.tokens?.map(
+        (res) => res?.collectionAddr
+      );
+      const data = Array.from(new Set(tokCollectionAddr));
+      const _data = await Promise.all(
+        data.map(async (res) => {
+          const res1 = await stargazeIndexerClient?.query<{
+            collection: Collection;
+          }>({
+            query: COLLECTION_DATA,
+            variables: {
+              collectionAddr: res,
+            },
+          });
+          return res1?.data?.collection;
+        })
+      );
+      return _data;
     },
-    {
-      enabled: !!partialData && !!myAddress,
-      retry: true,
-    }
-  );
+    queryKey: ["collection", walletQueryData?.data?.tokens?.total],
+  });
+  console.log({
+    DATA: walletQueryData.data,
+    collectionQueries: collectionQueries?.data,
+  });
+  // const { data: fullData, isLoading: fullyLoading } = useQuery(
+  //   [FULL_WALLET_NFTS, myAddress, partialData],
+  //   async () => {
+  //     const data = await WalletNFTsService.requestNFTs(networkName, myAddress);
 
-  const data = React.useMemo(
-    () => fullData ?? partialData,
-    [fullData, partialData]
-  );
+  //     if (data.state === WALLET_NFT_STATE.isUpdating) {
+  //       return Promise.reject(new Error("Not loaded fully reject!"));
+  //     }
 
-  const ownedCollections = React.useMemo(
-    () => data?.ownedCollections ?? [],
-    [data]
-  );
+  //     if (data.state === WALLET_NFT_STATE.Partial) {
+  //       refetchPartial();
+  //       return Promise.reject(new Error("Loaded partially return!"));
+  //     }
+
+  //     return data;
+  //   },
+  //   {
+  //     enabled: !!partialData && !!myAddress,
+  //     retry: true,
+  //   }
+  // );
+
+  const ownedCollections =
+    collectionQueries?.data ?? walletQueryData.data?.collections?.collections;
 
   const ownedNFTs = React.useMemo(() => {
-    return (data?.ownedTokens ?? [])
+    return (walletQueryData.data?.tokens?.tokens! ?? [])
       .filter(
         (nft) =>
           // Filter by collections
           (filters.collectionAddresses.length
-            ? filters.collectionAddresses.includes(nft.collectionAddress)
+            ? filters.collectionAddresses.includes(nft.collectionAddr)
             : true) &&
           // Filter by name %LIKE
           (filters.name
@@ -109,14 +134,20 @@ export function useMyNFTs(filters: UseMyNFTsFilters) {
             .toLowerCase()
             .localeCompare((b?.name || "").toLowerCase())
       );
-  }, [data, filters.sort, filters.name, filters.collectionAddresses]);
+  }, [
+    walletQueryData.data?.tokens?.tokens?.length,
+    filters.sort,
+    filters.name,
+    filters.collectionAddresses?.length,
+  ]);
 
   return {
     ownedNFTs,
     ownedCollections,
     partiallyLoading,
-    fullyLoading,
+    fullyLoading:false,
     fetchMyNFTs: refetchPartial,
+    collectionQueries,
     walletQueryData,
   };
 }
