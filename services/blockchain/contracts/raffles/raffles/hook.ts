@@ -1,5 +1,4 @@
 import { CONTRACT_NAME } from "@/constants/addresses";
-import { DrandResponse } from "@/services/api/drandService";
 import { NFT } from "@/services/api/walletNFTsService";
 import { TxReceipt } from "@/services/blockchain/blockchain.interface";
 // import { HumanCw20Coin } from '@/types'
@@ -44,24 +43,6 @@ export const useRafflesContract = () => {
     });
 
     return keysToCamel(result);
-  }
-  async function provideRandomness(
-    raffleId: number,
-    randomness: DrandResponse
-  ) {
-    const raffleContractAddress = networkUtils.getContractAddress(
-      CONTRACT_NAME.raffle
-    );
-
-    return networkUtils.postTransaction({
-      contractAddress: raffleContractAddress,
-      message: {
-        update_randomness: keysToSnake({
-          raffleId,
-          randomness,
-        }),
-      },
-    });
   }
   async function createRaffleListing(
     nfts: Token[],
@@ -242,7 +223,6 @@ export const useRafflesContract = () => {
     );
   }
   return {
-    provideRandomness,
     getContractInfo,
     createRaffleListing,
     modifyRaffleListing,
