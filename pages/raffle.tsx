@@ -53,7 +53,7 @@ import useRafflesContract from "@/services/blockchain/contracts/raffles/raffles/
 
 export default function Raffle() {
   const networkName = getNetworkName();
-  const { createRaffleListing,getContractInfo } = useRafflesContract();
+  const { createRaffleListing, getContractInfo } = useRafflesContract();
 
   // const { t } = useTranslation(['common', 'raffle'])
   useHeaderActions(<ExitCreateRaffleListing />);
@@ -87,7 +87,7 @@ export default function Raffle() {
     },
   ]);
 
-  const getStepSchema = (currentStep: 1|2) => {
+  const getStepSchema = (currentStep: 1 | 2) => {
     const formSchemas = {
       [CREATE_RAFFLE_LISTING_FORM_STEPS.SELECT_NFTS]:
         RafflesSelectNFTStepSchema,
@@ -100,7 +100,7 @@ export default function Raffle() {
 
   const formMethods = useForm<RaffleFormStepsProps>({
     mode: "onChange",
-    resolver: yupResolver(getStepSchema(step )),
+    resolver: yupResolver(getStepSchema(step)),
     defaultValues: {
       selectedNFTs: [],
       isSuccessScreen: false,
@@ -126,6 +126,8 @@ export default function Raffle() {
     );
 
     const duration = moment.duration(end.diff(now));
+    const info = await getContractInfo(selectedNFTs?.[0]?.collectionAddr);
+    console.log({info})
     const data: {
       action: string;
       raffleId: string;

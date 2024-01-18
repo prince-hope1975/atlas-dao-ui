@@ -31,7 +31,7 @@ interface TransactionDetails {
 
 interface TxOptions {
   gas: string | number;
-  address:string
+  address: string;
   // toast?: Partial<CustomToast>;
   onSuccess?: () => void;
 }
@@ -216,6 +216,7 @@ async function postManyTransactions(
   client = await getSigningCosmWasmClient();
 
   const result = await client.signAndBroadcast(address!, msgs, fee, "");
+  console.log({ result });
 
   const txId = result?.transactionHash ?? "";
 

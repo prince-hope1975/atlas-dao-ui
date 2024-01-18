@@ -1,4 +1,5 @@
 import { CONTRACT_NAME } from "@/constants/addresses";
+import { DrandResponse } from "@/services/api/drandService";
 import { NFT } from "@/services/api/walletNFTsService";
 import { TxReceipt } from "@/services/blockchain/blockchain.interface";
 // import { HumanCw20Coin } from '@/types'
@@ -10,10 +11,12 @@ import { keysToSnake } from "@/utils/js/keysToSnake";
 import { Token } from "@/services/api/gqlWalletSercice";
 import { keysToCamel } from "@/utils/js/keysToCamel";
 import { useChain, useWallet, walletContext } from "@cosmos-kit/react";
-import { GasPrice } from "@cosmjs/stargate";
-import useAddress from "@/hooks/useAddress";
-import { useQuery } from "@tanstack/react-query";
-import { Contract } from "../..";
+import {
+  CosmWasmClient,
+  SigningCosmWasmClient,
+} from "@cosmjs/cosmwasm-stargate";
+import { ExecuteMsg } from "../Raffle.types";
+import { coins } from "@cosmjs/amino";
 
 const amountConverter = converter.default;
 export interface ContractInfo {
@@ -30,7 +33,9 @@ export interface RaffleOptions {
   raffleTimeout?: number;
 }
 export const useRafflesContract = () => {
-  const { sign, getSigningCosmWasmClient, address } = useChain(CHAIN_NAMES[1]);
+  const { sign, getSigningCosmWasmClient, address, getCosmWasmClient } =
+    useChain(CHAIN_NAMES[1]);
+
   // const addr = useWallet();
 
   // console.log({ addr, , walletContext });
@@ -38,11 +43,28 @@ export const useRafflesContract = () => {
   async function getContractInfo(
     nftContractAddress: string
   ): Promise<ContractInfo> {
-    const result = await networkUtils.sendQuery(nftContractAddress, {
-      contract_info: {},
-    });
-
+    const client = await getCosmWasmClient();
+    console.log({ nftContractAddress });
+    const result = client.getContracts(2595);
     return keysToCamel(result);
+  }
+  async function provideRandomness(
+    raffleId: number,
+    randomness: DrandResponse
+  ) {
+    const raffleContractAddress = networkUtils.getContractAddress(
+      CONTRACT_NAME.raffle
+    );
+
+    return networkUtils.postTransaction({
+      contractAddress: raffleContractAddress,
+      message: {
+        update_randomness: keysToSnake({
+          raffleId,
+          randomness,
+        }),
+      },
+    });
   }
   async function createRaffleListing(
     nfts: Token[],
@@ -52,6 +74,37 @@ export const useRafflesContract = () => {
     const raffleContractAddress = networkUtils.getContractAddress(
       CONTRACT_NAME.raffle
     );
+    const createRaffle: Extract<
+      ExecuteMsg,
+      { create_raffle: any }
+    >["create_raffle"] = {
+      owner: address,
+      assets: [
+        ...nfts.flatMap(({ collectionAddr: collectionAddress, tokenId }) => [
+          {
+            sg721_token: {
+              token_id: tokenId,
+              address: collectionAddress,
+            },
+            // cw721_coin: {
+            //   token_id: tokenId,
+            //   address: collectionAddress,
+            // },
+          },
+        ]),
+      ],
+      raffle_options: keysToSnake(raffleOptions),
+      raffle_ticket_price: {
+        coin: {
+          // TODO: convert to display available raffle price denoms
+          amount: amountConverter.userFacingToBlockchainValue(ticketPrice),
+          //! convert to display available raffle price denoms
+          denom: "ustars",
+        },
+      },
+    };
+
+    // const client =new SigningCosmWasmClient()
     return networkUtils.postManyTransactions(
       [
         // Add cw721 tokens to raffle
@@ -68,31 +121,11 @@ export const useRafflesContract = () => {
         ]),
         {
           contractAddress: raffleContractAddress,
+          // TODO make this dynamic
+
+          coins: coins(1_000_000, "ustars"),
           message: {
-            create_raffle: {
-              assets: [
-                ...nfts.flatMap(
-                  ({ collectionAddr: collectionAddress, tokenId }) => [
-                    {
-                      cw721_coin: {
-                        token_id: tokenId,
-                        address: collectionAddress,
-                      },
-                    },
-                  ]
-                ),
-              ],
-              raffle_options: keysToSnake(raffleOptions),
-              raffle_ticket_price: {
-                coin: {
-                  // TODO: convert to display available raffle price denoms
-                  amount:
-                    amountConverter.userFacingToBlockchainValue(ticketPrice),
-                  // TODO: convert to display available raffle price denoms
-                  denom: "ustars",
-                },
-              },
-            },
+            create_raffle: createRaffle,
           },
         },
       ],
@@ -223,6 +256,7 @@ export const useRafflesContract = () => {
     );
   }
   return {
+    provideRandomness,
     getContractInfo,
     createRaffleListing,
     modifyRaffleListing,
