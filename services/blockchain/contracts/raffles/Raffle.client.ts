@@ -14,7 +14,7 @@ export interface RaffleReadOnlyInterface {
     raffleId
   }: {
     raffleId: number;
-  }) => Promise<RaffleInfoResponse>;
+  }) => Promise<RaffleResponse>;
   allRaffles: ({
     filters,
     limit,
@@ -64,7 +64,7 @@ export class RaffleQueryClient implements RaffleReadOnlyInterface {
     raffleId
   }: {
     raffleId: number;
-  }): Promise<RaffleInfoResponse> => {
+  }): Promise<RaffleResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       raffle_info: {
         raffle_id: raffleId

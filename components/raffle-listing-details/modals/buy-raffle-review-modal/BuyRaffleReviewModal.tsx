@@ -10,7 +10,6 @@ import { ModalCloseIcon } from '@/assets/icons/modal'
 import { Button, Modal } from '@/components/ui'
 
 import { ModalLayoutContainer } from '@/components/layout'
-import { Raffle } from '@/services/api/rafflesService'
 import moment from 'moment'
 import {
 	ModalBody,
@@ -21,9 +20,10 @@ import {
 	DescriptionCardLabel,
 	DescriptionCardContent,
 } from './BuyRaffleReviewModal.styled'
+import { RaffleResponse } from '@/services/blockchain/contracts/raffles/Raffle.types'
 
 export interface BuyRaffleReviewModalProps {
-	raffle: Raffle
+	raffle: RaffleResponse
 	ticketNumber: number
 }
 

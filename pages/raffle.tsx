@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import moment from "moment";
 import NiceModal from "@ebay/nice-modal-react";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -44,8 +44,14 @@ import { RafflesService } from "../services/api/rafflesService";
 import { TxBroadcastingModal } from "../components/shared";
 import { LayoutContainer, Page } from "../components/layout";
 import { MobileSteps, Steps } from "../components/ui";
-import { getNetworkName } from "../utils/blockchain/networkUtils";
+import networkUtils, {
+  CHAIN_NAMES,
+  getNetworkName,
+} from "../utils/blockchain/networkUtils";
 import useRafflesContract from "@/services/blockchain/contracts/raffles/raffles/hook";
+import { RaffleClient } from "@/services/blockchain/contracts/raffles/Raffle.client";
+import { useChain } from "@cosmos-kit/react";
+import { useQuery } from "@tanstack/react-query";
 
 // const getStaticProps = makeStaticProps(['common', 'raffle'])
 // const getStaticPaths = makeStaticPaths()
@@ -55,6 +61,7 @@ export default function Raffle() {
   const networkName = getNetworkName();
   const { createRaffleListing, getContractInfo } = useRafflesContract();
 
+  
   // const { t } = useTranslation(['common', 'raffle'])
   useHeaderActions(<ExitCreateRaffleListing />);
   // const [
@@ -127,7 +134,7 @@ export default function Raffle() {
 
     const duration = moment.duration(end.diff(now));
     const info = await getContractInfo(selectedNFTs?.[0]?.collectionAddr);
-    console.log({info})
+    console.log({ info });
     const data: {
       action: string;
       raffleId: string;
