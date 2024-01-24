@@ -22,6 +22,7 @@ import {
 	ModalContent,
 	ModalActions,
 } from './EditModal.styled'
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
 export interface EditModalProps {
 	initialTokenAmount: string
@@ -40,11 +41,13 @@ export interface EditModalResult {
 }
 
 export interface EditModalPropsState {
-	tokenAmount: string
-	tokenName: string
-	interestRate: string
-	loanPeriod: string
-	comment?: string
+  tokenAmount: string;
+  tokenName: string;
+  interestRate: string;
+  loanPeriod: string;
+  comment?: string;
+  client: () => Promise<SigningCosmWasmClient>;
+  address: string;
 }
 
 const EditModal = NiceModal.create(
@@ -92,6 +95,7 @@ const EditModal = NiceModal.create(
 				interestRate,
 				loanPeriod,
 				comment,
+				
 			} as EditModalResult)
 			modal.remove()
 		}

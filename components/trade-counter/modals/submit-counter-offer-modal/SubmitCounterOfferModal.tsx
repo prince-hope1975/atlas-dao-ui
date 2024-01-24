@@ -25,7 +25,7 @@ import {
 	HorizontalTradeLine,
 	VerticalTradeLine,
 } from '../../../../components/trade-listing-details'
-import { LunaIcon } from '../../../../assets/icons/mixed'
+import { StarIcon } from '../../../../assets/icons/mixed'
 import { TradeFee } from '../../../../services/blockchain'
 import {
 	ModalBody,
@@ -109,12 +109,12 @@ const SubmitCounterOfferModal = NiceModal.create(
 												<PreviewImageContainer
 													key={`${nft.collectionAddress}_${nft.tokenId}`}
 												>
-													{nft?.imageUrl?.every(img => img === '') ? (
+													{nft?.id?.every(img => img === '') ? (
 														<Flex sx={{ maxWidth: '61px', maxHeight: '61px' }}>
 															<ImagePlaceholder width='100%' height='100%' />
 														</Flex>
 													) : (
-														<PreviewImage src={nft?.imageUrl ?? []} />
+														<PreviewImage src={nft?.id ?? []} />
 													)}
 												</PreviewImageContainer>
 											))}
@@ -122,7 +122,7 @@ const SubmitCounterOfferModal = NiceModal.create(
 										<Flex sx={{ mt: 8, flexDirection: 'column', gap: 8 }}>
 											{counterTradeCoins.map(({ amount, currency }) => (
 												<CoinCard key={JSON.stringify({ amount, currency })}>
-													<LunaIcon />
+													<StarIcon />
 													<div>{`${Number(amount).toFixed(3)} ${currency}`}</div>
 												</CoinCard>
 											))}
@@ -170,7 +170,7 @@ const SubmitCounterOfferModal = NiceModal.create(
 										Withdrawal fees if accepted
 									</Title>
 									<CoinCard>
-										<LunaIcon />
+										<StarIcon />
 										{/* {t('common:total-fees', {
 											amount: fees.amount,
 											currency: fees.currency,

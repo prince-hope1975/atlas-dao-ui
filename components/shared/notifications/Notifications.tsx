@@ -196,7 +196,7 @@ function Notifications({ fullWidth }: NotificationsProps) {
 						status,
 						message,
 						actionMessage,
-						imageUrl: notificationPreview?.cw721Coin?.imageUrl ?? [],
+						imageUrl: notificationPreview?.cw721Coin?.id ?? [],
 						typeBadge: {
 							icon: <WalletIcon width='15px' height='17px' color='#fff' />,
 							background: 'linear-gradient(135deg, #61EA77 0%, #22BB28 100%)',
@@ -249,7 +249,7 @@ function Notifications({ fullWidth }: NotificationsProps) {
 						status,
 						message,
 						actionMessage,
-						imageUrl: notificationPreview?.cw721Coin?.imageUrl ?? [],
+						imageUrl: notificationPreview?.cw721Coin?.id ?? [],
 						typeBadge: {
 							icon: <WalletIcon width='15px' height='17px' color='#fff' />,
 							background: 'linear-gradient(135deg, #61EA77 0%, #22BB28 100%)',

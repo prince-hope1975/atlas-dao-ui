@@ -1,5 +1,5 @@
 import { VerifiedIcon } from '@/assets/icons/16pt'
-import { HeartFilledIcon, HeartIcon, LunaIcon } from '@/assets/icons/mixed'
+import { HeartFilledIcon, HeartIcon, StarIcon } from '@/assets/icons/mixed'
 import ImagePlaceholder from '@/assets/images/ImagePlaceholder'
 import { Link } from '@/components/link'
 import { Badge } from '@/components/ui'
@@ -31,6 +31,7 @@ import {
 	Title,
 } from './ListingCard.styled'
 import LoanStateBadge from './LoanStateBadge'
+import { getImageUrl } from '@/lib/getImageUrl'
 
 interface ListingCardProps extends NFT {
 	liked?: boolean
@@ -68,7 +69,7 @@ function ListingCard({
 	defaultThreshold,
 	...NFTProps
 }: ListingCardProps) {
-	const { name, collectionName, imageUrl } = NFTProps
+	const { name, collectionName,  imageUrl } = NFTProps
 	// const { t } = useTranslation(['common', 'loans-listings'])
 
 	return (
@@ -77,10 +78,10 @@ function ListingCard({
 				{/* <a> */}
 					<CardContainer>
 						<ImageSection>
-							{imageUrl?.every(img => img === '') ? (
+							{!imageUrl? (
 								<ImagePlaceholder width='61.56px' height='57.87px' />
 							) : (
-								<Image src={imageUrl ?? []} />
+								<Image src={getImageUrl(imageUrl )?? []} />
 							)}
 							<RightTopImageArea
 								onClick={e => {
@@ -104,10 +105,10 @@ function ListingCard({
 											<PreviewImageContainer
 												key={`${nft.collectionAddress}_${nft.tokenId}`}
 											>
-												{nft?.imageUrl?.every(img => img === '') ? (
+												{nft?.id?.every(img => img === '') ? (
 													<ImagePlaceholder width='18px' height='18px' />
 												) : (
-													<PreviewImage src={nft?.imageUrl ?? []} />
+													<PreviewImage src={nft?.id ?? []} />
 												)}
 											</PreviewImageContainer>
 										))}
@@ -179,7 +180,7 @@ function ListingCard({
 											</OverflowTip>
 
 											<Box sx={{ ml: 8 }}>
-												<LunaIcon />
+												<StarIcon />
 											</Box>
 										</AttributeValue>
 									</Flex>
@@ -193,7 +194,7 @@ function ListingCard({
 											<OverflowTip>
 												<div>
 													{/* {t('loan-listings:apr', { apr })} */}
-													 { apr }
+													 { apr } %
 													</div>
 											</OverflowTip>
 										</AttributeValue>
@@ -208,7 +209,7 @@ function ListingCard({
 											<OverflowTip>
 												<div>
 													{/* {t('loan-listings:days', { count: timeFrame })} */}
-													{timeFrame} 
+													{timeFrame} days
 													</div>
 											</OverflowTip>
 										</AttributeValue>

@@ -1,5 +1,5 @@
 import { VerifiedIcon } from '../../assets/icons/16pt'
-import { LunaIcon } from '../../assets/icons/mixed'
+import { StarIcon } from '../../assets/icons/mixed'
 import ImagePlaceholder from '../../assets/images/ImagePlaceholder'
 import { Link } from '../link'
 import { LoanOffersTable } from '../loan-listing-details'
@@ -67,7 +67,7 @@ function LoanOfferCard({
 	state,
 	...NFTProps
 }: LoanOfferCardProps) {
-	const { name, collectionName, imageUrl } = NFTProps
+	const { name, collectionName, id: imageUrl } = NFTProps
 	// const { t } = useTranslation(['common', 'loan-listings', 'dashboard'])
 	const [showingOffers, setShowingOffers] = React.useState(false)
 
@@ -90,10 +90,10 @@ function LoanOfferCard({
 											<PreviewImageContainer
 												key={`${nft.collectionAddress}_${nft.tokenId}`}
 											>
-												{nft?.imageUrl?.every(img => img === '') ? (
+												{nft?.id?.every(img => img === '') ? (
 													<ImagePlaceholder width='18px' height='18px' />
 												) : (
-													<PreviewImage src={nft?.imageUrl ?? []} />
+													<PreviewImage src={nft?.id ?? []} />
 												)}
 											</PreviewImageContainer>
 										))}
@@ -187,7 +187,7 @@ function LoanOfferCard({
 												</OverflowTip>
 
 												<Box sx={{ ml: 8 }}>
-													<LunaIcon />
+													<StarIcon />
 												</Box>
 											</AttributeValue>
 										</Flex>

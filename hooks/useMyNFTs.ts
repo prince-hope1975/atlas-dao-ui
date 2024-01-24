@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useQuery as USE_QUERY, gql } from "@apollo/client";
 import { NFTS_SORT_VALUE } from "../components/shared/modals/my-nfts-modal/MyNFTsModal.model";
 import {
-  FULL_WALLET_NFTS,
   PARTIAL_WALLET_NFTS,
 } from "../constants/useQueryKeys";
 import React from "react";
@@ -54,7 +53,7 @@ export function useMyNFTs(filters: UseMyNFTsFilters) {
   //   TODO: update this code to be dynamic and take in params
   const walletQueryData = USE_QUERY<ApiResponse>(WALLET_DATA, {
     variables: {
-      ownerAddr: "stars14s3udn2hazj2p3exyzn7xrlrl9h5uule4wsxvk",
+      ownerAddr: myAddress!,
       limit: 100,
       sortBy: "ACQUIRED_ASC",
     },

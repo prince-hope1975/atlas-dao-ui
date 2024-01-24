@@ -59,8 +59,14 @@ import {
   Tab,
   Tabs,
 } from "../components/ui";
-import { getNetworkName } from "../utils/blockchain/networkUtils";
+import networkUtils, {
+  CHAIN_NAMES,
+  getNetworkName,
+} from "../utils/blockchain/networkUtils";
 import { useQuery as USE_QUERY, gql } from "@apollo/client";
+import { useChain } from "@cosmos-kit/react";
+import { NFTLoansQueryClient } from "@/services/blockchain/contracts/loans/NFTLoans.client";
+import { Collateral } from "@/types/loan/types";
 
 // const getStaticProps = makeStaticProps(['common', 'loan-listings'])
 // const getStaticPaths = makeStaticPaths()
@@ -78,7 +84,6 @@ export default function LoanListings() {
         collections {
           collections {
             name
-            
           }
         }
       }
@@ -101,6 +106,8 @@ export default function LoanListings() {
       }
     );
 
+  const { sign, getSigningCosmWasmClient, address, getCosmWasmClient } =
+    useChain(CHAIN_NAMES[1]);
   const [
     activeStatusLabel,
     inactiveStatusLabel,
@@ -203,7 +210,7 @@ export default function LoanListings() {
   );
 
   // TODO extract this into hook, along with useQuery part.
-  const [infiniteData, setInfiniteData] = React.useState<Loan[]>([]);
+  const [infiniteData, setInfiniteData] = React.useState<Collateral[]>([]);
   React.useEffect(() => {
     setInfiniteData([]);
     setPage(1);
@@ -218,7 +225,7 @@ export default function LoanListings() {
     myAddress,
   ]);
 
-  const { data: loans, isLoading } = useQuery(
+  const { data: loans = [], isLoading } = useQuery(
     [
       LOANS,
       networkName,
@@ -231,37 +238,26 @@ export default function LoanListings() {
       page,
       myAddress,
     ],
-    async () =>
-      LoansService.getAllLoans(
-        networkName,
-        {
-          search: debouncedSearch,
-          myAddress,
-          borrowers:
-            listingsType === LOAN_LISTINGS_TYPE.MY_LISTINGS
-              ? [myAddress]
-              : undefined,
-          states: statuses.flatMap(({ value }) => JSON.parse(value)),
-          collections: collections.map(({ value }) => value),
-          favoritesOf: myFavoritesChecked ? myAddress : undefined,
-          fundedByMe: listingsType === LOAN_LISTINGS_TYPE.FUNDED_BY_ME,
-          offeredBy: counteredByMeChecked ? [myAddress] : undefined,
-        },
-        {
-          page,
-          limit: 28,
-        }
-      ),
-    {
-      enabled: !!favoriteLoans,
-      retry: true,
+    async () => {
+      console.log("Starging loan service", address);
+      if (!address) return null;
+      const client = await getCosmWasmClient();
+      const contractAddr = networkUtils.getContractAddress("loan");
+      const queryClient = new NFTLoansQueryClient(client, contractAddr!);
+      const ret = await queryClient?.allCollaterals({});
+      console.log({ loand: ret });
+      return ret?.collaterals!;
     }
+    // {
+    //   enabled: !!favoriteLoans,
+    //   retry: true,
+    // }
   );
-
-  React.useEffect(
-    () => loans && setInfiniteData((prev) => [...prev, ...loans.data]),
-    [loans]
-  );
+// TODO add later
+  // React.useEffect(
+  //   () => loans && setInfiniteData((prev) => [...(prev??[]), ...(loans??[])]),
+  //   [loans?.length]
+  // );
 
   const onFiltersClick = async () => {
     if (!isTablet) {
@@ -422,16 +418,17 @@ export default function LoanListings() {
             )}
             <Box sx={{ width: "100%" }}>
               <LoansGridController
-                loans={infiniteData}
-                isLoading={!infiniteData.length && isLoading}
+                loans={loans!}
+                isLoading={!loans?.length && isLoading}
                 verifiedCollections={verifiedCollections}
                 gridType={Number(gridType)}
                 favoriteLoans={favoriteLoans}
               />
               <Flex sx={{ width: "100%", marginTop: "14px" }}>
-                {loans?.data && !!loans.data?.length && !isLoading && (
+                {(loans?.length ?? 0) > 0 && !!loans?.length && !isLoading && (
                   <Button
-                    disabled={loans?.page === loans.pageCount}
+                  // disabled={loans?.page === loans.pageCount}
+                  disabled
                     fullWidth
                     variant="dark"
                     onClick={() => setPage((prev) => prev + 1)}

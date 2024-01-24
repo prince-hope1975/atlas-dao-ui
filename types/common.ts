@@ -40,7 +40,7 @@ export type Cw721Coin = {
 
 export type Sg721Token = {
 	address: string
-	tokenId: string
+	token_id: string
 }
 
 export type ContractName = keyof typeof CONTRACT_NAME

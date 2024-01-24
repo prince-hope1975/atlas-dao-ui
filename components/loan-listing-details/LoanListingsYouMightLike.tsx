@@ -10,6 +10,7 @@ import { LoansService, SupportedCollectionsService } from '@/services/api'
 import { Loan, LOAN_STATE } from '@/services/api/loansService'
 import { Box, Flex } from 'theme-ui'
 import { getNetworkName } from '../../utils/blockchain/networkUtils'
+import { Collateral } from '@/types/loan/types'
 
 const MightLikeText = styled(Flex)`
 	font-size: 20px;
@@ -27,13 +28,16 @@ MightLikeText.defaultProps = {
 }
 
 export interface LoanListingsYouMightLikeProps {
-	search: string
-	loan?: Loan
+  search: string;
+  loan?: Collateral["collateral"];
+  loanId?: string;
+  borrower?: string;
 }
 
 function LoanListingsYouMightLike({
 	search,
 	loan,
+	loanId
 }: LoanListingsYouMightLikeProps) {
 	const networkName = getNetworkName()
 	// const { t } = useTranslation(['common', 'loan-listings'])
@@ -48,26 +52,26 @@ function LoanListingsYouMightLike({
 	)
 
 	const { data: loans, isLoading } = useQuery(
-		[LOAN, networkName, search, myAddress],
-		async () =>
-			LoansService.getAllLoans(
-				networkName,
-				{
-					myAddress,
-					search,
-					states: [LOAN_STATE.Published],
-					excludeMyLoans: true,
-					excludeLoans: loan?.id ? [loan.id] : [],
-				},
-				{
-					page: 1,
-					limit: 15,
-				}
-			),
-		{
-			retry: true,
-		}
-	)
+    [LOAN, networkName, search, myAddress],
+    async () =>
+      LoansService.getAllLoans(
+        networkName,
+        {
+          myAddress,
+          search,
+          states: [LOAN_STATE.Published],
+          excludeMyLoans: true,
+          excludeLoans: loanId ? [+(loanId as string)] : [],
+        },
+        {
+          page: 1,
+          limit: 15,
+        }
+      ),
+    {
+      retry: true,
+    }
+  );
 
 	return (
 		<Flex

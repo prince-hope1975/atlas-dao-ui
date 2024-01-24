@@ -35,7 +35,7 @@ import {
 import {
   AvatarIcon,
   CalendarIcon,
-  LunaIcon,
+  StarIcon,
   WalletIcon,
 } from "../assets/icons/mixed";
 import useHeaderActions from "../hooks/useHeaderActions";
@@ -85,6 +85,10 @@ import { RaffleClient } from "@/services/blockchain/contracts/raffles/Raffle.cli
 import convertTimestampToDate from "@/lib/convertTimeStampToDate";
 import { Coin, coin, parseCoins } from "@cosmjs/amino";
 import { formaCurrency } from "@/lib/formatCurrency";
+import {
+  RaffleResponse,
+  Sg721Token,
+} from "@/services/blockchain/contracts/raffles/Raffle.types";
 
 // const getStaticProps = makeStaticProps(['common', 'raffle-listings'])
 // const getStaticPaths = makeStaticPaths()
@@ -138,25 +142,26 @@ export default function ListingDetails() {
       retry: true,
     }
   );
-
   const {
     data: raffle,
     isLoading,
     refetch,
+    error,
   } = useQuery({
     queryKey: [RAFFLE, raffleId, networkName],
     queryFn: async () => {
       if (!address || !raffleId) return null;
       const raffle_client = await Raffle_comp();
       const raf = await raffle_client.raffleInfo({ raffleId: +raffleId });
+      console.log({ raf });
       return raf;
     },
     retry: true,
     refetchInterval: 60 * 1000, // Refetch every minute
   });
-  const { coin } = (raffle?.raffle_info?.raffle_ticket_price as { coin: Coin }) ?? {};
-  const price = formaCurrency(+coin?.amount??0);
-
+  const { coin } =
+    (raffle?.raffle_info?.raffle_ticket_price as { coin: Coin }) ?? {};
+  const price = formaCurrency(+coin?.amount ?? 0);
   const { data: favoriteRaffles } = useQuery(
     [FAVORITES_RAFFLES, networkName, myAddress],
     async () =>
@@ -179,16 +184,19 @@ export default function ListingDetails() {
   const { raffle_info } = raffle ?? {};
   const { raffle_options } = raffle_info ?? {};
 
-  const [rafflePreview, setRafflePreview] = React.useState<{
-    cw721Coin?: NFT;
-    sg721Token?: NFT;
-  } | null>(null);
+  const [rafflePreview, setRafflePreview] = React.useState<
+    | {
+        sg721_token?: Sg721Token;
+      }[]
+    | null
+  >(null);
 
   React.useEffect(() => {
     if (raffle) {
-      setRafflePreview(
-        Object.values(raffle?.raffle_info?.assets?.[0]!)?.at(0) ?? null
-      );
+      const vals = Object.values(raffle?.raffle_info?.assets!)?.filter(
+        (res) => res?.sg721_token
+      )??[]
+      setRafflePreview(vals!);
     }
   }, [raffle]);
 
@@ -200,9 +208,11 @@ export default function ListingDetails() {
     }
     const [, result] = await asyncAction<ViewNFTsModalResult>(
       NiceModal.show(ViewNFTsModal, {
-        nfts: (raffle_info?.allAssociatedAssets ?? [])
-          .filter(({ cw721Coin }) => cw721Coin)
-          .map(({ cw721Coin }) => cw721Coin),
+        nfts: (
+          (raffle?.raffle_info?.assets as { sg721_token: Sg721Token }[]) ?? []
+        )
+          .filter(({ sg721_token }) => sg721_token)
+          .map(({ sg721_token }) => sg721_token),
         title: "All NFTs", //  t('common:all-nfts'),
       } as ViewNFTsModalProps)
     );
@@ -318,7 +328,6 @@ export default function ListingDetails() {
       +raffle_info?.raffle_options?.raffle_start_timestamp!
     )
   ).add(raffle_info?.raffle_options?.raffle_duration ?? 0, "seconds");
-
   return (
     <Page
       title="Title" //{t('title')}
@@ -326,10 +335,10 @@ export default function ListingDetails() {
       <LayoutContainer>
         {!isLoading ? (
           <>
-            <RaffleHeaderActionsRow raffle={raffle} />
+            <RaffleHeaderActionsRow raffle={raffle!} />
             <Row>
               {![RAFFLE_STATE.Started, RAFFLE_STATE.Created].includes(
-                raffle_info?.state as RAFFLE_STATE
+                raffle?.raffle_state as RAFFLE_STATE
               ) && (
                 <BlueWarning sx={{ width: "100%", height: "49px" }}>
                   {/* {t('raffle-listings:item-not-available')} */}
@@ -351,8 +360,8 @@ export default function ListingDetails() {
                 }}
               >
                 <ImageRow
-                  nft={rafflePreview?.cw721Coin}
-                  imageUrl={rafflePreview?.cw721Coin?.imageUrl ?? []}
+                  nft={rafflePreview?.map(res=>res?.sg721_token!).filter(res=>res)!??[]}
+                  id={raffle?.raffle_id!}
                   onLike={toggleLike}
                   liked={liked}
                 />
@@ -361,9 +370,9 @@ export default function ListingDetails() {
                   <Button fullWidth variant="dark" onClick={handleViewAllNFTs}>
                     <Flex sx={{ alignItems: "center" }}>
                       <NFTPreviewImages
-                        nfts={(raffle_info?.allAssociatedAssets ?? [])
-                          .filter((asset) => asset.cw721Coin)
-                          .map(({ cw721Coin }) => cw721Coin as NFT)}
+                        nfts={(raffle?.raffle_info?.assets ?? [])
+                          .filter((asset) => asset?.sg721_token)
+                          .map(({ sg721_token }) => sg721_token as Sg721Token)}
                       />
                       <div>
                         {/* {t('raffle-listings:view-all-nfts')} */}
@@ -515,7 +524,7 @@ export default function ListingDetails() {
                       <AttributeValue>
                         {ticketPrice} {ticketCurrency}
                         <Box sx={{ ml: 8 }}>
-                          <LunaIcon />
+                          <StarIcon />
                         </Box>
                       </AttributeValue>
                     </AttributeCard>

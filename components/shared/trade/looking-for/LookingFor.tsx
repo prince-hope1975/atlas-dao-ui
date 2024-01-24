@@ -3,7 +3,7 @@ import { Box, Flex } from 'theme-ui'
 // import { useTranslation } from 'next-i18next'
 
 import { Collection } from '@/services/api/walletNFTsService'
-import { LunaIcon } from '@/assets/icons/mixed'
+import { StarIcon } from '@/assets/icons/mixed'
 import {
 	LookingForSection,
 	LookingForTitle,
@@ -47,7 +47,7 @@ export default function LookingFor({
 						<Chip primary={primary} secondary={secondary} key={JSON.stringify(value)}>
 							{value.currency && (
 								<Flex sx={{ mr: '5px', alignItems: 'center' }}>
-									<LunaIcon
+									<StarIcon
 										width={primary ? '16.2px' : '20px'}
 										height={primary ? '16.2px' : '20px'}
 									/>

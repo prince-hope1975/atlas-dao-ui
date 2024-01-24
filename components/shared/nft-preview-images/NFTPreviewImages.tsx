@@ -4,6 +4,9 @@ import styled from '@emotion/styled'
 
 import ImagePlaceholder from '@/assets/images/ImagePlaceholder'
 import { NFT } from '@/services/api/walletNFTsService'
+import { Sg721Token } from '@/types'
+import { gql, useQuery } from '@apollo/client'
+import { getImageUrl } from '@/lib/getImageUrl'
 
 const PreviewNFTsSection = styled.div`
 	display: flex;
@@ -44,7 +47,7 @@ const PreviewImageContainer = styled.div`
 `
 
 interface NFTPreviewImagesProps {
-	nfts: NFT[]
+	nfts: Sg721Token[]
 	previewItemsLimit?: number
 }
 
@@ -52,27 +55,46 @@ function NFTPreviewImages({
 	nfts,
 	previewItemsLimit = 4,
 }: NFTPreviewImagesProps) {
+	  const { data, loading } = useQuery<{
+      token: {
+        imageUrl: string;
+      };
+    }>(
+      gql`
+        query Collection($collectionAddr: String!, $tokenId: String!) {
+          token(collectionAddr: $collectionAddr, tokenId: $tokenId) {
+            imageUrl
+          }
+        }
+      `,
+      {
+        variables: {
+          collectionAddr: nfts?.[0]?.address,
+          tokenId: nfts?.[0]?.token_id,
+        },
+      }
+    );
 	return (
-		<PreviewNFTsSection>
-			{(nfts || []).slice(0, previewItemsLimit).map(nft => (
-				<PreviewImageContainer key={`${nft.collectionAddress}_${nft.tokenId}`}>
-					{nft?.imageUrl?.every(img => img === '') ? (
-						<ImagePlaceholder width='18px' height='18px' />
-					) : (
-						<PreviewImage src={nft?.imageUrl ?? []} />
-					)}
-				</PreviewImageContainer>
-			))}
+    <PreviewNFTsSection>
+      {(nfts || []).slice(0, previewItemsLimit).map((nft) => (
+        <PreviewImageContainer key={`${nft.address}_${nft.token_id}`}>
+          {loading ? (
+            <ImagePlaceholder width="61.56px" height="57.87px" />
+          ) : (
+            <PreviewImage src={getImageUrl(data?.token?.imageUrl!) ?? []} />
+          )}
+        </PreviewImageContainer>
+      ))}
 
-			{(nfts || []).slice(previewItemsLimit).length ? (
-				<PreviewImageContainer>
-					+{(nfts || []).slice(previewItemsLimit).length}
-				</PreviewImageContainer>
-			) : (
-				''
-			)}
-		</PreviewNFTsSection>
-	)
+      {(nfts || []).slice(previewItemsLimit).length ? (
+        <PreviewImageContainer>
+          +{(nfts || []).slice(previewItemsLimit).length}
+        </PreviewImageContainer>
+      ) : (
+        ""
+      )}
+    </PreviewNFTsSection>
+  );
 }
 
 NFTPreviewImages.defaultProps = {

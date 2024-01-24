@@ -25,6 +25,7 @@ import {
 import { StargazeListingCard } from "./listing-card/ListingCard";
 import { Cw721Coin } from "@/types";
 import convertTimestampToDate from "@/lib/convertTimeStampToDate";
+import { formaCurrency } from "@/lib/formatCurrency";
 
 export enum GRID_TYPE {
   SMALL = 0,
@@ -162,18 +163,20 @@ function GridController({
 
           const ticketsSold = number_of_tickets;
 
-          const ticketPrice = Number(
-            price?.coin?.amount ??
-              // raffleTicketPrice?.cw20Coin?.amount ??
-              0
+          const ticketPrice = formaCurrency(
+            Number(
+              price?.coin?.amount ??
+                // raffleTicketPrice?.cw20Coin?.amount ??
+                0
+            )
           );
 
           const ticketCurrency =
-            price?.coin?.demon as string ??
+            (price?.coin?.demon as string) ??
             // raffleTicketPrice?.cw20Coin?.currency ??
             "";
 
-          const totalVolume = ticketPrice * ticketsSold;
+          const totalVolume = formaCurrency(ticketPrice) * ticketsSold;
 
           const ticketsRemaining =
             (raffle_options?.max_participant_number ?? 0) - ticketsSold;
@@ -197,7 +200,7 @@ function GridController({
                 nfts={(assets || [])
                   .filter((nft) => nft?.sg721_token)
                   .map(({ sg721_token }) => sg721_token as Sg721Token)}
-                imageUrl={assets?.sg721_token?.imageUrl ?? []}
+                id={assets as unknown as Sg721Token[] ?? []}
                 name={assets?.sg721_token?.name ?? ""}
                 liked={liked}
                 verified={verifiedCollections.some(
@@ -213,7 +216,11 @@ function GridController({
                 ticketNumber={raffle_options?.max_participant_number!}
                 totalVolume={totalVolume}
                 ticketsRemaining={ticketsRemaining}
-                endsIn={moment(convertTimestampToDate(+raffle_options?.raffle_start_timestamp))
+                endsIn={moment(
+                  convertTimestampToDate(
+                    +raffle_options?.raffle_start_timestamp
+                  )
+                )
                   .add(raffle_options?.raffle_duration ?? 0, "seconds")
                   .toDate()}
                 isSmall={gridType === GRID_TYPE.BIG}
@@ -356,8 +363,8 @@ function OLD_GridController({
                 nfts={(allAssociatedAssets || [])
                   .filter((nft) => nft.cw721Coin)
                   .map(({ cw721Coin }) => cw721Coin as NFT)}
-                imageUrl={
-                  raffleOptions?.rafflePreview?.cw721Coin?.imageUrl ?? []
+                id={
+                  raffleOptions?.rafflePreview?.cw721Coin?.id ?? []
                 }
                 name={raffleOptions?.rafflePreview?.cw721Coin?.name ?? ""}
                 liked={liked}

@@ -1,4 +1,4 @@
-import { LunaIcon, TwitterIcon } from "@/assets/icons/mixed";
+import { StarIcon, TwitterIcon } from "@/assets/icons/mixed";
 import ConfirmListingSuccessImage from "@/assets/images/ConfirmListingSuccessImage";
 import If from "@/components/core/if-statement";
 import { theme } from "@/constants/theme";
@@ -220,7 +220,7 @@ export const ConfirmListing = ({
               <Flex pb="24px" sx={{ gap: 8, flexWrap: "wrap" }}>
                 <Chip isViewMode>
                   <Flex sx={{ mr: "2px", alignItems: "center" }}>
-                    <LunaIcon />
+                    <StarIcon />
                   </Flex>
                   {tokenAmount} {tokenName}
                 </Chip>

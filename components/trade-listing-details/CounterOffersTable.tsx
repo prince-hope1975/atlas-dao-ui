@@ -39,7 +39,7 @@ import { asyncAction } from '@/utils/js/asyncAction'
 import { TxBroadcastingModal } from '@/components/shared'
 import useAddress from '@/hooks/useAddress'
 import { COUNTER_TRADES } from '@/constants/useQueryKeys'
-import { AvatarIcon, LunaIcon } from '@/assets/icons/mixed'
+import { AvatarIcon, StarIcon } from '@/assets/icons/mixed'
 import { isNil } from 'lodash'
 import { P2PTradingContract } from '@/services/blockchain'
 import { HumanCoin } from 'types'
@@ -360,10 +360,10 @@ function CounterOffersTable({
 												<PreviewImageContainer
 													key={`${nft.collectionAddress}_${nft.tokenId}`}
 												>
-													{nft.imageUrl?.every(img => img === '') ? (
+													{nft.id?.every(img => img === '') ? (
 														<ImagePlaceholder width='18px' height='18px' />
 													) : (
-														<PreviewImage src={nft.imageUrl ?? []} />
+														<PreviewImage src={nft.id ?? []} />
 													)}
 												</PreviewImageContainer>
 											))}
@@ -389,7 +389,7 @@ function CounterOffersTable({
 										)}
 										{coins.map(({ amount, currency }) => (
 											<TokenChip key={JSON.stringify({ amount, currency, id })}>
-												<LunaIcon />
+												<StarIcon />
 												<div>{`${amount} ${currency}`}</div>
 											</TokenChip>
 										))}

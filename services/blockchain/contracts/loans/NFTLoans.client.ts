@@ -7,6 +7,8 @@
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { StdFee } from "@cosmjs/amino";
 import { ExecuteMsg, AssetInfo, Uint128, Decimal, Cw721Coin, Sg721Token, Coin, LoanTerms, InstantiateMsg, QueryMsg } from "./NFTLoans.types";
+import { ConfigResponse } from "interchain-query/cosmos/base/node/v1beta1/query";
+import { Collateral, CollateralsResponse, OfferResponse, OffersResponse } from "@/types/loan/types";
 export interface NFTLoansReadOnlyInterface {
   contractAddress: string;
   config: () => Promise<ConfigResponse>;
@@ -37,7 +39,7 @@ export interface NFTLoansReadOnlyInterface {
   }: {
     limit?: number;
     startAfter?: string[][];
-  }) => Promise<AllCollateralsResponse>;
+  }) => Promise<CollateralsResponse>;
   offerInfo: ({
     globalOfferId
   }: {
@@ -83,38 +85,38 @@ export class NFTLoansQueryClient implements NFTLoansReadOnlyInterface {
 
   config = async (): Promise<ConfigResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
-      config: {}
+      config: {},
     });
   };
   borrowerInfo = async ({
-    borrower
+    borrower,
   }: {
     borrower: string;
   }): Promise<BorrowerInfoResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       borrower_info: {
-        borrower
-      }
+        borrower,
+      },
     });
   };
   collateralInfo = async ({
     borrower,
-    loanId
+    loanId,
   }: {
     borrower: string;
     loanId: number;
-  }): Promise<CollateralInfoResponse> => {
+  }): Promise<Collateral["collateral"]> => {
     return this.client.queryContractSmart(this.contractAddress, {
       collateral_info: {
         borrower,
-        loan_id: loanId
-      }
+        loan_id: loanId,
+      },
     });
   };
   collaterals = async ({
     borrower,
     limit,
-    startAfter
+    startAfter,
   }: {
     borrower: string;
     limit?: number;
@@ -124,40 +126,40 @@ export class NFTLoansQueryClient implements NFTLoansReadOnlyInterface {
       collaterals: {
         borrower,
         limit,
-        start_after: startAfter
-      }
+        start_after: startAfter,
+      },
     });
   };
   allCollaterals = async ({
     limit,
-    startAfter
+    startAfter,
   }: {
     limit?: number;
     startAfter?: string[][];
-  }): Promise<AllCollateralsResponse> => {
+  }): Promise<CollateralsResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       all_collaterals: {
         limit,
-        start_after: startAfter
-      }
+        start_after: startAfter,
+      },
     });
   };
   offerInfo = async ({
-    globalOfferId
+    globalOfferId,
   }: {
     globalOfferId: string;
-  }): Promise<OfferInfoResponse> => {
+  }): Promise<OfferResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       offer_info: {
-        global_offer_id: globalOfferId
-      }
+        global_offer_id: globalOfferId,
+      },
     });
   };
   offers = async ({
     borrower,
     limit,
     loanId,
-    startAfter
+    startAfter,
   }: {
     borrower: string;
     limit?: number;
@@ -169,14 +171,14 @@ export class NFTLoansQueryClient implements NFTLoansReadOnlyInterface {
         borrower,
         limit,
         loan_id: loanId,
-        start_after: startAfter
-      }
+        start_after: startAfter,
+      },
     });
   };
   lenderOffers = async ({
     lender,
     limit,
-    startAfter
+    startAfter,
   }: {
     lender: string;
     limit?: number;
@@ -186,8 +188,8 @@ export class NFTLoansQueryClient implements NFTLoansReadOnlyInterface {
       lender_offers: {
         lender,
         limit,
-        start_after: startAfter
-      }
+        start_after: startAfter,
+      },
     });
   };
 }

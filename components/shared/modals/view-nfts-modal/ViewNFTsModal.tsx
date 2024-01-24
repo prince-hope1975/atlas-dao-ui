@@ -33,19 +33,21 @@ import {
 	NFTCardsGrid,
 	SearchContainer,
 } from './ViewNFTsModal.styled'
+import { Sg721Token } from '@/services/blockchain/contracts/raffles/Raffle.types'
 
 export interface ViewNFTsModalProps {
-	title?: string
-	children?: React.ReactNode
-	nfts: NFT[]
+  title?: string;
+  children?: React.ReactNode;
+  nfts: Sg721Token [];
 }
 
 export interface ViewNFTsModalResult {
-	nft: NFT
+	nft: Sg721Token
 }
 
 export const ViewNFTsModal = NiceModal.create(
 	({ title, nfts }: ViewNFTsModalProps) => {
+		console.log({nfts})
 	// 	const { t } = useTranslation()
 		const modal = useModal()
 		const theme = useTheme()
@@ -59,7 +61,7 @@ export const ViewNFTsModal = NiceModal.create(
 			}
 		)
 
-		const availableCollections = uniqBy(nfts, col => col.collectionAddress)
+		const availableCollections = uniqBy(nfts, col => col?.collectionAddress)
 
 		const [selectedCollections, setSelectedCollections] = React.useState<
 			MultiSelectInputOption[]
@@ -74,7 +76,7 @@ export const ViewNFTsModal = NiceModal.create(
 				(selectedCollections.length
 					? selectedCollections
 							.map(({ value }) => value)
-							.includes(nft.collectionAddress)
+							.includes(nft.address)
 					: true) &&
 				(searchName
 					? (nft?.name || '').toLowerCase().match(`${searchName.toLowerCase()}.*`)

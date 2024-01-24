@@ -81,18 +81,16 @@ export default function RaffleListings() {
     const contractAddr = networkUtils.getContractAddress("raffle");
     return new RaffleClient(client, address!, contractAddr);
   }, [address]);
-
   const { data: _raffles, isLoading: rafflesLoading } = useQuery({
     queryKey: ["raffles", address],
     queryFn: async () => {
       if (!address) return null;
       const raffle_client = await Raffle_comp();
       const raf = await raffle_client.allRaffles({});
-      console.log({ raf });
       return raf;
     },
   });
-
+  console.log({ _raffles, rafflesLoading, address });
   const networkName = getNetworkName();
 
   const isTablet = useIsTablet();
@@ -465,7 +463,7 @@ export default function RaffleListings() {
             )}
             <Box sx={{ width: "100%" }}>
               <RaffleGridController
-                raffles={_raffles?.raffles}
+                raffles={_raffles?.raffles!}
                 isLoading={!_raffles?.raffles.length && rafflesLoading}
                 verifiedCollections={verifiedCollections}
                 gridType={Number(gridType)}

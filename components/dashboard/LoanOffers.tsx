@@ -261,7 +261,7 @@ function LoanOffers({
 													nfts={(associatedAssets || [])
 														.filter(nft => nft.cw721Coin)
 														.map(({ cw721Coin }) => cw721Coin as NFT)}
-													imageUrl={loanPreview?.cw721Coin?.imageUrl ?? []}
+													id={loanPreview?.cw721Coin?.id ?? []}
 													name={loanPreview?.cw721Coin?.name ?? ''}
 													apr={Number(
 														activeOffer?.offerInfo?.terms?.interestRate ??

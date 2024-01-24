@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { LunaIcon } from '@/assets/icons/mixed'
+import { StarIcon } from '@/assets/icons/mixed'
 import { withForwardRef } from '@/hoc'
 import React from 'react'
 import { Flex } from 'theme-ui'
@@ -53,7 +53,7 @@ function TokenInput(props: TokenInputProps) {
 			iconRight={
 				<IconContainer>
 					<TokenChipContainer>
-						<LunaIcon />
+						<StarIcon />
 						<TokenText>{tokenName}</TokenText>
 					</TokenChipContainer>
 				</IconContainer>

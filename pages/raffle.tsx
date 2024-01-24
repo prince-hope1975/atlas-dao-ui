@@ -39,19 +39,16 @@ import {
   RafflesSelectNFTStepSchema,
 } from "../constants/validation-schemas/raffle";
 import { RaffleFormStepsProps } from "../types/raffle/types";
-import { RafflesContract } from "../services/blockchain";
 import { RafflesService } from "../services/api/rafflesService";
 import { TxBroadcastingModal } from "../components/shared";
 import { LayoutContainer, Page } from "../components/layout";
 import { MobileSteps, Steps } from "../components/ui";
 import networkUtils, {
-  CHAIN_NAMES,
+  
   getNetworkName,
 } from "../utils/blockchain/networkUtils";
 import useRafflesContract from "@/services/blockchain/contracts/raffles/raffles/hook";
-import { RaffleClient } from "@/services/blockchain/contracts/raffles/Raffle.client";
-import { useChain } from "@cosmos-kit/react";
-import { useQuery } from "@tanstack/react-query";
+
 
 // const getStaticProps = makeStaticProps(['common', 'raffle'])
 // const getStaticPaths = makeStaticPaths()

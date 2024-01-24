@@ -1,5 +1,5 @@
 import { VerifiedIcon } from '@/assets/icons/16pt'
-import { LunaIcon } from '@/assets/icons/mixed'
+import { StarIcon } from '@/assets/icons/mixed'
 import ImagePlaceholder from '@/assets/images/ImagePlaceholder'
 import { Link } from '@/components/link'
 import { RaffleParticipantsTable } from '../raffle-listing-details'
@@ -62,7 +62,7 @@ function RaffleOfferCard({
 	state,
 	...NFTProps
 }: RaffleOfferCardProps) {
-	const { name, collectionName, imageUrl } = NFTProps
+	const { name, collectionName, id: imageUrl } = NFTProps
 // 	const { t } = useTranslation(['common', 'raffle-listings'])
 	const [showingParticipants, setShowingParticipants] = React.useState(false)
 
@@ -85,10 +85,10 @@ function RaffleOfferCard({
 											<PreviewImageContainer
 												key={`${nft.collectionAddress}_${nft.tokenId}`}
 											>
-												{nft?.imageUrl?.every(img => img === '') ? (
+												{nft?.id?.every(img => img === '') ? (
 													<ImagePlaceholder width='18px' height='18px' />
 												) : (
-													<PreviewImage src={nft?.imageUrl ?? []} />
+													<PreviewImage src={nft?.id ?? []} />
 												)}
 											</PreviewImageContainer>
 										))}
@@ -165,7 +165,7 @@ function RaffleOfferCard({
 												</OverflowTip>
 
 												<Box sx={{ ml: 8 }}>
-													<LunaIcon />
+													<StarIcon />
 												</Box>
 											</AttributeValue>
 										</Flex>

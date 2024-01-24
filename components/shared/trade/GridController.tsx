@@ -147,7 +147,7 @@ function GridController({
 									.filter(nft => nft.cw721Coin)
 									.map(({ cw721Coin }) => cw721Coin as NFT)}
 								lookingFor={additionalInfo?.lookingFor ?? []}
-								imageUrl={additionalInfo?.tradePreview?.cw721Coin?.imageUrl ?? []}
+								id={additionalInfo?.tradePreview?.cw721Coin?.imageUrl ?? []}
 								name={additionalInfo?.tradePreview?.cw721Coin?.name ?? ''}
 								liked={liked}
 								verified={verifiedCollections.some(

@@ -152,7 +152,7 @@ const TxBroadcastingComplete = ({
   explorerUrl,
   fee,
 }: TxBroadcastingCompleteProps) => {
-	// console.log({ onDone, txHash, explorerUrl, fee });
+  // console.log({ onDone, txHash, explorerUrl, fee });
   // const { t } = useTranslation(['common'])
   return (
     <Flex sx={{ flexDirection: "column" }}>
@@ -188,8 +188,10 @@ const TxBroadcastingComplete = ({
         </CompleteSectionTitle>
         <CompleteSectionTxHash
           onClick={() => {
-			console.log({ explorerUrl });
-            window.open(explorerUrl, "_blank");
+            window.open(
+              `https://testnet-explorer.publicawesome.dev/stargaze/tx/${txHash}`,
+              "_blank"
+            );
           }}
         >
           {getShortText(txHash, 6)}
@@ -224,6 +226,7 @@ const TxBroadcastingModalComponent = ({
   const [data, setData] = React.useState<unknown>(null);
 
   const closeResolveModal = (resolveData?: any) => {
+    console.log({ resolveData, data });
     modal.resolve(resolveData || data);
     modal.remove();
   };
@@ -276,7 +279,7 @@ const TxBroadcastingModalComponent = ({
             {(loading.send || loading.broadcasting) && (
               <TxBroadcastingProcessing
                 txHash={txReceipt?.txId}
-                explorerUrl={txReceipt?.txexplorerUrl}
+                explorerUrl={txReceipt?.explorerUrl}
                 onClose={modal.remove}
               />
             )}
@@ -286,7 +289,7 @@ const TxBroadcastingModalComponent = ({
               txReceipt?.txId && (
                 <TxBroadcastingComplete
                   txHash={txReceipt?.txId}
-                  explorerUrl={txReceipt.txexplorerUrl}
+                  explorerUrl={txReceipt.explorerUrl}
                   fee={txReceipt.txFee}
                   onDone={closeResolveModal}
                 />

@@ -20,7 +20,7 @@ import {
 import ImagePlaceholder from '@/assets/images/ImagePlaceholder'
 import { NFT } from '@/services/api/walletNFTsService'
 import { Trade } from '@/services/api/tradesService'
-import { LunaIcon } from '@/assets/icons/mixed'
+import { StarIcon } from '@/assets/icons/mixed'
 import { TradeFee } from '@/services/blockchain'
 import { TextAreaField } from '../../../form'
 import { HumanCoin } from 'types'
@@ -197,7 +197,7 @@ const AcceptCounterOfferModal = NiceModal.create(
 													<Flex sx={{ mt: 8, flexDirection: 'column', gap: 8 }}>
 														{counterTradeCoins.map(({ amount, currency }) => (
 															<CoinCard key={JSON.stringify({ amount, currency })}>
-																<LunaIcon />
+																<StarIcon />
 																{`${amount} ${currency}`}
 															</CoinCard>
 														))}
@@ -211,7 +211,7 @@ const AcceptCounterOfferModal = NiceModal.create(
 													Withdrawal fees if accepted
 												</Title>
 												<CoinCard>
-													<LunaIcon />
+													<StarIcon />
 													{/* {t('common:total-fees', {
 														amount: fees.amount,
 														currency: fees.currency,

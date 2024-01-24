@@ -1,4 +1,4 @@
-import { LunaIcon, TwitterIcon } from "@/assets/icons/mixed";
+import { StarIcon, TwitterIcon } from "@/assets/icons/mixed";
 import ConfirmListingSuccessImage from "@/assets/images/ConfirmListingSuccessImage";
 import If from "@/components/core/if-statement";
 import { theme } from "@/constants/theme";
@@ -265,7 +265,7 @@ export const ConfirmListing = ({
               </StepHeader>
               <Box pb="24px" style={{ width: "fit-content" }}>
                 <Chip isViewMode>
-                  <LunaIcon />
+                  <StarIcon />
                   <div>{`${ticketPrice} ${ticketPriceCurrency}`}</div>
                 </Chip>
               </Box>

@@ -110,3 +110,22 @@ export const COLLECTION_DATA = gql`
     }
   }
 `;
+export const TOKEN_DATA = gql`
+  query Collection($collectionAddr: String!, $tokenId: String!) {
+    token(collectionAddr: $collectionAddr, tokenId: $tokenId) {
+      imageUrl
+    }
+  }
+`;
+export const ALL_TOKEN_DATA = gql`
+  query Collection($collectionAddr: String!, $tokenId: String!) {
+    token(collectionAddr: $collectionAddr, tokenId: $tokenId) {
+      imageUrl
+      id
+      name
+      description
+      createdAt
+      ownerAddr
+    }
+  }
+`;

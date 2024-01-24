@@ -274,7 +274,7 @@ function RaffleOffers({
 													nfts={(allAssociatedAssets || [])
 														.filter(nft => nft.cw721Coin)
 														.map(({ cw721Coin }) => cw721Coin as NFT)}
-													imageUrl={raffleOptions?.rafflePreview?.cw721Coin?.imageUrl ?? []}
+													id={raffleOptions?.rafflePreview?.cw721Coin?.id ?? []}
 													name={raffleOptions?.rafflePreview?.cw721Coin?.name ?? ''}
 													verified={(verifiedCollections ?? []).some(
 														({ collectionAddress }) =>

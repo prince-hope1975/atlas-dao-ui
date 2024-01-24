@@ -223,11 +223,21 @@ async function postManyTransactions(
   const explorerUrl = getTxExplorer(txId);
 
   return {
+    code: result?.code,
+    rawlog: result?.rawLog!,
     txId,
     txFee: `< 0.2 ${getCurrencyForDenom(getDefaultChainDenom())}`,
-    explorerUrl,
+    explorerUrl: `https://testnet-explorer.publicawesome.dev/stargaze/tx/${txId}`,
   };
 }
+// {code:5,
+// gasUsed:151876,
+// gasWanted:1000000,
+// height:8744432,
+// msgResponses:[],
+// rawLog:"failed to execute message; message index: 1: Error parsing into type nft_loans::msg::ExecuteMsg: missing field `address`: execute wasm contract failed",
+// transactionHash:"835A84CB44C2D5F4772A322D4B264E83DCD3EAA97AEDEA8E8CEC9B7F5BB27BFC",
+// txIndex:0}
 // SIGN & BROADCAST SINGLE TRANSACTION
 async function postTransaction(
   tx: TransactionDetails,

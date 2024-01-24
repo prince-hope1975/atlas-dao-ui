@@ -8,7 +8,7 @@ export const LoanDetailsStepSchema = yup.object().shape({
 	tokenAmount: yup
 		.number()
 		.transform((value: string, originalValue: string) =>
-			originalValue.trim() === '' ? null : value
+			originalValue.trim() === '' ? null : +value
 		)
 		.typeError('loan-form-steps-token-must-be-number')
 		.positive('loan-form-steps-token-must-be-positive'),
