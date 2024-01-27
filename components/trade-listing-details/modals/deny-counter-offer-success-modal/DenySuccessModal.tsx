@@ -79,7 +79,7 @@ const DenySuccessModal = NiceModal.create(
 										variant='secondary'
 										fullWidth
 										onClick={() => {
-											router.push(ROUTES.TRADE_CREATE_LISTING)
+											// router.push(ROUTES.TRADE_CREATE_LISTING)
 											modal.remove()
 										}}
 									>

@@ -1,57 +1,59 @@
-@import url('https://rsms.me/inter/inter.css');
+@import url("https://rsms.me/inter/inter.css");
 
 body {
-	inset: 0;
-	margin: 0;
-	background: #011d2c;
-	color: #f9fafb;
-	position: relative;
-	overflow-y: scroll;
-	font-family: 'Inter', sans-serif;
+  inset: 0;
+  margin: 0;
+  background: #011d2c;
+  color: #f9fafb;
+  position: relative;
+  overflow-y: scroll;
+  font-family: "Inter", sans-serif;
 }
 
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-	-webkit-appearance: none;
-	margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* Firefox */
-input[type='number'] {
-	-moz-appearance: textfield;
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 img {
-	-khtml-user-select: none;
-	-o-user-select: none;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	user-select: none;
+  -khtml-user-select: none;
+  -o-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 button,
-input[type='submit'],
-input[type='reset'] {
-	background: none;
-	color: inherit;
-	border: none;
-	padding: 0;
-	font: inherit;
-	cursor: pointer;
-	outline: inherit;
+input[type="submit"],
+input[type="reset"] {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
 }
 
 a {
-	all: unset;
+  all: unset;
+  text-decoration: none !important;
+  color: white;
 }
 /* Customize website's scrollbar like Mac OS
 Not supports in Firefox and IE */
 
 /* total width */
 ::-webkit-scrollbar {
-	background-color: transparent;
-	width: 4px;
+  background-color: transparent;
+  width: 4px;
 }
 
 /* background of the scrollbar except button or resizer */
@@ -60,15 +62,15 @@ Not supports in Firefox and IE */
 
 /* scrollbar itself */
 ::-webkit-scrollbar-thumb {
-	border-radius: 16px;
-	border: 4px solid #9ca3af;
+  border-radius: 16px;
+  border: 4px solid #9ca3af;
 }
 
 /* set button(top and bottom of the scrollbar) */
 ::-webkit-scrollbar-button {
-	display: none;
+  display: none;
 }
 
 ::-webkit-scrollbar-corner {
-	background-color: transparent;
+  background-color: transparent;
 }

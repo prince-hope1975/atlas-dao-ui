@@ -203,7 +203,7 @@ export default function NotificationCard<T>({
 												{imageUrl?.every(img => img === '') ? (
 													<ImagePlaceholder width='25px' height='25px' />
 												) : (
-													<Image src={imageUrl ?? []} />
+													<Image alt={"nft image"} src={imageUrl ?? []} />
 												)}
 												<TypeImageWrapper>
 													{typeBadge && (

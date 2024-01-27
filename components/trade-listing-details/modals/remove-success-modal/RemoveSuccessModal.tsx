@@ -31,64 +31,74 @@ const RemoveSuccessModal = NiceModal.create(() => {
 	const router = useRouter()
 
 	return (
-		<Modal isOverHeader isOpen={modal.visible} onCloseModal={modal.remove}>
-			<ModalContainer>
-				<ModalLayoutContainer>
-					<ModalContent>
-						<ModalHeader>
-							{t('trade-listings:remove-modal.title')}
-							<IconButton
-								sx={{
-									borderRadius: '32px',
-									backgroundColor: theme.colors.dark500,
-								}}
-								onClick={modal.remove}
-							>
-								<ModalCloseIcon />
-							</IconButton>
-						</ModalHeader>
-						<ModalBody>
-							<Flex sx={{ gap: '8px' }}>
-								<Box sx={{ width: '32px', height: '32px' }}>
-									<ModalSuccessCircleIcon />
-								</Box>
-								<Box>
-									<Title>
-{t('trade-listings:remove-modal.removal-successful')}</Title>
-									<Subtitle>
-										{t('trade-listings:remove-modal.create-listing-suggestion')}
-									</Subtitle>
-								</Box>
-							</Flex>
-							<Flex
-								sx={{ justifyContent: 'space-between', gap: '12px', marginTop: '24px' }}
-							>
-								<Button
-									variant='secondary'
-									fullWidth
-									onClick={() => {
-										router.push(ROUTES.TRADE_CREATE_LISTING)
-										modal.remove()
-									}}
-								>
-									{t('trade-listings:remove-modal.create-new-listing')}
-								</Button>
-								<Button
-									variant='gradient'
-									fullWidth
-									onClick={() => {
-										router.push(ROUTES.DASHBOARD)
-										modal.remove()
-									}}
-								>
-									{t('trade-listings:remove-modal.go-to-dashboard')}
-								</Button>
-							</Flex>
-						</ModalBody>
-					</ModalContent>
-				</ModalLayoutContainer>
-			</ModalContainer>
-		</Modal>
-	)
+    <Modal isOverHeader isOpen={modal.visible} onCloseModal={modal.remove}>
+      <ModalContainer>
+        <ModalLayoutContainer>
+          <ModalContent>
+            <ModalHeader>
+              {/* {t('trade-listings:.title')} */}
+              remove modal
+              <IconButton
+                sx={{
+                  borderRadius: "32px",
+                  backgroundColor: theme.colors.dark500,
+                }}
+                onClick={modal.remove}
+              >
+                <ModalCloseIcon />
+              </IconButton>
+            </ModalHeader>
+            <ModalBody>
+              <Flex sx={{ gap: "8px" }}>
+                <Box sx={{ width: "32px", height: "32px" }}>
+                  <ModalSuccessCircleIcon />
+                </Box>
+                <Box>
+                  <Title>
+                    removal successful
+                    {/* {t("trade-listings:remove-modal.")} */}
+                  </Title>
+                  <Subtitle>
+                    create listing suggestion
+                    {/* {t("trade-listings:remove-modal.")} */}
+                  </Subtitle>
+                </Box>
+              </Flex>
+              <Flex
+                sx={{
+                  justifyContent: "space-between",
+                  gap: "12px",
+                  marginTop: "24px",
+                }}
+              >
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  onClick={() => {
+                    // router.push(ROUTES.TRADE_CREATE_LISTING);
+                    modal.remove();
+                  }}
+                >
+                  create new listing
+                  {/* {t("trade-listings:remove-modal.")} */}
+                </Button>
+                <Button
+                  variant="gradient"
+                  fullWidth
+                  onClick={() => {
+                    router.push(ROUTES.DASHBOARD);
+                    modal.remove();
+                  }}
+                >
+                  go to dashboard
+                  {/* {t("trade-listings:remove-modal.")} */}
+                </Button>
+              </Flex>
+            </ModalBody>
+          </ModalContent>
+        </ModalLayoutContainer>
+      </ModalContainer>
+    </Modal>
+  );
 })
 export default RemoveSuccessModal

@@ -17,7 +17,7 @@ import { Raffle, RAFFLE_STATE } from "@/services/api/rafflesService";
 import { asyncAction } from "@/utils/js/asyncAction";
 import NiceModal from "@ebay/nice-modal-react";
 import { TxBroadcastingModal } from "@/components/shared";
-import { RafflesContract } from "@/services/blockchain";
+// import { } from "@/services/blockchain";
 import { useQueryClient } from "@tanstack/react-query";
 import { RAFFLE } from "@/constants/useQueryKeys";
 import moment from "moment";
@@ -31,6 +31,7 @@ import EditModal, { EditModalResult } from "./modals/edit-modal/EditModal";
 import { RaffleResponse } from "@/services/blockchain/contracts/raffles/Raffle.types";
 import convertTimestampToDate from "@/lib/convertTimeStampToDate";
 import { EventEdge } from "@/services/api/gqlWalletSercice";
+import RafflesContract from "@/services/blockchain/contracts/raffles/raffles";
 
 interface RaffleHeaderActionsRowProps {
   raffle?: RaffleResponse;
