@@ -12,6 +12,7 @@ export const ACCEPTED_LOAN_OFFER = 'acceptedLoanOffer'
 export const COUNTERED_TRADES = 'counteredTrades'
 
 export const RAFFLE = 'raffle'
+export const RAFFLE_TICKET = 'raffle_ticket'
 export const RAFFLES = 'raffles'
 export const OUTGOING_RAFFLES = 'outgoingRaffles'
 export const FAVORITES_RAFFLES = 'favoriteRaffles'

@@ -30,13 +30,17 @@ import RemoveSuccessModal from "./modals/remove-success-modal/RemoveSuccessModal
 import EditModal, { EditModalResult } from "./modals/edit-modal/EditModal";
 import { RaffleResponse } from "@/services/blockchain/contracts/raffles/Raffle.types";
 import convertTimestampToDate from "@/lib/convertTimeStampToDate";
+import { EventEdge } from "@/services/api/gqlWalletSercice";
 
 interface RaffleHeaderActionsRowProps {
   raffle?: RaffleResponse;
+  // participants
+  participants: EventEdge[];
 }
 
 export const RaffleHeaderActionsRow = ({
   raffle,
+  participants
 }: RaffleHeaderActionsRowProps) => {
   const { raffle_info: raffleInfo } = raffle ?? {};
   const { raffle_options: raffleOptions } = raffleInfo ?? {};
@@ -47,11 +51,11 @@ export const RaffleHeaderActionsRow = ({
 
   const editDisabled =
     [RAFFLE_STATE.Cancelled].includes(raffle?.raffle_state as RAFFLE_STATE) ||
-    (raffle?.participants ?? []).length > 0;
+    (participants ?? []).length > 0;
 
   const removeDisabled =
     [RAFFLE_STATE.Cancelled].includes(raffle?.raffle_state as RAFFLE_STATE) ||
-    (raffle?.participants ?? []).length > 0;
+    (participants ?? []).length > 0;
 
   const myAddress = useAddress();
 

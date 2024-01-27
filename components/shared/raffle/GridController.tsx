@@ -176,7 +176,7 @@ function GridController({
             // raffleTicketPrice?.cw20Coin?.currency ??
             "";
 
-          const totalVolume = formaCurrency(ticketPrice) * ticketsSold;
+          const totalVolume = Number(ticketPrice * ticketsSold);
 
           const ticketsRemaining =
             (raffle_options?.max_participant_number ?? 0) - ticketsSold;
@@ -200,7 +200,7 @@ function GridController({
                 nfts={(assets || [])
                   .filter((nft) => nft?.sg721_token)
                   .map(({ sg721_token }) => sg721_token as Sg721Token)}
-                id={assets as unknown as Sg721Token[] ?? []}
+                id={(assets as unknown as Sg721Token[]) ?? []}
                 name={assets?.sg721_token?.name ?? ""}
                 liked={liked}
                 verified={verifiedCollections.some(
@@ -363,9 +363,7 @@ function OLD_GridController({
                 nfts={(allAssociatedAssets || [])
                   .filter((nft) => nft.cw721Coin)
                   .map(({ cw721Coin }) => cw721Coin as NFT)}
-                id={
-                  raffleOptions?.rafflePreview?.cw721Coin?.id ?? []
-                }
+                id={raffleOptions?.rafflePreview?.cw721Coin?.id ?? []}
                 name={raffleOptions?.rafflePreview?.cw721Coin?.name ?? ""}
                 liked={liked}
                 verified={verifiedCollections.some(

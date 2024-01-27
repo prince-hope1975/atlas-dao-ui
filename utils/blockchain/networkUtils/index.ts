@@ -216,7 +216,6 @@ async function postManyTransactions(
   client = await getSigningCosmWasmClient();
 
   const result = await client.signAndBroadcast(address!, msgs, fee, "");
-  console.log({ result });
 
   const txId = result?.transactionHash ?? "";
 

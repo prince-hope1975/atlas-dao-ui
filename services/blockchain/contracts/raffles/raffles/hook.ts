@@ -16,7 +16,7 @@ import {
   SigningCosmWasmClient,
 } from "@cosmjs/cosmwasm-stargate";
 import { ExecuteMsg } from "../Raffle.types";
-import { coins } from "@cosmjs/amino";
+import { coin, coins } from "@cosmjs/amino";
 
 const amountConverter = converter.default;
 export interface ContractInfo {
@@ -50,21 +50,26 @@ export const useRafflesContract = () => {
   }
   async function provideRandomness(
     raffleId: number,
-    randomness: DrandResponse
   ) {
     const raffleContractAddress = networkUtils.getContractAddress(
       CONTRACT_NAME.raffle
     );
 
-    return networkUtils.postTransaction({
-      contractAddress: raffleContractAddress,
-      message: {
-        update_randomness: keysToSnake({
-          raffleId,
-          randomness,
-        }),
+    return networkUtils.postTransaction(
+      {
+        contractAddress: raffleContractAddress,
+        message: {
+          update_randomness: keysToSnake({
+            raffleId,
+          }),
+        },
       },
-    });
+      getSigningCosmWasmClient,
+      {
+        gas: 1_000_000,
+        address: address!,
+      }
+    );
   }
   async function createRaffleListing(
     nfts: Token[],
@@ -123,7 +128,7 @@ export const useRafflesContract = () => {
           contractAddress: raffleContractAddress,
           // TODO make this dynamic
 
-          coins: coins(1_000_000, "ustars"),
+          coins: coins(69, "ustars"),
           message: {
             create_raffle: createRaffle,
           },
@@ -209,7 +214,12 @@ export const useRafflesContract = () => {
     const raffleContractAddress = networkUtils.getContractAddress(
       CONTRACT_NAME.raffle
     );
-
+    console.log({
+      coin: {
+        amount: String(+rawAmount * ticketNumber),
+        denom: networkUtils.getDefaultChainDenom(), // TODO: update to handle all ibc denoms
+      },
+    });
     return networkUtils.postManyTransactions(
       [
         {
@@ -217,7 +227,7 @@ export const useRafflesContract = () => {
           message: {
             buy_ticket: {
               raffle_id: raffleId,
-              ticket_number: ticketNumber,
+              ticket_count: ticketNumber,
               sent_assets: {
                 // ...(cw20Coin
                 // 	? {
@@ -242,16 +252,18 @@ export const useRafflesContract = () => {
           },
           ...(rawAmount
             ? {
-                coins: {
-                  denom: String(+rawAmount * ticketNumber),
-                },
+                coins: coins(
+                  String(+rawAmount * ticketNumber),
+                  networkUtils.getDefaultChainDenom()
+                ),
               }
             : {}),
         },
       ],
       getSigningCosmWasmClient,
       {
-        gas: 1,
+        gas: 1_000_000,
+        address: address!,
       }
     );
   }

@@ -6,7 +6,7 @@ const executeMultipleStargazeGraphQlQueries = async <T>(
   //   stargazeIndexerClient: ApolloClient<NormalizedCacheObject> | null,
   queries: Array<{
     query: DocumentNode;
-    variables?: Record<string, number | string>;
+    variables?: Record<string, any>;
   }>
 ) => {
   const results = await Promise.all(
@@ -16,7 +16,6 @@ const executeMultipleStargazeGraphQlQueries = async <T>(
           query: q.query,
           variables: q.variables,
         });
-        console.log({res})
         return res!;
       } catch (error) {
         console.error("Error executing query:", error);

@@ -117,7 +117,7 @@ function LoanOffersTable({
   );
   React.useEffect(
     () => loanOffers && setInfiniteData((prev) => [...loanOffers.offers]),
-    [...(loanOffers?.offers ?? [])?.map((res) => res.offer_info?.state)]
+    [loanOffers]
   );
 
   const updateLoanOffer = async (offer: Offer) => {

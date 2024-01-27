@@ -32,19 +32,20 @@ import {
 } from './ListingCard.styled'
 import LoanStateBadge from './LoanStateBadge'
 import { getImageUrl } from '@/lib/getImageUrl'
+import { Sg721Token } from '@/types'
 
 interface ListingCardProps extends NFT {
 	liked?: boolean
 	verified?: boolean
 	name?: string
-	nfts: NFT[]
+	nfts: Sg721Token[]
 	href: string
 	onLike: (nft: NFT) => void
 	disabled?: boolean
 	lookingForItemsLimit?: number
 	previewItemsLimit?: number
 	borrowAmount: number
-	apr: number
+	apr: number|string
 	timeFrame: number
 	isSmall?: boolean
 	state: LOAN_STATE

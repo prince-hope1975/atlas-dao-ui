@@ -197,8 +197,7 @@ const LoanItem = ({
     }
   );
   const loanId = id;
-  const defaultBlock =
-    (startBlock ?? 0) + (activeOffer?.offerInfo?.terms?.durationInBlocks ?? 0);
+  const defaultBlock = (startBlock ?? 0) + (terms?.duration_in_blocks ?? 0);
 
   const liked = Boolean(
     (favoriteLoans ?? []).find((favoriteLoan) =>
@@ -219,7 +218,7 @@ const LoanItem = ({
     [loanPreview?.sg721_token],
     [loanPreview?.sg721_token?.token_id]
   );
-  console.log({ data });
+  console.log({ terms });
 
   return (
     <Box key={`${loanId}_${borrower}`}>
@@ -238,7 +237,11 @@ const LoanItem = ({
         id={data?.[0]?.token?.id ?? loanId}
         name={data?.[0]?.token?.name ?? ""}
         liked={liked}
-        apr={Number(formaCurrency(+terms?.interest ?? 0))}
+        apr={Intl.NumberFormat("en-Us", {maximumSignificantDigits:3}).format(
+          Number(
+            (+(terms?.interest ?? 0) / +(terms?.principle?.amount ?? 0)) * 100
+          )
+        )}
         borrowAmount={formaCurrency(Number(terms?.principle?.amount ?? 0))}
         defaultPercentage={
           startBlock

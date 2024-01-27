@@ -1,6 +1,5 @@
 import { gql } from "@/services/graphql/__generated__/gql";
 
-
 export const MINT_TOKENS = gql(`
   query MintTokens($collectionAddr: String, $limit: Int) {
     tokens(collectionAddr: $collectionAddr, limit: $limit) {
@@ -45,7 +44,6 @@ export const GET_COLLECTIONS = gql(`
     }
   }
 `);
-
 
 export const GET_COLLECTION_IMAGE = gql(`
   query CollectionImage($collectionAddr: String!) {
@@ -135,6 +133,7 @@ export const GET_EVENTS = gql(`
     }
   }
 `);
+
 
 export const GET_CONTRACT = gql(`
   query Contract($address: String!) {

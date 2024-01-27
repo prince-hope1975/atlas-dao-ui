@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery as USE_QUERY } from "@apollo/client";
 // import { useTranslation } from 'next-i18next'
 import NiceModal from "@ebay/nice-modal-react";
 import { Box, Flex } from "theme-ui";
@@ -49,6 +50,7 @@ import NFTPreviewImages from "../components/shared/nft-preview-images/NFTPreview
 import {
   FAVORITES_RAFFLES,
   RAFFLE,
+  RAFFLE_TICKET,
   VERIFIED_COLLECTIONS,
 } from "../constants/useQueryKeys";
 import {
@@ -61,7 +63,6 @@ import {
   RafflesResponse,
 } from "../services/api/rafflesService";
 import CreateRaffleListing from "../components/shared/header-actions/create-raffle-listing/CreateRaffleListing";
-import { RafflesContract } from "../services/blockchain";
 import BuyTicketModal, {
   BuyTicketModalResult,
 } from "../components/raffle-listing-details/modals/buy-ticket-modal/BuyTicketModal";
@@ -81,7 +82,10 @@ import networkUtils, {
   getNetworkName,
 } from "../utils/blockchain/networkUtils";
 import { useChain } from "@cosmos-kit/react";
-import { RaffleClient } from "@/services/blockchain/contracts/raffles/Raffle.client";
+import {
+  RaffleClient,
+  RaffleQueryClient,
+} from "@/services/blockchain/contracts/raffles/Raffle.client";
 import convertTimestampToDate from "@/lib/convertTimeStampToDate";
 import { Coin, coin, parseCoins } from "@cosmjs/amino";
 import { formaCurrency } from "@/lib/formatCurrency";
@@ -89,6 +93,14 @@ import {
   RaffleResponse,
   Sg721Token,
 } from "@/services/blockchain/contracts/raffles/Raffle.types";
+import useRafflesContract from "@/services/blockchain/contracts/raffles/raffles/hook";
+import {
+  GraphQLEventResponse,
+  RAFFLE_EVENT,
+} from "@/services/api/gqlWalletSercice";
+import executeMultipleStargazeGraphQlQueries from "@/lib/multiplequeries";
+import { useToken } from "@/hooks/useTokens";
+import RafflesContract from "@/services/blockchain/contracts/raffles/raffles";
 
 // const getStaticProps = makeStaticProps(['common', 'raffle-listings'])
 // const getStaticPaths = makeStaticPaths()
@@ -159,6 +171,46 @@ export default function ListingDetails() {
     retry: true,
     refetchInterval: 60 * 1000, // Refetch every minute
   });
+  console.log({ raffle });
+  // const {} = USE_QUERY(RAFFLE_EVENT);
+  const {
+    data: ticket = [],
+    error: ticketError,
+    isLoading: ticketLoading,
+  } = useQuery({
+    queryKey: [RAFFLE_TICKET, raffleId, networkName, address],
+    queryFn: async () => {
+      if (!raffleId) return null;
+      const contractAddr = networkUtils.getContractAddress("raffle");
+      const value =
+        await executeMultipleStargazeGraphQlQueries<GraphQLEventResponse>([
+          {
+            query: RAFFLE_EVENT,
+            variables: {
+              forContractAddrs: contractAddr,
+              attributeFilters: {
+                filters: [
+                  {
+                    name: "raffle_id",
+                    value: raffleId,
+                  },
+                ],
+              },
+              eventsFilters: {
+                events: {
+                  action: "buy_ticket",
+                  name: "wasm",
+                },
+              },
+            },
+          },
+        ]);
+      return value;
+    },
+    retry: true,
+    refetchInterval: 60 * 1000, // Refetch every minute
+  });
+
   const { coin } =
     (raffle?.raffle_info?.raffle_ticket_price as { coin: Coin }) ?? {};
   const price = formaCurrency(+coin?.amount ?? 0);
@@ -193,14 +245,19 @@ export default function ListingDetails() {
 
   React.useEffect(() => {
     if (raffle) {
-      const vals = Object.values(raffle?.raffle_info?.assets!)?.filter(
-        (res) => res?.sg721_token
-      )??[]
+      const vals =
+        Object.values(raffle?.raffle_info?.assets!)?.filter(
+          (res) => res?.sg721_token
+        ) ?? [];
       setRafflePreview(vals!);
     }
   }, [raffle]);
+  const nfts = (raffle?.raffle_info?.assets ?? [])
+    .filter((asset) => asset?.sg721_token)
+    .map(({ sg721_token }) => sg721_token as Sg721Token);
 
   useHeaderActions(<CreateRaffleListing />);
+  const { data: NFTMeta, isLoading: loading } = useToken(nfts, ["nfts", nfts]);
 
   const handleViewAllNFTs = async () => {
     if (!raffle) {
@@ -208,17 +265,17 @@ export default function ListingDetails() {
     }
     const [, result] = await asyncAction<ViewNFTsModalResult>(
       NiceModal.show(ViewNFTsModal, {
-        nfts: (
-          (raffle?.raffle_info?.assets as { sg721_token: Sg721Token }[]) ?? []
-        )
-          .filter(({ sg721_token }) => sg721_token)
-          .map(({ sg721_token }) => sg721_token),
+        nfts: nfts,
+        nftResponse: NFTMeta,
         title: "All NFTs", //  t('common:all-nfts'),
       } as ViewNFTsModalProps)
     );
 
     if (result) {
-      setRafflePreview((oldPrev) => ({ ...oldPrev, cw721Coin: result.nft }));
+      setRafflePreview((oldPrev) => [
+        ...oldPrev!,
+        { sg721_token: result?.nft },
+      ]);
     }
   };
 
@@ -240,7 +297,8 @@ export default function ListingDetails() {
       raffleId: [Number(raffleId)],
       user: myAddress,
     }));
-
+  const { purchaseRaffleTickets, drawRaffle, provideRandomness } =
+    useRafflesContract();
   const purchaseTicket = async () => {
     if (!raffle || !raffle_info) {
       return;
@@ -251,17 +309,18 @@ export default function ListingDetails() {
     );
 
     if (result) {
+      // const client = await getCosmWasmClient();
+      // const endpoint = new RaffleQueryClient(client, address!);
       await NiceModal.show(BuyRaffleReviewModal, {
         raffle,
         ticketNumber: +result.ticketNumber,
       });
 
       await NiceModal.show(TxBroadcastingModal, {
-        transactionAction: RafflesContract.purchaseRaffleTickets(
+        transactionAction: purchaseRaffleTickets(
           raffle?.raffle_id,
           +result.ticketNumber,
           coin.amount
-          // cw20Coin
         ),
         closeOnFinish: true,
       });
@@ -276,11 +335,21 @@ export default function ListingDetails() {
     }
 
     await NiceModal.show(TxBroadcastingModal, {
-      transactionAction: RafflesContract.drawRaffle(raffle?.raffle_id),
+      transactionAction: drawRaffle(raffle?.raffle_id),
       closeOnFinish: true,
     });
 
     refetch();
+  };
+
+  const handleDetermineWinner = async () => {
+    if (!raffle) {
+      return;
+    }
+    await NiceModal.show(TxBroadcastingModal, {
+      transactionAction: provideRandomness(raffle?.raffle_id),
+      closeOnFinish: true,
+    });
   };
 
   // const provideRandomness = async () => {
@@ -298,9 +367,8 @@ export default function ListingDetails() {
   // 		closeOnFinish: true,
   // 	})
   // }
-
-  const ticketsSold = 0;
-
+  const tickets = ticket?.at(0)?.events?.edges ?? [];
+  const ticketsSold = raffle?.raffle_info?.number_of_tickets ?? 0;
   const ticketsRemaining =
     (raffle_options?.max_participant_number ?? 0) - ticketsSold;
 
@@ -314,20 +382,21 @@ export default function ListingDetails() {
     "stars" ??
     // raffleInfo?.raffleTicketPrice?.cw20Coin?.currency ??
     "";
-
   const myWinningOdds =
-    (((raffle?.participants ?? []).find((p) => p.user === myAddress)
-      ?.ticketNumber ?? 0) /
+    (+(ticket?.at(0)?.events?.edges ?? [])
+      .filter((p) => p.node?.data?.purchaser === myAddress)
+      ?.reduce((old, newVal) => old + +(newVal.node.data.ticketCount ?? 0), 0) /
       +ticketsSold) *
     100;
 
-  const ownerName = raffle?.raffle_info?.owner;
+  const ownerName = "";
 
   const raffleEndDate = moment(
     convertTimestampToDate(
       +raffle_info?.raffle_options?.raffle_start_timestamp!
     )
   ).add(raffle_info?.raffle_options?.raffle_duration ?? 0, "seconds");
+
   return (
     <Page
       title="Title" //{t('title')}
@@ -335,7 +404,7 @@ export default function ListingDetails() {
       <LayoutContainer>
         {!isLoading ? (
           <>
-            <RaffleHeaderActionsRow raffle={raffle!} />
+            <RaffleHeaderActionsRow participants={tickets} raffle={raffle!} />
             <Row>
               {![RAFFLE_STATE.Started, RAFFLE_STATE.Created].includes(
                 raffle?.raffle_state as RAFFLE_STATE
@@ -360,7 +429,11 @@ export default function ListingDetails() {
                 }}
               >
                 <ImageRow
-                  nft={rafflePreview?.map(res=>res?.sg721_token!).filter(res=>res)!??[]}
+                  nft={
+                    rafflePreview
+                      ?.map((res) => res?.sg721_token!)
+                      .filter((res) => res)! ?? []
+                  }
                   id={raffle?.raffle_id!}
                   onLike={toggleLike}
                   liked={liked}
@@ -369,11 +442,7 @@ export default function ListingDetails() {
                 <Row>
                   <Button fullWidth variant="dark" onClick={handleViewAllNFTs}>
                     <Flex sx={{ alignItems: "center" }}>
-                      <NFTPreviewImages
-                        nfts={(raffle?.raffle_info?.assets ?? [])
-                          .filter((asset) => asset?.sg721_token)
-                          .map(({ sg721_token }) => sg721_token as Sg721Token)}
-                      />
+                      <NFTPreviewImages nfts={nfts} />
                       <div>
                         {/* {t('raffle-listings:view-all-nfts')} */}
                         View all NFTs
@@ -386,21 +455,21 @@ export default function ListingDetails() {
                 <Row>
                   <DescriptionRow
                     isPrivate={false}
-                    name={rafflePreview?.cw721Coin?.name}
-                    collectionName={
-                      rafflePreview?.cw721Coin?.collectionName ?? ""
-                    }
+                    name={NFTMeta?.at(0)?.token?.name}
+                    collectionName={NFTMeta?.at(0)?.token?.description ?? ""}
                     verified={(verifiedCollections ?? []).some(
                       ({ collectionAddress }) =>
-                        rafflePreview?.cw721Coin?.collectionAddress ===
+                        rafflePreview?.at(0)?.sg721_token?.address ===
                         collectionAddress
                     )}
                   />
                 </Row>
-                {Boolean(rafflePreview?.cw721Coin?.attributes?.length) && (
+                {Boolean(
+                  rafflePreview?.at(0)?.sg721_token?.attributes?.length
+                ) && (
                   <Row>
                     <Flex sx={{ flexWrap: "wrap", gap: "4.3px" }}>
-                      {(rafflePreview?.cw721Coin?.attributes ?? []).map(
+                      {(rafflePreview?.sg721_token?.attributes ?? []).map(
                         (attribute) => (
                           <UIAttributeCard
                             key={JSON.stringify(attribute)}
@@ -470,7 +539,10 @@ export default function ListingDetails() {
 												})} */}
                         {moment(
                           convertTimestampToDate(
-                            raffle_info?.raffle_options?.raffle_start_timestamp!
+                            +(
+                              raffle_info?.raffle_options
+                                ?.raffle_start_timestamp! ?? 0
+                            )
                           ) ?? ""
                         ).fromNow()}
                       </Box>
@@ -535,8 +607,8 @@ export default function ListingDetails() {
                       </AttributeName>
                       <AttributeValue>
                         {ticketsRemaining}
-                        {raffle_options?.maxParticipantNumber
-                          ? ` / ${raffle_options?.maxParticipantNumber}`
+                        {raffle_options?.max_participant_number
+                          ? ` / ${raffle_options?.max_participant_number}`
                           : ""}
                       </AttributeValue>
                     </AttributeCard>
@@ -564,16 +636,35 @@ export default function ListingDetails() {
                     </AttributeCard>
                   </AttributesCard>
                 </Row>
-
+                {raffle?.raffle_info?.winner &&
+                myAddress &&
+                [RAFFLE_STATE.Closed].includes(
+                  raffle?.raffle_state as RAFFLE_STATE
+                ) ? (
+                  <></>
+                ) : (
+                  <Row>
+                    <Button
+                      fullWidth
+                      variant="gradient"
+                      onClick={handleDetermineWinner}
+                      // onClick={handleViewAllNFTs}
+                    >
+                      <Flex sx={{ alignItems: "center" }}>
+                        <div>Determine Winner</div>
+                      </Flex>
+                    </Button>
+                  </Row>
+                )}
                 {!isMyRaffle &&
                   raffle &&
-                  (raffle?.participants ?? [])
-                    .map((p) => p.ticketNumber)
+                  (tickets ?? [])
+                    .map((p) => +(p.node?.data?.ticketCount ?? 0))
                     .reduce((a, b) => a + b, 0) <
-                    (raffle_options?.maxParticipantNumber ??
+                    (raffle_options?.max_participant_number ??
                       Number.POSITIVE_INFINITY) &&
                   [RAFFLE_STATE.Started].includes(
-                    raffle_info?.state as RAFFLE_STATE
+                    raffle?.raffle_state as RAFFLE_STATE
                   ) && (
                     <Row>
                       <Button
@@ -592,7 +683,7 @@ export default function ListingDetails() {
 
                 {raffle &&
                   [RAFFLE_STATE.Finished].includes(
-                    raffle_info?.state as RAFFLE_STATE
+                    raffle?.raffle_state as RAFFLE_STATE
                   ) &&
                   !raffle_info?.winner && (
                     <Row>
@@ -602,10 +693,7 @@ export default function ListingDetails() {
                         fullWidth
                         variant="gradient"
                       >
-                        <div>
-                          {/* {t('raffle-listings:draw-raffle-ticket')} */}
-                          Draw Raffle Ticket
-                        </div>
+                        <div>Draw Raffle Ticket</div>
                       </Button>
                     </Row>
                   )}
@@ -613,7 +701,7 @@ export default function ListingDetails() {
                 {raffle &&
                   randomnessProvider &&
                   [RAFFLE_STATE.Closed].includes(
-                    raffle_info?.state as RAFFLE_STATE
+                    raffle?.raffle_state as RAFFLE_STATE
                   ) && (
                     <Row>
                       <Button
@@ -640,17 +728,18 @@ export default function ListingDetails() {
                     Participants
                   </ParticipantsTitle>
                 </Box>
-                <RaffleParticipantsTable raffle={raffle} />
+                <RaffleParticipantsTable raffle={raffle!} ticket={tickets} />
               </Flex>
             </Row>
-            <RaffleListingsYouMightLike
+            {/* For later */}
+            {/* <RaffleListingsYouMightLike
               search={
-                rafflePreview?.cw721Coin?.collectionName ??
+                rafflePreview?.sg721_token?.collectionName ??
                 sample(verifiedCollections ?? [])?.collectionName ??
                 ""
               }
               raffleId={raffle?.raffleId}
-            />
+            /> */}
           </>
         ) : (
           <Flex

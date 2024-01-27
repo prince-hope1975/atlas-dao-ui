@@ -353,8 +353,7 @@ class LoansContract extends Contract {
         },
         coins: [
           {
-            amount:
-              amountConverter.default.userFacingToBlockchainValue(amountNative),
+            amount: `${amountNative}`,
             denom: "ustars",
           },
         ],

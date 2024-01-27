@@ -44,12 +44,35 @@ interface CollectionNode {
 export interface Collection {
   __typename: string;
   name: string;
-  description?:string
+  description?: string;
   mintedAt: string;
   createdByAddr: string;
   collectionAddr: string;
 }
+interface EventData {
+  eventName: string;
+  action: string;
+  price: null | number;
+  data: {
+    purchaser: string;
+    raffleId: string;
+    ticketCount: string;
+    timestamp: string;
+  };
+  id: string;
+}
 
+export interface EventEdge {
+  node: EventData;
+}
+
+interface EventsData {
+  edges: EventEdge[];
+}
+
+export interface GraphQLEventResponse {
+  events: EventsData;
+}
 
 export const WALLET_DATA = gql`
   query Tokens($ownerAddr: String, $sortBy: TokenSortBy, $limit: Int) {
@@ -110,6 +133,24 @@ export const COLLECTION_DATA = gql`
     }
   }
 `;
+export const COLLECTION_AND_TOKEN_DATA = gql`
+  query Collection($collectionAddr: String!, $tokenId: String!) {
+    collection(collectionAddr: $collectionAddr) {
+      name
+      description
+      createdByAddr
+      collectionAddr
+    }
+    token(collectionAddr: $collectionAddr, tokenId: $tokenId) {
+      imageUrl
+      id
+      name
+      description
+      createdAt
+      ownerAddr
+    }
+  }
+`;
 export const TOKEN_DATA = gql`
   query Collection($collectionAddr: String!, $tokenId: String!) {
     token(collectionAddr: $collectionAddr, tokenId: $tokenId) {
@@ -129,3 +170,25 @@ export const ALL_TOKEN_DATA = gql`
     }
   }
 `;
+export const RAFFLE_EVENT = gql(`query Events(
+  $forContractAddrs: [String!]
+  $attributeFilters: AttributeFilter
+  $eventsFilters: EventsFilter
+) {
+  events(
+    forContractAddrs: $forContractAddrs
+    attributeFilters: $attributeFilters
+    eventsFilters: $eventsFilters
+  ) {
+    edges {
+      node {
+        eventName
+        action
+        data
+        action
+        id
+      }
+    }
+  }
+}
+`);

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 // import { useTranslation } from 'next-i18next'
 import { useDebounce } from "react-use";
 import NiceModal from "@ebay/nice-modal-react";
@@ -67,6 +67,7 @@ import networkUtils, {
 } from "../utils/blockchain/networkUtils";
 import { useChain } from "@cosmos-kit/react";
 import { RaffleClient } from "@/services/blockchain/contracts/raffles/Raffle.client";
+import { AllRafflesResponse } from "@/services/blockchain/contracts/raffles/Raffle.types";
 
 // const getStaticProps = makeStaticProps(['common', 'raffle-listings'])
 // const getStaticPaths = makeStaticPaths()
@@ -76,11 +77,16 @@ export default function RaffleListings() {
   useHeaderActions(<CreateRaffleListing />);
   const { sign, getSigningCosmWasmClient, address, getCosmWasmClient } =
     useChain(CHAIN_NAMES[1]);
+  const [listingsType, setListingsType] = React.useState(
+    RAFFLE_LISTINGS_TYPE.ALL_LISTINGS
+  );
   const Raffle_comp = useCallback(async () => {
     const client = await getSigningCosmWasmClient();
     const contractAddr = networkUtils.getContractAddress("raffle");
     return new RaffleClient(client, address!, contractAddr);
   }, [address]);
+  const myAddress = useAddress();
+
   const { data: _raffles, isLoading: rafflesLoading } = useQuery({
     queryKey: ["raffles", address],
     queryFn: async () => {
@@ -90,7 +96,40 @@ export default function RaffleListings() {
       return raf;
     },
   });
-  console.log({ _raffles, rafflesLoading, address });
+  const [raffleListing, setRaffleListing] = useState(
+    _raffles || ({} as AllRafflesResponse)
+  );
+  console.log({ raffleListing });
+  useEffect(() => {
+    if (
+      listingsType === RAFFLE_LISTINGS_TYPE.ALL_LISTINGS &&
+      _raffles?.raffles?.length
+    ) {
+      setRaffleListing(_raffles);
+    }
+    if (
+      listingsType === RAFFLE_LISTINGS_TYPE.MY_LISTINGS &&
+      _raffles?.raffles?.length
+    ) {
+      setRaffleListing({
+        raffles: _raffles?.raffles?.filter(
+          (val) => val?.raffle_info?.owner == myAddress
+        ),
+      });
+    }
+    if (
+      listingsType === RAFFLE_LISTINGS_TYPE.PAST_LISTINGS &&
+      _raffles?.raffles?.length
+    ) {
+      setRaffleListing({
+        raffles: _raffles?.raffles?.filter(
+          (val) =>
+            val?.raffle_state == RAFFLE_STATE.Finished ||
+            val?.raffle_state == RAFFLE_STATE.Cancelled
+        ),
+      });
+    }
+  }, [listingsType, _raffles?.raffles?.length, myAddress]);
   const networkName = getNetworkName();
 
   const isTablet = useIsTablet();
@@ -152,10 +191,6 @@ export default function RaffleListings() {
 
   useDebounce(() => setDebouncedSearch(search), 800, [search]);
 
-  const [listingsType, setListingsType] = React.useState(
-    RAFFLE_LISTINGS_TYPE.ALL_LISTINGS
-  );
-
   const [page, setPage] = React.useState(1);
 
   const [statuses, setStatuses] = React.useState<
@@ -173,7 +208,6 @@ export default function RaffleListings() {
 
   const [wonByMeChecked, setWonByMeChecked] = React.useState(false);
 
-  const myAddress = useAddress();
 
   const { data: favoriteRaffles } = useQuery(
     [FAVORITES_RAFFLES, networkName, myAddress],
@@ -191,7 +225,9 @@ export default function RaffleListings() {
   );
 
   // TODO extract this into hook, along with useQuery part.
-  const [infiniteData, setInfiniteData] = React.useState<Raffle[]>([]);
+  const [infiniteData, setInfiniteData] = React.useState<
+    AllRafflesResponse["raffles"]
+  >([]);
   React.useEffect(() => {
     setInfiniteData([]);
     setPage(1);
@@ -206,48 +242,6 @@ export default function RaffleListings() {
     wonByMeChecked,
     myAddress,
   ]);
-
-  const { data: raffles, isLoading } = useQuery(
-    [
-      RAFFLES,
-      networkName,
-      listingsType,
-      statuses,
-      collections,
-      myFavoritesChecked,
-      participatedByMeChecked,
-      debouncedSearch,
-      wonByMeChecked,
-      page,
-      myAddress,
-    ],
-    async () => [],
-    // RafflesService.getAllRaffles(
-    //   networkName,
-    //   {
-    //     search: debouncedSearch,
-    //     myAddress,
-    //     owners:
-    //       listingsType === RAFFLE_LISTINGS_TYPE.MY_LISTINGS
-    //         ? [myAddress]
-    //         : undefined,
-    //     states: statuses.flatMap(({ value }) => JSON.parse(value)),
-    //     collections: collections.map(({ value }) => value),
-    //     participatedBy: participatedByMeChecked ? [myAddress] : undefined,
-    //     favoritesOf: myFavoritesChecked ? myAddress : undefined,
-    //     wonByMe: wonByMeChecked,
-    //   },
-    //   {
-    //     page,
-    //     limit: 28,
-    //   },
-    //   sort
-    // ),
-    {
-      enabled: !!favoriteRaffles,
-      retry: true,
-    }
-  );
 
   React.useEffect(() => {
     // eslint-disable-next-line security/detect-object-injection
@@ -287,10 +281,10 @@ export default function RaffleListings() {
     fnc?.();
   }, [listingsType]);
 
-  React.useEffect(
-    () => raffles && setInfiniteData((prev) => [...prev, ...raffles?.data]),
-    [raffles]
-  );
+  React.useEffect(() => {
+    !!raffleListing &&
+      setInfiniteData((prev) => [...prev, ...raffleListing?.raffles]);
+  }, [raffleListing?.raffles?.length]);
 
   const onFiltersClick = async () => {
     if (!isTablet) {
@@ -463,15 +457,15 @@ export default function RaffleListings() {
             )}
             <Box sx={{ width: "100%" }}>
               <RaffleGridController
-                raffles={_raffles?.raffles!}
-                isLoading={!_raffles?.raffles.length && rafflesLoading}
+                raffles={raffleListing?.raffles!}
+                isLoading={!raffleListing?.raffles.length && rafflesLoading}
                 verifiedCollections={verifiedCollections}
                 gridType={Number(gridType)}
                 favoriteRaffles={favoriteRaffles}
               />
               <Flex sx={{ width: "100%", marginTop: "14px" }}>
-                {_raffles?.raffles &&
-                  !!_raffles?.raffles?.length &&
+                {raffleListing?.raffles &&
+                  !!raffleListing?.raffles?.length &&
                   !rafflesLoading && (
                     <Button
                       // TODO uncomment

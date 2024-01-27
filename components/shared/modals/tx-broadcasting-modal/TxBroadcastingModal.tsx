@@ -253,6 +253,17 @@ const TxBroadcastingModalComponent = ({
     if (txResponse) {
       setTxReceipt(txResponse);
     }
+    if (txResponse?.code == 5) {
+      setError(
+        parseTxError(
+          new AxiosError(
+            "Returned Error Code of 5, The transaction failed"
+          ) as AxiosError<{
+            message?: string;
+          }>
+        )
+      );
+    }
     if (txError) {
       console.log({ txError });
       setError(parseTxError(txError as AxiosError<{ message?: string }>));

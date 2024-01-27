@@ -181,10 +181,9 @@ export default function LoanListingDetails() {
   const { data: latestBlockHeight, error } = useQuery(
     [LATEST_BLOCK, networkName],
     async () => {
-      // networkUtils.getLatestBlockHeight()
       const _client = await getCosmWasmClient();
 
-      const block = await _client.getBlock(8769053);
+      const block = await _client.getBlock();
       return block;
     },
     {
@@ -217,7 +216,6 @@ export default function LoanListingDetails() {
 
   const [loanPreview, setLoanPreview] = React.useState<{
     sg721_token?: Sg721Token;
-    // cw1155Coin?: any
   } | null>(null);
 
   React.useEffect(() => {
@@ -280,7 +278,7 @@ export default function LoanListingDetails() {
           //   loan?.terms?.principle?.amount,
           //   result.comment
         ),
-		
+
         closeOnFinish: true,
       });
 
@@ -369,7 +367,13 @@ export default function LoanListingDetails() {
       loan?.loan_preview?.sg721_token?.token_id,
     ]
   );
-  console.log({ loan });
+
+  console.log({
+    loan: loan?.start_block,
+    termsBlock: loan?.terms?.duration_in_blocks,
+    latestBlockHeight: latestBlockHeight?.header?.height,
+    list_date: loan?.list_date,
+  });
   return (
     <Page
       title="Title" // {t('title')}
@@ -550,9 +554,11 @@ export default function LoanListingDetails() {
 																(Number(latestBlockHeight) ?? 0),
 													  })
 													: '-'} */}
-                        {(loan?.start_block ?? 0) +
-                          (loan?.terms?.duration_in_blocks ?? 0) -
-                          (Number(latestBlockHeight?.header?.height) || 0)}
+                        {loan?.start_block
+                          ? (loan?.start_block ?? 0) +
+                            (loan?.terms?.duration_in_blocks ?? 0) -
+                            (Number(latestBlockHeight?.header?.height) || 0)
+                          : "-"}
                       </AttributeValue>
                     </AttributeCard>
                     <AttributeCard>
@@ -616,7 +622,15 @@ export default function LoanListingDetails() {
 														loanInfo?.terms?.interestRate ??
 														0,
 												})} */}
-                        {formaCurrency(+(loan?.terms?.interest! ?? 0))}
+                        {Intl.NumberFormat("en-Us", {
+                          maximumSignificantDigits: 3,
+                        }).format(
+                          Number(
+                            (+(loan?.terms?.interest ?? 0) /
+                              +(loan?.terms?.principle?.amount ?? 0)) *
+                              100
+                          )
+                        )}
                       </AttributeValue>
                     </AttributeCard>
                     <AttributeCard>
@@ -639,12 +653,16 @@ export default function LoanListingDetails() {
 														'',
 												})} */}
 
-                        {(
+                        {/* {(
                           (1 +
                             formaCurrency(+(loan?.terms?.interest! ?? 0)) /
                               100) *
                           formaCurrency(+(loan?.terms?.principle?.amount ?? 0))
-                        ).toFixed(3)}
+                        ).toFixed(3)} */}
+                        {formaCurrency(
+                          +(loan?.terms?.interest! ?? 0) +
+                            +(loan?.terms?.principle?.amount ?? 0)
+                        )}
                         {DEFAULT_CURRENCY ?? ""}
                         <Box sx={{ ml: 8 }}>
                           <StarIcon />
@@ -653,7 +671,7 @@ export default function LoanListingDetails() {
                     </AttributeCard>
                   </AttributesCard>
                 </Row>
-
+              
                 {isMyLoan &&
                   acceptedLoanOffer &&
                   [LOAN_STATE.Started].includes(
@@ -747,7 +765,8 @@ export default function LoanListingDetails() {
                 />
               </Flex>
             </Row>
-            <LoanListingsYouMightLike
+            {/* Loan listing */}
+            {/* <LoanListingsYouMightLike
               search={
                 data?.[0]?.token?.name ??
                 sample(verifiedCollections ?? [])?.collectionName ??
@@ -756,7 +775,7 @@ export default function LoanListingDetails() {
               loanId={loanId as string}
               borrower={borrower as string}
               loan={loan!}
-            />
+            /> */}
           </>
         ) : (
           <Flex

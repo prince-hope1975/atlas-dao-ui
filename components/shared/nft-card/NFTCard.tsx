@@ -59,7 +59,7 @@ export function StargazeNFTCard({
   size = "medium",
   imageUrl,
   isCover = false,
-  hasCoverSelector=false,
+  hasCoverSelector = false,
 }: Pick<
   NFTCardProps,
   | "verified"
@@ -143,7 +143,7 @@ function NFTCard({
         {imageUrl?.every((img) => img === "") ? (
           <ImagePlaceholder width="85px" height="80px" />
         ) : (
-          <Image src={imageUrl ?? []} />
+          <Image alt="Unable to view image" width={500} height={500} objectFit="cover" objectPosition="center" src={imageUrl?.at(0) ?? ""} />
         )}
         {checked && (
           <RightImageArea>

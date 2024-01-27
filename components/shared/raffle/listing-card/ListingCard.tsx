@@ -55,6 +55,7 @@ import {
 import { NFT } from "@/services/api/walletNFTsService";
 import { gql, useQuery } from "@apollo/client";
 import { getImageUrl } from "@/lib/getImageUrl";
+import { DEFAULT_CURRENCY } from "@/constants/core";
 
 interface StargazeListingCardProps extends NFT {
   liked?: boolean;
@@ -288,7 +289,7 @@ export function StargazeListingCard({
                       Total Volume
                     </AttributeName>
                     <AttributeValue isSmall={isSmall}>
-                      {`${totalVolume.toFixed(2)} ${ticketCurrency}`}
+                      {`${totalVolume.toFixed(2)} ${DEFAULT_CURRENCY}`}
                     </AttributeValue>
                   </Flex>
                 </Flex>

@@ -34,7 +34,6 @@ const useGetAllSg721Images = (props: Sg721Token[], keys: any[] = []) => {
         token: { imageUrl: string };
       }>(
         props?.map((item) => {
-          console.log({ item });
           return {
             query: TOKEN_DATA,
             variables: {
