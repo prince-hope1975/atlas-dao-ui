@@ -188,5 +188,5 @@ const MultiSelectAccordionInput = React.forwardRef<
 		</AccordionCard>
 	)
 })
-
+MultiSelectAccordionInput.displayName = "MultiSelectAccordionInput";
 export default MultiSelectAccordionInput

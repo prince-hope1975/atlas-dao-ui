@@ -107,7 +107,7 @@ function LoanOffers({
 						<Box sx={{ maxWidth: '524px' }}>
 							<ActivityCardEmptyTitle>
 								{/* {t('dashboard:loans:no-offers')} */}
-								You don't have any offers yet.
+								You {"don't"} have any offers yet.
 								<br />
 								{/* {t('dashboard:loans:make-offer-to-appear')} */}
 								Make an offer on a trade for it to appear here.

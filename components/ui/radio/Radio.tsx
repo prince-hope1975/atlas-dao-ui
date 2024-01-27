@@ -58,7 +58,7 @@ export const Knob = styled.div`
 type RadioProps = React.InputHTMLAttributes<HTMLInputElement> & {
 	inputGroup?: any
 }
-
+// eslint-disable-next-line react/display-name
 export const RadioInput = React.forwardRef<HTMLInputElement, RadioProps>(
 	(props, ref) => {
 		const { disabled: disabledByProps, inputGroup, value, ...other } = props

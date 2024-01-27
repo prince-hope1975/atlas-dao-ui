@@ -86,7 +86,6 @@ const TextAreaStyled = styled.textarea`
 
 	color: ${props => props.theme.colors.natural50};
 `
-
 export const TextArea = React.forwardRef<
 	HTMLTextAreaElement,
 	TextAreaInputProps
@@ -111,5 +110,6 @@ export const TextArea = React.forwardRef<
 		</Container>
 	)
 })
+TextArea.displayName = "TextArea";
 
 export default TextArea

@@ -114,6 +114,8 @@ const AccordionCard = React.forwardRef<AccordionCardRef, AccordionCardProps>(
 	}
 )
 
+AccordionCard.displayName = 'AccordionCard'
+
 AccordionCard.defaultProps = {
 	children: undefined,
 	title: undefined,

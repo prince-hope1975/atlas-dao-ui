@@ -135,5 +135,5 @@ export const DatePicker = React.forwardRef<Flatpickr, DatePickerProps>(
 		)
 	}
 )
-
+DatePicker.displayName = "DatePicker";
 export default DatePicker

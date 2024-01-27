@@ -211,5 +211,5 @@ const MultiSelectDropdownInput = React.forwardRef<
 		</div>
 	)
 })
-
+MultiSelectDropdownInput.displayName = "MultiSelectDropdownInput";
 export default MultiSelectDropdownInput

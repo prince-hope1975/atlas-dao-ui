@@ -131,5 +131,6 @@ export const TimePicker = React.forwardRef<Flatpickr, TimePickerProps>(
 		)
 	}
 )
+TimePicker.displayName="TimiePircker"
 
 export default TimePicker

@@ -244,7 +244,6 @@ export default function RaffleListings() {
   ]);
 
   React.useEffect(() => {
-    // eslint-disable-next-line security/detect-object-injection
     const fnc = {
       [RAFFLE_LISTINGS_TYPE.MY_LISTINGS]: () => {
         setSort("ASC");

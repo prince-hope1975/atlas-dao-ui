@@ -85,7 +85,7 @@ const Tab = React.forwardRef<HTMLInputElement, TabProps>((props, ref) => {
 		</Container>
 	)
 })
-
+Tab.displayName = 'Tab'
 Tab.defaultProps = {
 	inputGroup: undefined,
 }

@@ -67,7 +67,7 @@ export const RadioCardText = styled.div`
 type RadioCardProps = React.InputHTMLAttributes<HTMLInputElement> & {
 	inputGroup?: any
 }
-
+// eslint-disable-next-line react/display-name
 const RadioCardInput = React.forwardRef<HTMLInputElement, RadioCardProps>(
 	(props, ref) => {
 		const inputRef = React.useRef<HTMLInputElement>(null)
@@ -92,6 +92,8 @@ const RadioCardInput = React.forwardRef<HTMLInputElement, RadioCardProps>(
 		)
 	}
 )
+
+RadioCardInput.displayName = 'RadioCardInput'
 
 RadioCardInput.defaultProps = {
 	inputGroup: undefined,

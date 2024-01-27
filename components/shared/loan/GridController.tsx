@@ -129,9 +129,10 @@ function GridController({
         ...stylesByGrid[gridType],
       }}
     >
-      {loans?.map((props) => {
+      {loans?.map((props,key) => {
         return (
           <LoanItem
+          key={key}
             {...props}
             favoriteLoans={favoriteLoans}
             verifiedCollections={verifiedCollections}

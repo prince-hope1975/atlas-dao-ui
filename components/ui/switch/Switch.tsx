@@ -21,5 +21,6 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>((props, ref) => {
 		</Container>
 	)
 })
+Switch.displayName = "Switch";
 
 export default Switch

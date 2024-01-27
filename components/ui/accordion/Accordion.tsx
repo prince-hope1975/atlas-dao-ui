@@ -102,6 +102,7 @@ const Accordion = React.forwardRef<AccordionRef, AccordionProps>(
 		)
 	}
 )
+Accordion.displayName = 'Accordion'
 
 Accordion.defaultProps = {
 	children: undefined,

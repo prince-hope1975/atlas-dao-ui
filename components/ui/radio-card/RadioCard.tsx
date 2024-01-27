@@ -29,6 +29,7 @@ export const RadioCard = forwardRef<HTMLInputElement, Props>((props, ref) => {
 		</CardItem>
 	)
 })
+RadioCard.displayName = 'RadioCard'
 
 RadioCard.defaultProps = {
 	subtitle: '',
