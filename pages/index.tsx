@@ -103,11 +103,10 @@ export default function Dashboard() {
 						</If>
 					</Flex>
 
-					<Title>
-					{/* {'dashboard:activity.title'} */}
+					{/* <Title>
 					Activity
-					</Title>
-					<Flex
+					</Title> */}
+					{/* <Flex
 						sx={{
 							justifyContent: 'space-between',
 							maxWidth: [null, null, '410px'],
@@ -127,9 +126,9 @@ export default function Dashboard() {
 								{`${feature}s Outgoing`}
 							</Tab>
 						</Tabs>
-					</Flex>
+					</Flex> */}
 					<SectionTitle />
-				
+{/* 				
 					<If condition={feature === FEATURE_TYPE.raffle}>
 						<>
 							{activityType === ACTIVITY_TYPE.incomingActivity && (
@@ -149,7 +148,7 @@ export default function Dashboard() {
 								<OutgoingLoanOffers />
 							)}
 						</>
-					</If>
+					</If> */}
 				</Flex>
 			</LayoutContainer>
 		</Page>
