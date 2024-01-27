@@ -43,12 +43,14 @@ export interface TxBroadcastingModalProps {
 interface TxBroadcastingErrorProps {
   errorMessage: string;
   // onTryAgain: () => void
+  txHash?: string;
   onClose: () => void;
 }
 
 const TxBroadcastingError = ({
   errorMessage,
   // onTryAgain,
+  txHash,
   onClose,
 }: TxBroadcastingErrorProps) => {
   // const { t } = useTranslation(['common'])
@@ -74,14 +76,26 @@ const TxBroadcastingError = ({
           Failed
         </Title>
       </Flex>
-      <Flex sx={{ mt: "12px" }}>
-        <Subtitle>{errorMessage}</Subtitle>
-      </Flex>
       {/* <Flex sx={{ mt: '20px' }}>
 				<Button fullWidth onClick={onTryAgain}>
-					{t('common:try-again')}
+        {t('common:try-again')}
 				</Button>
 			</Flex> */}
+      <Flex  sx={{ mt: "12px" }}>
+        <Subtitle>{errorMessage}</Subtitle>
+      </Flex>
+        {txHash && (
+          <CompleteSectionTxHash
+            onClick={() => {
+              window.open(
+                `https://testnet-explorer.publicawesome.dev/stargaze/tx/${txHash}`,
+                "_blank"
+              );
+            }}
+          >
+            {getShortText(txHash, 6)}
+          </CompleteSectionTxHash>
+        )}
     </Flex>
   );
 };
@@ -283,6 +297,7 @@ const TxBroadcastingModalComponent = ({
             {error && !loading.broadcasting && !loading.send && (
               <TxBroadcastingError
                 // onTryAgain={executeBlockchain}
+                txHash={txReceipt?.txId}
                 errorMessage={error}
                 onClose={modal.remove}
               />

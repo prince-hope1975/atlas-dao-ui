@@ -38,39 +38,63 @@ class LoansContract extends Contract {
     );
   }
 
-  static async modifyLoanListing(
-    loanId: string | number,
-    durationInDays: number | string,
-    interestRate: number | string,
-    amountNative: number | string,
-    comment?: string
-  ) {
+  static async modifyLoanListing({
+    amountNative,
+    durationInDays,
+    interestRate,
+    loanId,
+    comment,
+    address,
+    client,
+  }: {
+    loanId: string | number;
+    durationInDays: number | string;
+    interestRate: number | string;
+    amountNative: number | string;
+    comment?: string;
+    address: string;
+    client: () => Promise<SigningCosmWasmClient>;
+  }) {
+    console.log({
+      amountNative,
+      durationInDays,
+      interestRate,
+      loanId,
+      comment,
+    });
     const loanContractAddress = networkUtils.getContractAddress(
       CONTRACT_NAME.loan
     );
 
-    return networkUtils.postTransaction({
-      contractAddress: loanContractAddress,
-      message: {
-        modify_collaterals: {
-          loan_id: loanId,
-          terms: {
-            duration_in_blocks: +durationInDays * BLOCKS_PER_DAY,
-            interest: amountConverter.default.userFacingToBlockchainValue(
-              (Number(amountNative ?? 0) * Number(interestRate ?? 0)) / 100
-            ),
-            principle: {
-              amount:
-                amountConverter.default.userFacingToBlockchainValue(
-                  amountNative
-                ),
-              denom: networkUtils.getDefaultChainDenom(),
+    return networkUtils.postTransaction(
+      {
+        contractAddress: loanContractAddress,
+        message: {
+          modify_collaterals: {
+            loan_id: loanId,
+            terms: {
+              duration_in_blocks: +durationInDays * BLOCKS_PER_DAY,
+              interest: amountConverter.default.userFacingToBlockchainValue(
+                (Number(amountNative ?? 0) * Number(interestRate ?? 0)) / 100
+              ),
+              principle: {
+                amount:
+                  amountConverter.default.userFacingToBlockchainValue(
+                    amountNative
+                  ),
+                denom: networkUtils.getDefaultChainDenom(),
+              },
             },
+            ...(comment ? { comment } : {}),
           },
-          ...(comment ? { comment } : {}),
         },
       },
-    });
+      client,
+      {
+        gas: 1_000_000,
+        address: address!,
+      }
+    );
   }
 
   static async createLoanListing({

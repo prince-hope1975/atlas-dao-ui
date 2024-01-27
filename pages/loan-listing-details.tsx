@@ -368,12 +368,12 @@ export default function LoanListingDetails() {
     ]
   );
 
-  console.log({
-    loan: loan?.start_block,
-    termsBlock: loan?.terms?.duration_in_blocks,
-    latestBlockHeight: latestBlockHeight?.header?.height,
-    list_date: loan?.list_date,
-  });
+  // console.log({
+  //   loan: loan?.start_block,
+  //   termsBlock: loan?.terms?.duration_in_blocks,
+  //   latestBlockHeight: latestBlockHeight?.header?.height,
+  //   list_date: loan?.list_date,
+  // });
   return (
     <Page
       title="Title" // {t('title')}

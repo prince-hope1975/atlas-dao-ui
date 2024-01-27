@@ -219,7 +219,6 @@ const LoanItem = ({
     [loanPreview?.sg721_token],
     [loanPreview?.sg721_token?.token_id]
   );
-  console.log({ terms });
 
   return (
     <Box key={`${loanId}_${borrower}`}>

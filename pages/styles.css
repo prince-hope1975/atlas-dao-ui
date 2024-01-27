@@ -4,7 +4,7 @@ body {
   inset: 0;
   margin: 0;
   background: #011d2c;
-  color: #f9fafb;
+  color: #f9fafb !important;
   position: relative;
   overflow-y: scroll;
   font-family: "Inter", sans-serif;

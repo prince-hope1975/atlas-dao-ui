@@ -32,6 +32,8 @@ import {
 import { EditModalProps, EditModalResult } from "./modals/edit-modal/EditModal";
 import { Collateral } from "@/types/loan/types";
 import { formaCurrency } from "@/lib/formatCurrency";
+import { useChain } from "@cosmos-kit/react";
+import { CHAIN_NAMES } from "@/utils/blockchain/networkUtils";
 
 interface LoanHeaderActionsRowProps {
   loan?: Collateral["collateral"];
@@ -45,7 +47,8 @@ export const LoanHeaderActionsRow = ({
   loanId,
 }: LoanHeaderActionsRowProps) => {
   const { state } = loan ?? {};
-
+  const { sign, getSigningCosmWasmClient, address, getCosmWasmClient } =
+    useChain(CHAIN_NAMES[1]);
   const router = useRouter();
 
   const queryClient = useQueryClient();
@@ -66,7 +69,11 @@ export const LoanHeaderActionsRow = ({
 
     if (result) {
       const cancelLoanResponse = await NiceModal.show(TxBroadcastingModal, {
-        transactionAction: LoansContract.cancelLoanListing(loanId),
+        transactionAction: LoansContract.cancelLoanListing(
+          loanId,
+          address!,
+          getSigningCosmWasmClient
+        ),
         closeOnFinish: true,
       });
 
@@ -109,13 +116,15 @@ export const LoanHeaderActionsRow = ({
     if (result) {
       const { loanPeriod, interestRate, tokenAmount, comment } = result;
       const modifyRaffleResponse = await NiceModal.show(TxBroadcastingModal, {
-        transactionAction: LoansContract.modifyLoanListing(
+        transactionAction: LoansContract.modifyLoanListing({
           loanId,
-          loanPeriod,
+          durationInDays: loanPeriod,
           interestRate,
-          tokenAmount,
-          comment
-        ),
+          amountNative: tokenAmount,
+          comment,
+          address: address!,
+          client: getSigningCosmWasmClient,
+        }),
         closeOnFinish: true,
       });
 
