@@ -1,11 +1,10 @@
-import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 // import languageDetector from './languageDetector'
 
 export const useRedirect = (param?: string) => {
 	const router = useRouter()
 
-	const to = param || router.asPath
+	// const to = param || router.asPath
 
 	// language detection
 	// useEffect(() => {

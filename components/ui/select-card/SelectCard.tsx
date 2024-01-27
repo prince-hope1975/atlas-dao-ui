@@ -2,7 +2,6 @@ import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ModalCloseIcon } from '@/assets/icons/modal'
 import { Img } from 'react-image'
-import { NFT } from '@/services/api/walletNFTsService'
 import { Box, Flex, IconButton, ThemeUIStyleObject } from 'theme-ui'
 import { Token } from '@/services/api/gqlWalletSercice'
 

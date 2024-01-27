@@ -239,13 +239,11 @@ export default function LoanListings() {
       myAddress,
     ],
     async () => {
-      console.log("Starging loan service", address);
-      if (!address) return null;
+  
       const client = await getCosmWasmClient();
       const contractAddr = networkUtils.getContractAddress("loan");
       const queryClient = new NFTLoansQueryClient(client, contractAddr!);
       const ret = await queryClient?.allCollaterals({});
-      console.log({ loand: ret });
       return ret?.collaterals!;
     }
     // {

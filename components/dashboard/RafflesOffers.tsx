@@ -99,7 +99,7 @@ function RaffleOffers({
 						<Box sx={{ maxWidth: '524px' }}>
 							<ActivityCardEmptyTitle>
 								{/* {t('dashboard:raffles:no-offers')} */}
-								You don't have any offers yet.
+								You {"don't"} have any offers yet.
 								<br />
 								{/* {t('dashboard:raffles:make-offer-to-appear')} */}
 								Make an offer on a raffle for it to appear here.

@@ -112,9 +112,20 @@ export default function ListingDetails() {
   const { sign, getSigningCosmWasmClient, address, getCosmWasmClient } =
     useChain(CHAIN_NAMES[1]);
   const Raffle_comp = useCallback(async () => {
-    const client = await getSigningCosmWasmClient();
+    const client = await getCosmWasmClient();
     const contractAddr = networkUtils.getContractAddress("raffle");
-    return new RaffleClient(client, address!, contractAddr);
+    const raffleInfo = async ({
+      raffleId,
+    }: {
+      raffleId: number;
+    }): Promise<RaffleResponse> => {
+      return client.queryContractSmart(contractAddr, {
+        raffle_info: {
+          raffle_id: raffleId,
+        },
+      });
+    };
+    return { raffleInfo };
   }, [address]);
   const route = useRouter();
 
@@ -162,16 +173,15 @@ export default function ListingDetails() {
   } = useQuery({
     queryKey: [RAFFLE, raffleId, networkName],
     queryFn: async () => {
-      if (!address || !raffleId) return null;
+      if (!raffleId) return null;
       const raffle_client = await Raffle_comp();
       const raf = await raffle_client.raffleInfo({ raffleId: +raffleId });
-      console.log({ raf });
+
       return raf;
     },
     retry: true,
     refetchInterval: 60 * 1000, // Refetch every minute
   });
-  console.log({ raffle });
   // const {} = USE_QUERY(RAFFLE_EVENT);
   const {
     data: ticket = [],

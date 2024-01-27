@@ -33,5 +33,5 @@ const TextInputField = React.forwardRef<HTMLInputElement, TextInputFieldProps>(
 		)
 	}
 )
-
+TextInputField.displayName = "TextInputField";
 export default TextInputField

@@ -67,11 +67,11 @@ import networkUtils, {
 } from "../utils/blockchain/networkUtils";
 import { useChain } from "@cosmos-kit/react";
 import { RaffleClient } from "@/services/blockchain/contracts/raffles/Raffle.client";
-import { AllRafflesResponse } from "@/services/blockchain/contracts/raffles/Raffle.types";
+import { AllRafflesResponse, QueryFilters } from "@/services/blockchain/contracts/raffles/Raffle.types";
+import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 
 // const getStaticProps = makeStaticProps(['common', 'raffle-listings'])
 // const getStaticPaths = makeStaticPaths()
-// export { getStaticPaths, getStaticProps }
 
 export default function RaffleListings() {
   useHeaderActions(<CreateRaffleListing />);
@@ -81,25 +81,43 @@ export default function RaffleListings() {
     RAFFLE_LISTINGS_TYPE.ALL_LISTINGS
   );
   const Raffle_comp = useCallback(async () => {
-    const client = await getSigningCosmWasmClient();
+    const client = await getCosmWasmClient();
+  
     const contractAddr = networkUtils.getContractAddress("raffle");
-    return new RaffleClient(client, address!, contractAddr);
+      const allRaffles = async ({
+        filters,
+        limit,
+        startAfter,
+      }: {
+        filters?: QueryFilters;
+        limit?: number;
+        startAfter?: number;
+      }): Promise<AllRafflesResponse> => {
+        return client.queryContractSmart(contractAddr, {
+          all_raffles: {
+            filters,
+            limit,
+            start_after: startAfter,
+          },
+        });
+      };
+      return { allRaffles };
+    // return new RaffleClient(client, address!, contractAddr);
   }, [address]);
   const myAddress = useAddress();
 
   const { data: _raffles, isLoading: rafflesLoading } = useQuery({
     queryKey: ["raffles", address],
     queryFn: async () => {
-      if (!address) return null;
       const raffle_client = await Raffle_comp();
       const raf = await raffle_client.allRaffles({});
       return raf;
     },
   });
+  console.log({ _raffles });
   const [raffleListing, setRaffleListing] = useState(
     _raffles || ({} as AllRafflesResponse)
   );
-  console.log({ raffleListing });
   useEffect(() => {
     if (
       listingsType === RAFFLE_LISTINGS_TYPE.ALL_LISTINGS &&
@@ -282,7 +300,7 @@ export default function RaffleListings() {
 
   React.useEffect(() => {
     !!raffleListing &&
-      setInfiniteData((prev) => [...prev, ...raffleListing?.raffles]);
+      setInfiniteData((prev) => [...prev, ...(raffleListing?.raffles??[])]);
   }, [raffleListing?.raffles?.length]);
 
   const onFiltersClick = async () => {
@@ -457,7 +475,7 @@ export default function RaffleListings() {
             <Box sx={{ width: "100%" }}>
               <RaffleGridController
                 raffles={raffleListing?.raffles!}
-                isLoading={!raffleListing?.raffles.length && rafflesLoading}
+                isLoading={!raffleListing?.raffles?.length && rafflesLoading}
                 verifiedCollections={verifiedCollections}
                 gridType={Number(gridType)}
                 favoriteRaffles={favoriteRaffles}

@@ -183,7 +183,7 @@ export const ConfirmListing = ({
               >
                 <StepTitle>
                   {/* {t('raffle:confirm-listing.what-are-you-raffling')} */}
-                  What you're raffling
+                  What {"you're"} raffling
                   <span>
                     {/* {t('common:nft', { count: selectedNFTs.length })} */}
                     {selectedNFTs.length} NFTs

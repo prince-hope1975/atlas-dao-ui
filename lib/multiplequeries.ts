@@ -1,5 +1,4 @@
 import { stargazeIndexerClient } from "@/services/graphql";
-import { QueryResult } from "@apollo/client";
 import { DocumentNode } from "graphql";
 
 const executeMultipleStargazeGraphQlQueries = async <T>(

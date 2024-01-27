@@ -35,7 +35,7 @@ function WatchListRaffles() {
 				<Flex sx={{ gap: ['12px'], flexDirection: 'column' }}>
 					<Title>
 						{/* {t('dashboard:watch-list.no-watching-any-listings')} */}
-						You aren't watching any listings yet.
+						You {"aren't"} watching any listings yet.
 						</Title>
 					<Description>
 						{/* {t('dashboard:watch-list.explore-generic-description')} */}
