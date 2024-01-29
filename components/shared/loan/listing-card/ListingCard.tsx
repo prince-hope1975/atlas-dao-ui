@@ -82,9 +82,10 @@ function ListingCard({
             {!imageUrl ? (
               <ImagePlaceholder width="61.56px" height="57.87px" />
             ) : (
-              <Image src={getImageUrl(imageUrl) ?? []} />
+              <Image style={{ zIndex: 0 }} src={getImageUrl(imageUrl) ?? []} />
             )}
             <RightTopImageArea
+              style={{ zIndex: 0 }}
               onClick={(e) => {
                 // disable link when clicking on like icon
                 e.preventDefault();

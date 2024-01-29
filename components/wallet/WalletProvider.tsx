@@ -14,6 +14,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const { gasPrice, feeToken } = getConfig(NETWORK_TYPE)
   return (
     <ChainProvider
+    
       assetLists={assets}
       chains={chains}
       endpointOptions={{
