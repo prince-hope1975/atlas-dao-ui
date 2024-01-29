@@ -31,65 +31,73 @@ const RemoveSuccessModal = NiceModal.create(() => {
 	const router = useRouter()
 
 	return (
-		<Modal isOverHeader isOpen={modal.visible} onCloseModal={modal.remove}>
-			<ModalContainer>
-				<ModalLayoutContainer>
-					<ModalContent>
-						<ModalHeader>
-							{t('raffle-listings:remove-modal.title')}
-							<IconButton
-								sx={{
-									borderRadius: '32px',
-									backgroundColor: theme.colors.dark500,
-								}}
-								onClick={modal.remove}
-							>
-								<ModalCloseIcon />
-							</IconButton>
-						</ModalHeader>
-						<ModalBody>
-							<Flex sx={{ gap: '8px' }}>
-								<Box sx={{ width: '32px', height: '32px' }}>
-									<ModalSuccessCircleIcon />
-								</Box>
-								<Box>
-									<Title>
-{t('raffle-listings:remove-modal.removal-successful')}</Title>
-									<Subtitle>
-										{/* {t('raffle-listings:remove-modal.create-listing-suggestion')} */}
-									
-									</Subtitle>
-								</Box>
-							</Flex>
-							<Flex
-								sx={{ justifyContent: 'space-between', gap: '12px', marginTop: '24px' }}
-							>
-								<Button
-									variant='secondary'
-									fullWidth
-									onClick={() => {
-										router.push(ROUTES.RAFFLE_CREATE_LISTING)
-										modal.remove()
-									}}
-								>
-									{t('raffle-listings:remove-modal.create-new-listing')}
-								</Button>
-								<Button
-									variant='gradient'
-									fullWidth
-									onClick={() => {
-										router.push(ROUTES.DASHBOARD)
-										modal.remove()
-									}}
-								>
-									{t('raffle-listings:remove-modal.go-to-dashboard')}
-								</Button>
-							</Flex>
-						</ModalBody>
-					</ModalContent>
-				</ModalLayoutContainer>
-			</ModalContainer>
-		</Modal>
-	)
+    <Modal isOverHeader isOpen={modal.visible} onCloseModal={modal.remove}>
+      <ModalContainer>
+        <ModalLayoutContainer>
+          <ModalContent>
+            <ModalHeader>
+              remove modal
+              {/* {t('raffle-listings:remove-modal.title')} */}
+              <IconButton
+                sx={{
+                  borderRadius: "32px",
+                  backgroundColor: theme.colors.dark500,
+                }}
+                onClick={modal.remove}
+              >
+                <ModalCloseIcon />
+              </IconButton>
+            </ModalHeader>
+            <ModalBody>
+              <Flex sx={{ gap: "8px" }}>
+                <Box sx={{ width: "32px", height: "32px" }}>
+                  <ModalSuccessCircleIcon />
+                </Box>
+                <Box>
+                  <Title>
+                    removal successful
+                    {/* {t("raffle-listings:remove-modal.removal-successful")} */}
+                  </Title>
+                  <Subtitle>
+                    {/* {t('raffle-listings:remove-modal.create-listing-suggestion')} */}
+                  </Subtitle>
+                </Box>
+              </Flex>
+              <Flex
+                sx={{
+                  justifyContent: "space-between",
+                  gap: "12px",
+                  marginTop: "24px",
+                }}
+              >
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  onClick={() => {
+                    router.push(ROUTES.RAFFLE_CREATE_LISTING);
+                    modal.remove();
+                  }}
+                >
+                  .create new listing
+                  {/* {t("raffle-listings:remove-modal.create-new-listing")} */}
+                </Button>
+                <Button
+                  variant="gradient"
+                  fullWidth
+                  onClick={() => {
+                    router.push(ROUTES.DASHBOARD);
+                    modal.remove();
+                  }}
+                >
+                  go to dashboard
+                  {/* {t("raffle-listings:remove-modal.go-to-dashboard")} */}
+                </Button>
+              </Flex>
+            </ModalBody>
+          </ModalContent>
+        </ModalLayoutContainer>
+      </ModalContainer>
+    </Modal>
+  );
 })
 export default RemoveSuccessModal

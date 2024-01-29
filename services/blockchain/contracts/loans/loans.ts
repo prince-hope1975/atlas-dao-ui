@@ -10,6 +10,9 @@ import {
   CosmWasmClient,
   SigningCosmWasmClient,
 } from "@cosmjs/cosmwasm-stargate";
+import { coin } from "@/utils/blockchain/convertDenomToReadable";
+import { Coin } from "@cosmjs/amino";
+import { LoanTerms } from "./NFTLoans.types";
 
 class LoansContract extends Contract {
   static async cancelLoanListing(
@@ -26,8 +29,8 @@ class LoansContract extends Contract {
         contractAddress: loanContractAddress,
         message: {
           withdraw_collaterals: {
-            loan_id: loanId,
-          },
+            loan_id: +loanId,
+          } ,
         },
       },
       client,
@@ -55,13 +58,6 @@ class LoansContract extends Contract {
     address: string;
     client: () => Promise<SigningCosmWasmClient>;
   }) {
-    console.log({
-      amountNative,
-      durationInDays,
-      interestRate,
-      loanId,
-      comment,
-    });
     const loanContractAddress = networkUtils.getContractAddress(
       CONTRACT_NAME.loan
     );
@@ -71,7 +67,7 @@ class LoansContract extends Contract {
         contractAddress: loanContractAddress,
         message: {
           modify_collaterals: {
-            loan_id: loanId,
+            loan_id: +loanId,
             terms: {
               duration_in_blocks: +durationInDays * BLOCKS_PER_DAY,
               interest: amountConverter.default.userFacingToBlockchainValue(
@@ -82,9 +78,9 @@ class LoansContract extends Contract {
                   amountConverter.default.userFacingToBlockchainValue(
                     amountNative
                   ),
-                denom: networkUtils.getDefaultChainDenom(),
-              },
-            },
+                denom: networkUtils.getDefaultChainDenom() ?? "ustars",
+              } as Coin,
+            } as LoanTerms,
             ...(comment ? { comment } : {}),
           },
         },

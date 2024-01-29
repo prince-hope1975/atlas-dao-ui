@@ -114,7 +114,6 @@ export default function RaffleListings() {
       return raf;
     },
   });
-  console.log({ _raffles });
   const [raffleListing, setRaffleListing] = useState(
     _raffles || ({} as AllRafflesResponse)
   );

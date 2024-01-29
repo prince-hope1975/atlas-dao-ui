@@ -1,5 +1,5 @@
 // import { useTranslation } from 'next-i18next'
-import React from "react";
+import React, { useEffect, useState } from "react";
 import NiceModal from "@ebay/nice-modal-react";
 import useHeaderActions from "../hooks/useHeaderActions";
 import { useQuery } from "@tanstack/react-query";
@@ -89,7 +89,6 @@ export default function LoanListings() {
       }
     `
   );
-  console.log({ data });
   const networkName = getNetworkName();
 
   useHeaderActions(<CreateLoanListing />);
@@ -229,7 +228,6 @@ export default function LoanListings() {
     [
       LOANS,
       networkName,
-      listingsType,
       statuses,
       collections,
       myFavoritesChecked,
@@ -239,19 +237,39 @@ export default function LoanListings() {
       myAddress,
     ],
     async () => {
-  
       const client = await getCosmWasmClient();
       const contractAddr = networkUtils.getContractAddress("loan");
       const queryClient = new NFTLoansQueryClient(client, contractAddr!);
       const ret = await queryClient?.allCollaterals({});
       return ret?.collaterals!;
     }
+
     // {
     //   enabled: !!favoriteLoans,
     //   retry: true,
     // }
   );
-// TODO add later
+  const [loanListings, setLoanListing] = useState(
+    loans || ([] as Collateral[])
+  );
+  useEffect(() => {
+    if (listingsType === LOAN_LISTINGS_TYPE.ALL_LISTINGS && loans?.length) {
+      setLoanListing(loans);
+    }
+    if (listingsType === LOAN_LISTINGS_TYPE.MY_LISTINGS && loans?.length) {
+      setLoanListing(loans?.filter((val) => val?.borrower == myAddress));
+    }
+    if (listingsType === LOAN_LISTINGS_TYPE.FUNDED_BY_ME && loans?.length) {
+      setLoanListing(
+        []
+        // loans?.filter(
+        //   (val) =>
+        //     val?.collateral?.state == LOAN_STATE.Finished
+        // )
+      );
+    }
+  }, [listingsType, loans?.length, myAddress]);
+  // TODO add later
   // React.useEffect(
   //   () => loans && setInfiniteData((prev) => [...(prev??[]), ...(loans??[])]),
   //   [loans?.length]
@@ -307,10 +325,10 @@ export default function LoanListings() {
                 {/* {t('loan-listings:tabs:my-listings')} */}
                 My Loans
               </Tab>
-              <Tab value={LOAN_LISTINGS_TYPE.FUNDED_BY_ME}>
-                {/* {t('loan-listings:tabs:funded-by-me')} */}
+              {/* <Tab value={LOAN_LISTINGS_TYPE.FUNDED_BY_ME}>
                 Funded by me
-              </Tab>
+              </Tab> */}
+                {/* {t('loan-listings:tabs:funded-by-me')} */}
             </Tabs>
           </TabsSection>
           <FiltersSection>
@@ -416,17 +434,17 @@ export default function LoanListings() {
             )}
             <Box sx={{ width: "100%" }}>
               <LoansGridController
-                loans={loans!}
-                isLoading={!loans?.length && isLoading}
+                loans={loanListings!}
+                isLoading={!loanListings?.length && isLoading}
                 verifiedCollections={verifiedCollections}
                 gridType={Number(gridType)}
                 favoriteLoans={favoriteLoans}
               />
               <Flex sx={{ width: "100%", marginTop: "14px" }}>
-                {(loans?.length ?? 0) > 0 && !!loans?.length && !isLoading && (
+                {(loanListings?.length ?? 0) > 0 && !!loanListings?.length && !isLoading && (
                   <Button
-                  // disabled={loans?.page === loans.pageCount}
-                  disabled
+                    // disabled={loans?.page === loans.pageCount}
+                    disabled
                     fullWidth
                     variant="dark"
                     onClick={() => setPage((prev) => prev + 1)}

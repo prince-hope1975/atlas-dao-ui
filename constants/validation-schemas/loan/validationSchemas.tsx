@@ -20,7 +20,7 @@ export const LoanDetailsStepSchema = yup.object().shape({
 			originalValue.trim() === '' ? null : value
 		)
 		.max(100, 'loan-form-steps-interest-rate-maximum')
-		.integer('loan-form-steps-interest-rate-must-be-an-integer')
+		// .integer('loan-form-steps-interest-rate-must-be-an-integer')
 		.typeError('loan-form-steps-interest-rate-must-be-number')
 		.min(0, 'loan-form-steps-interest-rate-must-be-positive'),
 
