@@ -248,6 +248,7 @@ export default function LoanListings() {
     //   retry: true,
     // }
   );
+  console.log({ loans });
   const [loanListings, setLoanListing] = useState(
     loans || ([] as Collateral[])
   );
