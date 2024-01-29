@@ -484,6 +484,7 @@ export default function RaffleListings() {
                   !!raffleListing?.raffles?.length &&
                   !rafflesLoading && (
                     <Button
+                    disabled
                       // TODO uncomment
                       //   disabled={raffles?.page === raffles.pageCount}
                       fullWidth

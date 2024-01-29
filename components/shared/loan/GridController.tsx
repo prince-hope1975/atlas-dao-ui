@@ -219,7 +219,6 @@ const LoanItem = ({
     [loanPreview?.sg721_token],
     [loanPreview?.sg721_token?.token_id,list_date]
   );
-  // console.log({ loanId, data });
   return (
     <Box key={`${loanId}_${list_date}`}>
       <ListingCard

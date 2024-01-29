@@ -172,7 +172,6 @@ export default function LoanListings() {
   const [debouncedSearch, setDebouncedSearch] = React.useState("");
 
   useDebounce(() => setDebouncedSearch(search), 800, [search]);
-
   const [listingsType, setListingsType] = React.useState(
     LOAN_LISTINGS_TYPE.ALL_LISTINGS
   );
@@ -252,7 +251,10 @@ export default function LoanListings() {
   const [loanListings, setLoanListing] = useState(
     loans || ([] as Collateral[])
   );
-  console.log({ loans });
+  const [filteredListing, setFilteredListing] = useState<null | Collateral[]>(
+    loans || ([] as Collateral[])
+  );
+
   useEffect(() => {
     if (listingsType === LOAN_LISTINGS_TYPE.ALL_LISTINGS && loans?.length) {
       setLoanListing(loans);
@@ -270,6 +272,17 @@ export default function LoanListings() {
       );
     }
   }, [listingsType, loans?.length, myAddress]);
+  useEffect(() => {
+    if (!debouncedSearch) {
+      setFilteredListing(null);
+    } else {
+      setFilteredListing(
+        loanListings?.filter((val) =>
+          val?.collateral?.comment?.includes(debouncedSearch)||val?.collateral?.loan_preview
+        )
+      );
+    }
+  }, [debouncedSearch]);
   // TODO add later
   // React.useEffect(
   //   () => loans && setInfiniteData((prev) => [...(prev??[]), ...(loans??[])]),
@@ -329,7 +342,7 @@ export default function LoanListings() {
               {/* <Tab value={LOAN_LISTINGS_TYPE.FUNDED_BY_ME}>
                 Funded by me
               </Tab> */}
-                {/* {t('loan-listings:tabs:funded-by-me')} */}
+              {/* {t('loan-listings:tabs:funded-by-me')} */}
             </Tabs>
           </TabsSection>
           <FiltersSection>
@@ -442,18 +455,19 @@ export default function LoanListings() {
                 favoriteLoans={favoriteLoans}
               />
               <Flex sx={{ width: "100%", marginTop: "14px" }}>
-                {(loanListings?.length ?? 0) > 0 && !!loanListings?.length && !isLoading && (
-                  <Button
-                    // disabled={loans?.page === loans.pageCount}
-                    disabled
-                    fullWidth
-                    variant="dark"
-                    onClick={() => setPage((prev) => prev + 1)}
-                  >
-                    {/* {t('common:show-more')} */}
-                    Show More
-                  </Button>
-                )}
+                {(loanListings?.length ?? 0) > 0 &&
+                  !!loanListings?.length &&
+                  !isLoading && (
+                    <Button
+                      // disabled={loans?.page === loans.pageCount}
+                      disabled
+                      fullWidth
+                      variant="dark"
+                      onClick={() => setPage((prev) => prev + 1)}
+                    >
+                      Show More
+                    </Button>
+                  )}
               </Flex>
             </Box>
           </ListingsNFTsContainer>

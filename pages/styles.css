@@ -45,7 +45,7 @@ input[type="reset"] {
 a {
   all: unset;
   text-decoration: none !important;
-  color: white;
+  color: white !important;
 }
 /* Customize website's scrollbar like Mac OS
 Not supports in Firefox and IE */

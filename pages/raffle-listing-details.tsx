@@ -182,7 +182,6 @@ export default function ListingDetails() {
     retry: true,
     refetchInterval: 60 * 1000, // Refetch every minute
   });
-  console.log({raffle})
   // const {} = USE_QUERY(RAFFLE_EVENT);
   const [ticketController,setTC]=useState(Math.random())
   const {
