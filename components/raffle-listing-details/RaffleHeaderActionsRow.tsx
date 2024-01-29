@@ -32,6 +32,7 @@ import { RaffleResponse } from "@/services/blockchain/contracts/raffles/Raffle.t
 import convertTimestampToDate from "@/lib/convertTimeStampToDate";
 import { EventEdge } from "@/services/api/gqlWalletSercice";
 import RafflesContract from "@/services/blockchain/contracts/raffles/raffles";
+import useRafflesContract from "@/services/blockchain/contracts/raffles/raffles/hook";
 
 interface RaffleHeaderActionsRowProps {
   raffle?: RaffleResponse;
@@ -41,11 +42,11 @@ interface RaffleHeaderActionsRowProps {
 
 export const RaffleHeaderActionsRow = ({
   raffle,
-  participants
+  participants,
 }: RaffleHeaderActionsRowProps) => {
   const { raffle_info: raffleInfo } = raffle ?? {};
   const { raffle_options: raffleOptions } = raffleInfo ?? {};
-
+  const { modifyRaffleListing, cancelRaffleListing } = useRafflesContract();
   const router = useRouter();
 
   const queryClient = useQueryClient();
@@ -117,7 +118,7 @@ export const RaffleHeaderActionsRow = ({
       const duration = moment.duration(end.diff(startDate));
 
       const response = await NiceModal.show(TxBroadcastingModal, {
-        transactionAction: RafflesContract.modifyRaffleListing(
+        transactionAction: modifyRaffleListing(
           raffle.raffle_id,
           {
             maxParticipantNumber: +(ticketSupply ?? 0),
@@ -148,9 +149,7 @@ export const RaffleHeaderActionsRow = ({
 
     if (result) {
       const cancelRaffleResponse = await NiceModal.show(TxBroadcastingModal, {
-        transactionAction: RafflesContract.cancelRaffleListing(
-          Number(result.raffleId)
-        ),
+        transactionAction: cancelRaffleListing(Number(result.raffleId)),
         closeOnFinish: true,
       });
 

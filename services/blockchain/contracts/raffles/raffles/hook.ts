@@ -267,6 +267,27 @@ export const useRafflesContract = () => {
       }
     );
   }
+  async function cancelRaffleListing(raffleId: number) {
+		const raffleContractAddress = networkUtils.getContractAddress(
+			CONTRACT_NAME.raffle
+		)
+
+		return networkUtils.postTransaction(
+      {
+        contractAddress: raffleContractAddress,
+        message: {
+          cancel_raffle: {
+            raffle_id: raffleId,
+          },
+        },
+      },
+      getSigningCosmWasmClient,
+      {
+        gas: 1_000_000,
+        address: address!,
+      }
+    );
+	}
   return {
     provideRandomness,
     getContractInfo,
@@ -274,6 +295,7 @@ export const useRafflesContract = () => {
     modifyRaffleListing,
     drawRaffle,
     purchaseRaffleTickets,
+    cancelRaffleListing,
   };
 };
 
