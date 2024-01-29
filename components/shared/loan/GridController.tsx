@@ -129,10 +129,10 @@ function GridController({
         ...stylesByGrid[gridType],
       }}
     >
-      {loans?.map((props,key) => {
+      {loans?.map((props, key) => {
         return (
           <LoanItem
-          key={key}
+            key={key}
             {...props}
             favoriteLoans={favoriteLoans}
             verifiedCollections={verifiedCollections}
@@ -217,11 +217,11 @@ const LoanItem = ({
     }));
   const { data } = useToken(
     [loanPreview?.sg721_token],
-    [loanPreview?.sg721_token?.token_id]
+    [loanPreview?.sg721_token?.token_id,list_date]
   );
-
+  // console.log({ loanId, data });
   return (
-    <Box key={`${loanId}_${borrower}`}>
+    <Box key={`${loanId}_${list_date}`}>
       <ListingCard
         onLike={toggleLike}
         state={state}
@@ -237,7 +237,7 @@ const LoanItem = ({
         id={data?.[0]?.token?.id ?? loanId}
         name={data?.[0]?.token?.name ?? ""}
         liked={liked}
-        apr={Intl.NumberFormat("en-Us", {maximumSignificantDigits:3}).format(
+        apr={Intl.NumberFormat("en-Us", { maximumSignificantDigits: 3 }).format(
           Number(
             (+(terms?.interest ?? 0) / +(terms?.principle?.amount ?? 0)) * 100
           )

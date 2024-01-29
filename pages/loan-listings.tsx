@@ -232,8 +232,8 @@ export default function LoanListings() {
       collections,
       myFavoritesChecked,
       counteredByMeChecked,
-      debouncedSearch,
-      page,
+      // debouncedSearch,
+      // page,
       myAddress,
     ],
     async () => {
@@ -252,6 +252,7 @@ export default function LoanListings() {
   const [loanListings, setLoanListing] = useState(
     loans || ([] as Collateral[])
   );
+  console.log({ loans });
   useEffect(() => {
     if (listingsType === LOAN_LISTINGS_TYPE.ALL_LISTINGS && loans?.length) {
       setLoanListing(loans);
