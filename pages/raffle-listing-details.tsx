@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useQuery as USE_QUERY } from "@apollo/client";
@@ -182,13 +182,16 @@ export default function ListingDetails() {
     retry: true,
     refetchInterval: 60 * 1000, // Refetch every minute
   });
+  console.log({raffle})
   // const {} = USE_QUERY(RAFFLE_EVENT);
+  const [ticketController,setTC]=useState(Math.random())
   const {
     data: ticket = [],
     error: ticketError,
     isLoading: ticketLoading,
+    refetch: ticketRefetch,
   } = useQuery({
-    queryKey: [RAFFLE_TICKET, raffleId, networkName, address],
+    queryKey: [RAFFLE_TICKET, raffleId, networkName, address, ticketController],
     queryFn: async () => {
       if (!raffleId) return null;
       const contractAddr = networkUtils.getContractAddress("raffle");
@@ -335,7 +338,9 @@ export default function ListingDetails() {
         closeOnFinish: true,
       });
 
-      await refetch();
+       refetch();
+       setTC(Math.random())
+      await ticketRefetch();
     }
   };
 
@@ -360,6 +365,7 @@ export default function ListingDetails() {
       transactionAction: provideRandomness(raffle?.raffle_id),
       closeOnFinish: true,
     });
+    await refetch()
   };
 
   // const provideRandomness = async () => {
@@ -646,10 +652,12 @@ export default function ListingDetails() {
                     </AttributeCard>
                   </AttributesCard>
                 </Row>
-                {raffle?.raffle_info?.winner &&
-                myAddress &&
-                [RAFFLE_STATE.Closed].includes(
-                  raffle?.raffle_state as RAFFLE_STATE
+                {!(
+                  !raffle?.raffle_info?.winner &&
+                  myAddress &&
+                  [RAFFLE_STATE.Closed].includes(
+                    raffle?.raffle_state as RAFFLE_STATE
+                  )
                 ) ? (
                   <></>
                 ) : (

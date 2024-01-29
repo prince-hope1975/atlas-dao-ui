@@ -260,7 +260,7 @@ const LoanItem = ({
           ({ collectionAddress }) =>
             loanPreview?.sg721_token?.address === collectionAddress
         )}
-        collectionName={loanPreview?.sg721_token?.collectionName || ""}
+        collectionName={data?.at(0)?.token?.name || ""}
         isSmall={gridType === GRID_TYPE.BIG}
       />
     </Box>
