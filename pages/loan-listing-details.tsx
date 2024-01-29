@@ -293,16 +293,13 @@ export default function LoanListingDetails() {
     if (!loan) {
       return;
     }
-
     if (!acceptedLoanOffer) {
       return;
     }
-    const totalAmountToRepay = formaCurrency(
-      (1 +
-        formaCurrency(+acceptedLoanOffer?.offer_info?.terms?.interest! ?? 0) /
-          100) *
-        +(acceptedLoanOffer?.offer_info?.terms?.principle.amount ?? 0)
-    );
+    const totalAmountToRepay =
+      +(acceptedLoanOffer?.offer_info?.terms?.interest! ?? 0) +
+      +(acceptedLoanOffer?.offer_info?.terms?.principle.amount ?? 0);
+    console.log({ totalAmountToRepay });
     const repayLoanResponse = await NiceModal.show(TxBroadcastingModal, {
       transactionAction: LoansContract.repayBorrowedFunds(
         +(loanId as string),
@@ -671,7 +668,7 @@ export default function LoanListingDetails() {
                     </AttributeCard>
                   </AttributesCard>
                 </Row>
-              
+
                 {isMyLoan &&
                   acceptedLoanOffer &&
                   [LOAN_STATE.Started].includes(

@@ -240,7 +240,7 @@ const TxBroadcastingModalComponent = ({
   const [data, setData] = React.useState<unknown>(null);
 
   const closeResolveModal = (resolveData?: any) => {
-    console.log({ resolveData, data });
+    // console.log({ resolveData, data });
     modal.resolve(resolveData || data);
     modal.remove();
   };
