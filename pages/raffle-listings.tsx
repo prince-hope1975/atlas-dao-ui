@@ -67,7 +67,10 @@ import networkUtils, {
 } from "../utils/blockchain/networkUtils";
 import { useChain } from "@cosmos-kit/react";
 import { RaffleClient } from "@/services/blockchain/contracts/raffles/Raffle.client";
-import { AllRafflesResponse, QueryFilters } from "@/services/blockchain/contracts/raffles/Raffle.types";
+import {
+  AllRafflesResponse,
+  QueryFilters,
+} from "@/services/blockchain/contracts/raffles/Raffle.types";
 import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 
 // const getStaticProps = makeStaticProps(['common', 'raffle-listings'])
@@ -80,35 +83,36 @@ export default function RaffleListings() {
   const [listingsType, setListingsType] = React.useState(
     RAFFLE_LISTINGS_TYPE.ALL_LISTINGS
   );
-  const Raffle_comp = useCallback(async () => {
+  const Raffle_comp = async () => {
     const client = await getCosmWasmClient();
-  
+
     const contractAddr = networkUtils.getContractAddress("raffle");
-      const allRaffles = async ({
-        filters,
-        limit,
-        startAfter,
-      }: {
-        filters?: QueryFilters;
-        limit?: number;
-        startAfter?: number;
-      }): Promise<AllRafflesResponse> => {
-        return client.queryContractSmart(contractAddr, {
-          all_raffles: {
-            filters,
-            limit,
-            start_after: startAfter,
-          },
-        });
-      };
-      return { allRaffles };
+    const allRaffles = async ({
+      filters,
+      limit,
+      startAfter,
+    }: {
+      filters?: QueryFilters;
+      limit?: number;
+      startAfter?: number;
+    }): Promise<AllRafflesResponse> => {
+      return client.queryContractSmart(contractAddr, {
+        all_raffles: {
+          filters,
+          limit,
+          start_after: startAfter,
+        },
+      });
+    };
+    return { allRaffles };
     // return new RaffleClient(client, address!, contractAddr);
-  }, [address]);
+  };
   const myAddress = useAddress();
 
   const { data: _raffles, isLoading: rafflesLoading } = useQuery({
     queryKey: ["raffles", address],
     queryFn: async () => {
+      console.log("Fetching raffles");
       const raffle_client = await Raffle_comp();
       const raf = await raffle_client.allRaffles({});
       return raf;
@@ -225,7 +229,6 @@ export default function RaffleListings() {
 
   const [wonByMeChecked, setWonByMeChecked] = React.useState(false);
 
-
   const { data: favoriteRaffles } = useQuery(
     [FAVORITES_RAFFLES, networkName, myAddress],
     async () =>
@@ -299,7 +302,7 @@ export default function RaffleListings() {
 
   React.useEffect(() => {
     !!raffleListing &&
-      setInfiniteData((prev) => [...prev, ...(raffleListing?.raffles??[])]);
+      setInfiniteData((prev) => [...prev, ...(raffleListing?.raffles ?? [])]);
   }, [raffleListing?.raffles?.length]);
 
   const onFiltersClick = async () => {
@@ -484,7 +487,7 @@ export default function RaffleListings() {
                   !!raffleListing?.raffles?.length &&
                   !rafflesLoading && (
                     <Button
-                    disabled
+                      disabled
                       // TODO uncomment
                       //   disabled={raffles?.page === raffles.pageCount}
                       fullWidth

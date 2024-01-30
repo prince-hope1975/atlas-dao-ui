@@ -39,7 +39,7 @@ import { getImageUrl } from "@/lib/getImageUrl";
 export interface ViewNFTsModalProps {
   title?: string;
   children?: React.ReactNode;
-  nfts: Sg721Token[];
+  nfts: TokenResponse[];
   nftResponse: TokenResponse[];
 }
 
@@ -53,8 +53,14 @@ export const ViewNFTsModal = NiceModal.create(
     const modal = useModal();
     const theme = useTheme();
     const networkName = getNetworkName();
-    const { data: collections } = useGetCollectionsFromSG721_token(nfts);
-    console.log({ collections });
+
+    const { data: collections } = useGetCollectionsFromSG721_token(
+      nfts?.map((res) => ({
+        address: res?.token?.collectionAddr,
+        token_id: res?.token?.tokenId,
+      }))
+    );
+    // console.log({ nfts, nftResponse ,collections});
     const { data: verifiedCollections } = useQuery(
       [VERIFIED_COLLECTIONS],
       async () =>
@@ -68,7 +74,6 @@ export const ViewNFTsModal = NiceModal.create(
       collections,
       (col) => col?.collection?.collectionAddr
     );
-    console.log({ availableCollections });
     const [selectedCollections, setSelectedCollections] = React.useState<
       MultiSelectInputOption[]
     >([]);
@@ -77,20 +82,19 @@ export const ViewNFTsModal = NiceModal.create(
       React.useState<HTMLDivElement | null>(null);
     const [searchName, setSearchName] = React.useState<string>("");
 
-    const filteredNFTs = collections?.filter(
+    const filteredNFTs = nfts?.filter(
       (nft) =>
         (selectedCollections.length
           ? selectedCollections
               .map(({ value }) => value)
-              .includes(nft.collection?.collectionAddr)
+              .includes(nft?.token?.collectionAddr)
           : true) &&
         (searchName
-          ? (nft?.collection?.name || "")
+          ? (nft?.token?.name || "")
               .toLowerCase()
               .match(`${searchName.toLowerCase()}.*`)
           : true)
     );
-    console.log({ filteredNFTs });
     return (
       <Modal isOverHeader isOpen={modal.visible} onCloseModal={modal.remove}>
         <ModalOverlay>
@@ -155,17 +159,19 @@ export const ViewNFTsModal = NiceModal.create(
                         onChange={(collections) =>
                           setSelectedCollections(collections)
                         }
-                        options={availableCollections.filter(res=>res?.collection).map(
-                          ({
-                            collection: {
-                              collectionAddr: collectionAddress,
-                              name: collectionName,
-                            },
-                          }) => ({
-                            label: collectionName,
-                            value: collectionAddress,
-                          })
-                        )}
+                        options={availableCollections
+                          .filter((res) => res?.collection)
+                          .map(
+                            ({
+                              collection: {
+                                collectionAddr: collectionAddress,
+                                name: collectionName,
+                              },
+                            }) => ({
+                              label: collectionName,
+                              value: collectionAddress,
+                            })
+                          )}
                       />
                     </Flex>
                     <div
@@ -185,51 +191,49 @@ export const ViewNFTsModal = NiceModal.create(
                     }}
                   >
                     <FiltersSection>
-                      {availableCollections.map(
-                        ({
-                          collection: {
-                            collectionAddr: collectionAddress,
-                            name: collectionName,
-                          },
-                        }) => {
-                          const checked = selectedCollections
-                            .map(({ value }) => value)
-                            .includes(collectionAddress);
+                      {availableCollections.map(({ collection }) => {
+                        if (!collection) return;
+                        const {
+                          collectionAddr: collectionAddress,
+                          name: collectionName,
+                        } = collection;
+                        const checked = selectedCollections
+                          .map(({ value }) => value)
+                          .includes(collectionAddress);
 
-                          const setCollections = (
-                            prevCollectionAddresses: MultiSelectInputOption[]
-                          ) => {
-                            if (checked) {
-                              return selectedCollections.filter(
-                                (collection) =>
-                                  collection.value !== collectionAddress
-                              );
-                            }
-                            return [
-                              ...prevCollectionAddresses,
-                              {
-                                label: collectionName,
-                                value: collectionAddress,
-                              },
-                            ];
-                          };
+                        const setCollections = (
+                          prevCollectionAddresses: MultiSelectInputOption[]
+                        ) => {
+                          if (checked) {
+                            return selectedCollections.filter(
+                              (collection) =>
+                                collection.value !== collectionAddress
+                            );
+                          }
+                          return [
+                            ...prevCollectionAddresses,
+                            {
+                              label: collectionName,
+                              value: collectionAddress,
+                            },
+                          ];
+                        };
 
-                          return (
-                            <Box
-                              key={collectionAddress}
-                              sx={{ flex: 1, maxHeight: "66px" }}
-                            >
-                              <CheckboxCard
-                                checked={checked}
-                                onChange={() =>
-                                  setSelectedCollections(setCollections)
-                                }
-                                title={collectionName}
-                              />
-                            </Box>
-                          );
-                        }
-                      )}
+                        return (
+                          <Box
+                            key={collectionAddress}
+                            sx={{ flex: 1, maxHeight: "66px" }}
+                          >
+                            <CheckboxCard
+                              checked={checked}
+                              onChange={() =>
+                                setSelectedCollections(setCollections)
+                              }
+                              title={collectionName}
+                            />
+                          </Box>
+                        );
+                      })}
                     </FiltersSection>
 
                     <Flex
@@ -241,26 +245,29 @@ export const ViewNFTsModal = NiceModal.create(
                     >
                       <NFTCardsGrid>
                         {filteredNFTs?.map((nft, idx) => {
+                          const collectionInfo = collections?.find(
+                            (res) =>
+                              res?.collection?.collectionAddr ===
+                              nft?.token?.collectionAddr
+                          );
                           return (
                             <Box
-                              key={`${nft.collection.collectionAddr}_${
-                                nfts.at(idx)?.token_id ?? idx
+                              key={`${nft?.token?.collectionAddr}_${
+                                nft?.token?.tokenId ?? idx
                               }`}
                             >
                               <NFTCard
-                                imageUrl={[
-                                  getImageUrl(
-                                    nftResponse?.at(idx)?.token?.imageUrl!
-                                  ),
-                                ]}
-                                collectionName={
-                                  nftResponse?.at(idx)?.token?.description!
-                                }
                                 {...nft}
-                                name={nftResponse?.at(idx)?.token?.name!}
+                                imageUrl={[getImageUrl(nft?.token?.imageUrl!)]}
+                                name={nft?.token?.name!}
+                                collectionName={
+                                  collectionInfo?.collection?.name ??
+                                  nft?.token?.name!
+                                }
                                 verified={(verifiedCollections ?? []).some(
                                   ({ collectionAddress }) =>
-                                    nft?.collection?.collectionAddr === collectionAddress
+                                    nft?.token?.collectionAddr ===
+                                    collectionAddress
                                 )}
                                 onCardClick={() => {
                                   modal.resolve({

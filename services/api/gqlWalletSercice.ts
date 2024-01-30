@@ -167,6 +167,8 @@ export const ALL_TOKEN_DATA = gql`
       description
       createdAt
       ownerAddr
+      tokenId
+      collectionAddr
     }
   }
 `;

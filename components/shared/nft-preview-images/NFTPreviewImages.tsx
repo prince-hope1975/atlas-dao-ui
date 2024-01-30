@@ -6,7 +6,7 @@ import { NFT } from "@/services/api/walletNFTsService";
 import { Sg721Token } from "@/types";
 import { gql, useQuery } from "@apollo/client";
 import { getImageUrl } from "@/lib/getImageUrl";
-import { useToken } from "@/hooks/useTokens";
+import { TokenResponse, useToken } from "@/hooks/useTokens";
 
 const PreviewNFTsSection = styled.div`
   display: flex;
@@ -47,18 +47,16 @@ const PreviewImageContainer = styled.div`
 `;
 
 interface NFTPreviewImagesProps {
-  nfts: Sg721Token[];
+  nfts: TokenResponse[];
+  loading: boolean;
   previewItemsLimit?: number;
 }
 
 function NFTPreviewImages({
   nfts,
   previewItemsLimit = 4,
+  loading = false,
 }: NFTPreviewImagesProps) {
-  const { data, isLoading: loading } = useToken(nfts, [
-    "nfts",
-    nfts?.at(0)?.token_id,
-  ]);
   // const { data, loading } = useQuery<{
   //   token: {
   //     imageUrl: string;
@@ -78,20 +76,21 @@ function NFTPreviewImages({
   //     },
   //   }
   // );
+  console.log({ nfts });
   return (
     <PreviewNFTsSection>
-      {((data?.map((res) => res?.token) ?? nfts) || [])
+      {((nfts?.map((res) => res?.token) ?? nfts) || [])
         .slice(0, previewItemsLimit)
         .map((nft, id) => (
           <PreviewImageContainer key={`${id}`}>
-            {loading || !data ? (
+            {loading || !nft ? (
               <ImagePlaceholder width="61.56px" height="57.87px" />
             ) : (
               <PreviewImage
                 width={100}
                 height={100}
-                alt={data?.at(id)?.token?.description ?? "alt"}
-                src={getImageUrl(data?.at(id)?.token?.imageUrl!) ?? []}
+                alt={nfts?.at(id)?.token?.description ?? "alt"}
+                src={getImageUrl(nfts?.at(id)?.token?.imageUrl!) ?? []}
               />
             )}
           </PreviewImageContainer>

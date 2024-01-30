@@ -177,7 +177,7 @@ export default function LoanListingDetails() {
       refetchInterval: 60 * 1000,
     }
   );
-
+  console.log({ active_offer, loan });
   const { data: latestBlockHeight, error } = useQuery(
     [LATEST_BLOCK, networkName],
     async () => {
@@ -371,6 +371,10 @@ export default function LoanListingDetails() {
   //   latestBlockHeight: latestBlockHeight?.header?.height,
   //   list_date: loan?.list_date,
   // });
+  const blocksUntilDefault =
+    (loan?.start_block ?? 0) +
+      (loan?.terms?.duration_in_blocks ?? 0) -
+      (Number(latestBlockHeight?.header?.height) || 0) ?? 0;
   return (
     <Page
       title="Title" // {t('title')}
@@ -670,6 +674,7 @@ export default function LoanListingDetails() {
                 </Row>
 
                 {isMyLoan &&
+                  blocksUntilDefault > 0 &&
                   acceptedLoanOffer &&
                   [LOAN_STATE.Started].includes(
                     loan?.state ?? ("" as LOAN_STATE)
@@ -690,10 +695,8 @@ export default function LoanListingDetails() {
                   )}
 
                 {!isMyLoan &&
-                  [LOAN_STATE.PendingDefault].includes(
-                    loan?.state as LOAN_STATE
-                  ) &&
-                  active_offer?.offer_info?.lender === myAddress && (
+                  blocksUntilDefault < 0 &&
+                  [LOAN_STATE.Started].includes(loan?.state as LOAN_STATE) && (
                     <Row>
                       <Button
                         size="extraLarge"

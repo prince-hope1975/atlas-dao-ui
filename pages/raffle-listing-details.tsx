@@ -87,7 +87,7 @@ import {
   RaffleQueryClient,
 } from "@/services/blockchain/contracts/raffles/Raffle.client";
 import convertTimestampToDate from "@/lib/convertTimeStampToDate";
-import { Coin, coin, parseCoins } from "@cosmjs/amino";
+import { Coin } from "@cosmjs/amino";
 import { formaCurrency } from "@/lib/formatCurrency";
 import {
   RaffleResponse,
@@ -100,12 +100,6 @@ import {
 } from "@/services/api/gqlWalletSercice";
 import executeMultipleStargazeGraphQlQueries from "@/lib/multiplequeries";
 import { useToken } from "@/hooks/useTokens";
-import RafflesContract from "@/services/blockchain/contracts/raffles/raffles";
-
-// const getStaticProps = makeStaticProps(['common', 'raffle-listings'])
-// const getStaticPaths = makeStaticPaths()
-
-// export { getStaticPaths, getStaticProps }
 
 export default function ListingDetails() {
   // const { t } = useTranslation(['common', 'raffle-listings'])
@@ -140,7 +134,7 @@ export default function ListingDetails() {
   const updateFavoriteRaffleState = (data: FavoriteRaffleResponse) =>
     queryClient.setQueryData(
       [FAVORITES_RAFFLES, networkName, myAddress],
-      (old: any) => [...old.filter((o) => o?.id !== data?.id), data]
+      (old: any) => [...old?.filter((o) => o?.id !== data?.id), data]
     );
 
   const { mutate: addFavoriteRaffle } = useMutation(
@@ -169,7 +163,6 @@ export default function ListingDetails() {
     data: raffle,
     isLoading,
     refetch,
-    error,
   } = useQuery({
     queryKey: [RAFFLE, raffleId, networkName],
     queryFn: async () => {
@@ -183,7 +176,7 @@ export default function ListingDetails() {
     refetchInterval: 60 * 1000, // Refetch every minute
   });
   // const {} = USE_QUERY(RAFFLE_EVENT);
-  const [ticketController,setTC]=useState(Math.random())
+  const [ticketController, setTC] = useState(Math.random());
   const {
     data: ticket = [],
     error: ticketError,
@@ -242,9 +235,9 @@ export default function ListingDetails() {
   );
 
   const [ownerInfo] = useNameService(
-    raffle?.data?.owner ? [raffle?.raffleInfo?.owner] : []
+    raffle?.raffle_info?.owner ? [raffle?.raffle_info?.owner!] : []
   );
-
+  console.log({ raffle });
   const { raffle_info } = raffle ?? {};
   const { raffle_options } = raffle_info ?? {};
 
@@ -269,15 +262,17 @@ export default function ListingDetails() {
     .map(({ sg721_token }) => sg721_token as Sg721Token);
 
   useHeaderActions(<CreateRaffleListing />);
-  const { data: NFTMeta, isLoading: loading } = useToken(nfts, ["nfts", nfts]);
-
+  const { data: NFTMeta, isLoading: nftLoading } = useToken(nfts, [
+    "nfts",
+    nfts,
+  ]);
   const handleViewAllNFTs = async () => {
     if (!raffle) {
       return;
     }
     const [, result] = await asyncAction<ViewNFTsModalResult>(
       NiceModal.show(ViewNFTsModal, {
-        nfts: nfts,
+        nfts: NFTMeta,
         nftResponse: NFTMeta,
         title: "All NFTs", //  t('common:all-nfts'),
       } as ViewNFTsModalProps)
@@ -337,8 +332,8 @@ export default function ListingDetails() {
         closeOnFinish: true,
       });
 
-       refetch();
-       setTC(Math.random())
+      refetch();
+      setTC(Math.random());
       await ticketRefetch();
     }
   };
@@ -355,8 +350,7 @@ export default function ListingDetails() {
 
     refetch();
   };
-
-  const handleDetermineWinner = async () => {
+  const handleProvideRandomness = async () => {
     if (!raffle) {
       return;
     }
@@ -364,7 +358,7 @@ export default function ListingDetails() {
       transactionAction: provideRandomness(raffle?.raffle_id),
       closeOnFinish: true,
     });
-    await refetch()
+    await refetch();
   };
 
   // const provideRandomness = async () => {
@@ -457,7 +451,7 @@ export default function ListingDetails() {
                 <Row>
                   <Button fullWidth variant="dark" onClick={handleViewAllNFTs}>
                     <Flex sx={{ alignItems: "center" }}>
-                      <NFTPreviewImages nfts={nfts} />
+                      <NFTPreviewImages loading={nftLoading} nfts={NFTMeta!} />
                       <div>
                         {/* {t('raffle-listings:view-all-nfts')} */}
                         View all NFTs
@@ -664,11 +658,11 @@ export default function ListingDetails() {
                     <Button
                       fullWidth
                       variant="gradient"
-                      onClick={handleDetermineWinner}
+                      onClick={handleProvideRandomness}
                       // onClick={handleViewAllNFTs}
                     >
                       <Flex sx={{ alignItems: "center" }}>
-                        <div>Determine Winner</div>
+                        <div>Provide Randomness</div>
                       </Flex>
                     </Button>
                   </Row>

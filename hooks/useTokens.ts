@@ -13,6 +13,8 @@ interface Token {
   description: string;
   createdAt: string;
   ownerAddr: string;
+  collectionAddr: string;
+  tokenId: string;
   //   price: null;
 }
 
@@ -38,4 +40,3 @@ export const useToken = (props: Sg721Token[], keys: any[] = []) => {
     },
   });
 };
-
