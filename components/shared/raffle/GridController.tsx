@@ -131,8 +131,9 @@ function GridController({
         ...stylesByGrid[gridType],
       }}
     >
-      {raffles?.map((props) => (
+      {raffles?.map((props, key) => (
         <SingleRaffleResponse
+          key={key}
           raffle={props}
           rest={{
             search,
