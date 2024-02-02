@@ -232,7 +232,7 @@ export default function LoanListingDetails() {
     }
     const [, result] = await asyncAction<ViewNFTsModalResult>(
       NiceModal.show(ViewNFTsModal, {
-        nfts: [loan?.loan_preview?.sg721_token],
+        nfts: data,
         title: "All NFTs", //  t('common:all-nfts'),
       } as ViewNFTsModalProps)
     );
@@ -353,8 +353,8 @@ export default function LoanListingDetails() {
 
   const isMyLoan = borrower === myAddress;
 
-  const { data } = useToken(
-    loan?.associated_assets?.map((Res) => Res.sg721_token)!,
+  const { data,isLoading:tokenLoading } = useToken(
+    loan?.associated_assets?.map((res) => res.sg721_token)!,
     [loan?.loan_preview?.sg721_token?.token_id]
   );
   const { data: collectionInfo } = useCollectionInfo(
@@ -365,19 +365,13 @@ export default function LoanListingDetails() {
     ]
   );
 
-  // console.log({
-  //   loan: loan?.start_block,
-  //   termsBlock: loan?.terms?.duration_in_blocks,
-  //   latestBlockHeight: latestBlockHeight?.header?.height,
-  //   list_date: loan?.list_date,
-  // });
   const blocksUntilDefault =
     (loan?.start_block ?? 0) +
       (loan?.terms?.duration_in_blocks ?? 0) -
       (Number(latestBlockHeight?.header?.height) || 0) ?? 0;
   return (
     <Page
-      title="Title" // {t('title')}
+      title="Loan listing detais | Atlas DAO" // {t('title')}
     >
       <LayoutContainer>
         {!isLoading ? (
@@ -418,11 +412,7 @@ export default function LoanListingDetails() {
                 <Row>
                   <Button fullWidth variant="dark" onClick={handleViewAllNFTs}>
                     <Flex sx={{ alignItems: "center" }}>
-                      <NFTPreviewImages
-                        nfts={(loan?.associated_assets ?? [])
-                          .filter((asset) => asset.sg721_token)
-                          .map(({ sg721_token }) => sg721_token)}
-                      />
+                      <NFTPreviewImages nfts={data!} loading={tokenLoading} />
                       <div>
                         {/* {t('loan-listings:view-all-nfts')} */}
                         View All NFTs

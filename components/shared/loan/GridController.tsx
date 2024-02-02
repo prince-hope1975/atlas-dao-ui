@@ -34,6 +34,7 @@ interface GridControllerProps {
   verifiedCollections?: SupportedCollectionGetResponse[];
   isLoading?: boolean;
   favoriteLoans?: FavoriteLoanResponse[];
+  search: string;
 }
 
 const stylesByGrid = {
@@ -63,6 +64,7 @@ function GridController({
   verifiedCollections = [],
   isLoading,
   favoriteLoans,
+  search,
 }: GridControllerProps) {
   // 	const { t } = useTranslation()
 
@@ -132,6 +134,7 @@ function GridController({
       {loans?.map((props, key) => {
         return (
           <LoanItem
+            search={search}
             key={key}
             {...props}
             favoriteLoans={favoriteLoans}
@@ -160,10 +163,12 @@ const LoanItem = ({
   favoriteLoans,
   verifiedCollections,
   gridType,
+  search,
 }: Collateral & {
   favoriteLoans: FavoriteLoanResponse[] | undefined;
   verifiedCollections: SupportedCollectionGetResponse[];
   gridType?: GRID_TYPE;
+  search: string;
 }) => {
   const networkName = getNetworkName();
   const queryClient = useQueryClient();
@@ -217,8 +222,23 @@ const LoanItem = ({
     }));
   const { data } = useToken(
     [loanPreview?.sg721_token],
-    [loanPreview?.sg721_token?.token_id,list_date]
+    [loanPreview?.sg721_token?.token_id, list_date]
   );
+  if (
+    search &&
+    !data?.some(
+      (res) =>
+        res?.token?.name
+          ?.toLocaleLowerCase()
+          ?.includes(search?.toLocaleLowerCase()) ||
+        res?.token?.description
+          ?.toLocaleLowerCase()
+          ?.includes(search?.toLocaleLowerCase())
+    ) &&
+    !comment?.toLowerCase()?.includes(search?.toLowerCase())
+  )
+    return <></>;
+    console.log({ comment });
   return (
     <Box key={`${loanId}_${list_date}`}>
       <ListingCard

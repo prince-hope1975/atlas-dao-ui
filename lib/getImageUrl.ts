@@ -3,7 +3,8 @@ export function getImageUrl(url: string) {
     // console.log({ url, isIpfsString });
     if (isIpfsString) {
       const ipfsHash = url.replace("ipfs://", "");
-      const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+      const ipfsUrl = `https://ipfs.io/ipfs/${ipfsHash}`;
+      // const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
       return ipfsUrl;
     }
     if (url?.startsWith("http")) {

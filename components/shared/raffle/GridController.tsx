@@ -236,6 +236,7 @@ const SingleRaffleResponse = ({
     raffle_info?.assets?.map((Res) => Res.sg721_token)!,
     [...(raffle_info?.assets?.map((res) => res.sg721_token?.token_id) ?? [])]
   );
+
   if (
     search &&
     !tokens?.some(
@@ -246,7 +247,8 @@ const SingleRaffleResponse = ({
         res?.token?.description
           ?.toLocaleLowerCase()
           ?.includes(search?.toLocaleLowerCase())
-    )
+    ) &&
+    !raffle_options?.comment?.toLowerCase()?.includes(search?.toLowerCase())
   )
     return <></>;
   return (

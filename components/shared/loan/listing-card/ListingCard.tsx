@@ -33,6 +33,7 @@ import {
 import LoanStateBadge from "./LoanStateBadge";
 import { getImageUrl } from "@/lib/getImageUrl";
 import { Sg721Token } from "@/types";
+import { isVideo } from "@/lib/mediaCheck";
 
 interface ListingCardProps extends NFT {
   liked?: boolean;
@@ -81,6 +82,8 @@ function ListingCard({
           <ImageSection>
             {!imageUrl ? (
               <ImagePlaceholder width="61.56px" height="57.87px" />
+            ) : isVideo(imageUrl) ? (
+              <video controls src={getImageUrl(imageUrl)}></video>
             ) : (
               <Image style={{ zIndex: 0 }} src={getImageUrl(imageUrl) ?? []} />
             )}
@@ -107,8 +110,10 @@ function ListingCard({
                     <PreviewImageContainer
                       key={`${nft.address}_${nft.token_id}`}
                     >
-                      {nft?.id?.every((img) => img === "") ? (
+                      {!nft ? (
                         <ImagePlaceholder width="18px" height="18px" />
+                      ) : isVideo(imageUrl) ? (
+                        <video src={getImageUrl(imageUrl)}></video>
                       ) : (
                         <PreviewImage src={getImageUrl(imageUrl) || []} />
                       )}

@@ -7,6 +7,7 @@ import { Sg721Token } from "@/types";
 import { gql, useQuery } from "@apollo/client";
 import { getImageUrl } from "@/lib/getImageUrl";
 import { TokenResponse, useToken } from "@/hooks/useTokens";
+import { isVideo } from "@/lib/mediaCheck";
 
 const PreviewNFTsSection = styled.div`
   display: flex;
@@ -80,20 +81,26 @@ function NFTPreviewImages({
     <PreviewNFTsSection>
       {((nfts?.map((res) => res?.token) ?? nfts) || [])
         .slice(0, previewItemsLimit)
-        .map((nft, id) => (
-          <PreviewImageContainer key={`${id}`}>
-            {loading || !nft ? (
-              <ImagePlaceholder width="61.56px" height="57.87px" />
-            ) : (
-              <PreviewImage
-                width={100}
-                height={100}
-                alt={nfts?.at(id)?.token?.description ?? "alt"}
-                src={getImageUrl(nfts?.at(id)?.token?.imageUrl!) ?? []}
-              />
-            )}
-          </PreviewImageContainer>
-        ))}
+        .map((nft, id) => {
+          return (
+            <PreviewImageContainer key={`${id}`}>
+              {loading || !nft ? (
+                <ImagePlaceholder width="61.56px" height="57.87px" />
+              ) : isVideo(nfts?.at(id)?.token?.imageUrl ?? "") ? (
+                <video
+                  src={getImageUrl(nfts?.at(id)?.token?.imageUrl ?? "")}
+                ></video>
+              ) : (
+                <PreviewImage
+                  width={100}
+                  height={100}
+                  alt={nfts?.at(id)?.token?.description ?? "alt"}
+                  src={getImageUrl(nfts?.at(id)?.token?.imageUrl!) ?? []}
+                />
+              )}
+            </PreviewImageContainer>
+          );
+        })}
 
       {(nfts || []).slice(previewItemsLimit).length ? (
         <PreviewImageContainer>

@@ -248,7 +248,6 @@ export default function LoanListings() {
     //   retry: true,
     // }
   );
-  console.log({ loans });
   const [loanListings, setLoanListing] = useState(
     loans || ([] as Collateral[])
   );
@@ -278,8 +277,10 @@ export default function LoanListings() {
       setFilteredListing(null);
     } else {
       setFilteredListing(
-        loanListings?.filter((val) =>
-          val?.collateral?.comment?.includes(debouncedSearch)||val?.collateral?.loan_preview
+        loanListings?.filter(
+          (val) =>
+            val?.collateral?.comment?.includes(debouncedSearch) ||
+            val?.collateral?.loan_preview
         )
       );
     }
@@ -454,6 +455,7 @@ export default function LoanListings() {
                 verifiedCollections={verifiedCollections}
                 gridType={Number(gridType)}
                 favoriteLoans={favoriteLoans}
+                search={debouncedSearch}
               />
               <Flex sx={{ width: "100%", marginTop: "14px" }}>
                 {(loanListings?.length ?? 0) > 0 &&

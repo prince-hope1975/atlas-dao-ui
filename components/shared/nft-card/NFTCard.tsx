@@ -19,6 +19,7 @@ import {
 } from "./NFTCard.styled";
 import { Token } from "@/services/api/gqlWalletSercice";
 import { getImageUrl } from "@/lib/getImageUrl";
+import { isVideo } from "@/lib/mediaCheck";
 
 type SizeVariants = "small" | "medium";
 
@@ -142,8 +143,17 @@ function NFTCard({
       <ImageSection>
         {imageUrl?.every((img) => img === "") ? (
           <ImagePlaceholder width="85px" height="80px" />
+        ) : isVideo(imageUrl?.at(0) ?? "") ? (
+          <video controls src={imageUrl?.at(0)}></video>
         ) : (
-          <Image alt="Unable to view image" width={500} height={500} objectFit="cover" objectPosition="center" src={imageUrl?.at(0) ?? ""} />
+          <Image
+            alt="Unable to view image"
+            width={500}
+            height={500}
+            objectFit="cover"
+            objectPosition="center"
+            src={imageUrl?.at(0) ?? ""}
+          />
         )}
         {checked && (
           <RightImageArea>

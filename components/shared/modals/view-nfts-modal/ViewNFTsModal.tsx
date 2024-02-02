@@ -191,8 +191,9 @@ export const ViewNFTsModal = NiceModal.create(
                     }}
                   >
                     <FiltersSection>
-                      {availableCollections.map(({ collection }) => {
-                        if (!collection) return;
+                      {availableCollections?.map((items) => {
+                        if (!items?.collection) return;
+                        const { collection }=items
                         const {
                           collectionAddr: collectionAddress,
                           name: collectionName,
