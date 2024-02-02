@@ -76,7 +76,6 @@ function NFTPreviewImages({
   //     },
   //   }
   // );
-  console.log({ nfts });
   return (
     <PreviewNFTsSection>
       {((nfts?.map((res) => res?.token) ?? nfts) || [])

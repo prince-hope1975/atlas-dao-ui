@@ -9,7 +9,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import useAddress from "@/hooks/useAddress";
 import { FAVORITES_RAFFLES } from "@/constants/useQueryKeys";
-import { Raffle } from "@/services/api/rafflesService";
+import { RAFFLE_STATE, Raffle } from "@/services/api/rafflesService";
 import {
   FavoriteRaffleResponse,
   FavoriteRafflesService,
@@ -26,6 +26,7 @@ import { StargazeListingCard } from "./listing-card/ListingCard";
 import { Cw721Coin } from "@/types";
 import convertTimestampToDate from "@/lib/convertTimeStampToDate";
 import { formaCurrency } from "@/lib/formatCurrency";
+import { useToken } from "@/hooks/useTokens";
 
 export enum GRID_TYPE {
   SMALL = 0,
@@ -45,6 +46,7 @@ interface GridControllerProps {
   verifiedCollections?: SupportedCollectionGetResponse[];
   isLoading?: boolean;
   favoriteRaffles?: FavoriteRaffleResponse[];
+  search: string;
 }
 
 const stylesByGrid = {
@@ -73,6 +75,7 @@ function GridController({
   verifiedCollections = [],
   isLoading,
   favoriteRaffles,
+  search,
 }: GridControllerProps) {
   // 	const { t } = useTranslation()
 
@@ -128,110 +131,162 @@ function GridController({
         ...stylesByGrid[gridType],
       }}
     >
-      {raffles?.map(
-        ({
-          //   id,
-          raffle_id,
-          raffle_state,
-          raffle_info,
-        }) => {
-          const {
-            assets,
-            is_cancelled,
-            number_of_tickets,
-            owner,
-            raffle_options,
-            raffle_ticket_price,
-            randomness,
-            winner: _winner,
-          } = raffle_info!;
-          const liked = Boolean(
-            (favoriteRaffles ?? []).find((favoriteRaffle) =>
-              favoriteRaffle.raffles.some((raffle) => raffle.id === id)
-            )
-          );
-          const price = raffle_ticket_price as { coin: Coin };
-
-          const toggleLike = () =>
-            ({ addFavoriteRaffle, removeFavoriteRaffle }[
-              liked ? "removeFavoriteRaffle" : "addFavoriteRaffle"
-            ]({
-              network: networkName,
-              raffleId: [Number(raffle_id)],
-              user: myAddress,
-            }));
-
-          const ticketsSold = number_of_tickets;
-
-          const ticketPrice = formaCurrency(
-            Number(
-              price?.coin?.amount ??
-                // raffleTicketPrice?.cw20Coin?.amount ??
-                0
-            )
-          );
-
-          const ticketCurrency =
-            (price?.coin?.demon as string) ??
-            // raffleTicketPrice?.cw20Coin?.currency ??
-            "";
-
-          const totalVolume = Number(ticketPrice * ticketsSold);
-
-          const ticketsRemaining =
-            (raffle_options?.max_participant_number ?? 0) - ticketsSold;
-          const collectionAddr = assets?.flatMap((val) =>
-            Object.values(val)
-              .map((res) => res?.address)
-              .filter((ewa) => !!ewa)
-          );
-
-          return (
-            <Box key={raffle_id}>
-              <StargazeListingCard
-                state={raffle_state}
-                winner={_winner!}
-                onLike={toggleLike}
-                description={raffle_options?.comment ?? ""}
-                // attributes={raffle_options?.cw721Coin?.attributes ?? []}
-                tokenId={`${raffle_id}` ?? ""}
-                collectionAddress={collectionAddr?.[0] ?? ""}
-                href={`${ROUTES.RAFFLE_LISTING_DETAILS}?raffleId=${raffle_id}`}
-                nfts={(assets || [])
-                  .filter((nft) => nft?.sg721_token)
-                  .map(({ sg721_token }) => sg721_token as Sg721Token)}
-                id={(assets as unknown as Sg721Token[]) ?? []}
-                name={assets?.sg721_token?.name ?? ""}
-                liked={liked}
-                verified={verifiedCollections.some(
-                  ({ collectionAddress }) =>
-                    raffle_options?.rafflePreview?.cw721Coin
-                      ?.collectionAddress === collectionAddress
-                )}
-                collectionName={
-                  raffle_options?.rafflePreview?.cw721Coin?.collectionName || ""
-                }
-                ticketPrice={ticketPrice}
-                ticketCurrency={ticketCurrency}
-                ticketNumber={raffle_options?.max_participant_number!}
-                totalVolume={totalVolume}
-                ticketsRemaining={ticketsRemaining}
-                endsIn={moment(
-                  convertTimestampToDate(
-                    +raffle_options?.raffle_start_timestamp
-                  )
-                )
-                  .add(raffle_options?.raffle_duration ?? 0, "seconds")
-                  .toDate()}
-                isSmall={gridType === GRID_TYPE.BIG}
-              />
-            </Box>
-          );
-        }
-      )}
+      {raffles?.map((props) => (
+        <SingleRaffleResponse
+          raffle={props}
+          rest={{
+            search,
+            gridType,
+            favoriteRaffles,
+            updateFavoriteRaffleState,
+            verifiedCollections,
+          }}
+        />
+      ))}
     </Flex>
   );
 }
+const SingleRaffleResponse = ({
+  raffle: { raffle_id, raffle_state, raffle_info },
+  rest: {
+    gridType,
+    favoriteRaffles,
+    updateFavoriteRaffleState,
+    verifiedCollections,
+    search,
+  },
+}: {
+  raffle: RaffleResponse;
+  rest: Pick<
+    GridControllerProps,
+    "gridType" | "favoriteRaffles" | "verifiedCollections"
+  > & {
+    search: string;
+    updateFavoriteRaffleState: (
+      data: FavoriteRaffleResponse
+    ) => any[] | undefined;
+  };
+}) => {
+  const {
+    assets,
+    is_cancelled,
+    number_of_tickets,
+    owner,
+    raffle_options,
+    raffle_ticket_price,
+    randomness,
+    winner: _winner,
+  } = raffle_info!;
+  const liked = Boolean(
+    (favoriteRaffles ?? []).find((favoriteRaffle) =>
+      favoriteRaffle.raffles.some((raffle) => raffle.id === id)
+    )
+  );
+  const price = raffle_ticket_price as { coin: Coin };
+  const networkName = getNetworkName();
+  const myAddress = useAddress();
+
+  const { mutate: addFavoriteRaffle } = useMutation(
+    FavoriteRafflesService.addFavoriteRaffle,
+    {
+      onSuccess: updateFavoriteRaffleState,
+    }
+  );
+
+  const { mutate: removeFavoriteRaffle } = useMutation(
+    FavoriteRafflesService.removeFavoriteRaffle,
+    {
+      onSuccess: updateFavoriteRaffleState,
+    }
+  );
+  const toggleLike = () =>
+    ({ addFavoriteRaffle, removeFavoriteRaffle }[
+      liked ? "removeFavoriteRaffle" : "addFavoriteRaffle"
+    ]({
+      network: networkName,
+      raffleId: [Number(raffle_id)],
+      user: myAddress,
+    }));
+
+  const ticketsSold = number_of_tickets;
+
+  const ticketPrice = formaCurrency(
+    Number(
+      price?.coin?.amount ??
+        // raffleTicketPrice?.cw20Coin?.amount ??
+        0
+    )
+  );
+
+  const ticketCurrency =
+    (price?.coin?.demon as string) ??
+    // raffleTicketPrice?.cw20Coin?.currency ??
+    "";
+
+  const totalVolume = Number(ticketPrice * ticketsSold);
+
+  const ticketsRemaining =
+    (raffle_options?.max_participant_number ?? 0) - ticketsSold;
+  const collectionAddr = assets?.flatMap((val) =>
+    Object.values(val)
+      .map((res) => res?.address)
+      .filter((ewa) => !!ewa)
+  );
+  const { data: tokens } = useToken(
+    raffle_info?.assets?.map((Res) => Res.sg721_token)!,
+    [...(raffle_info?.assets?.map((res) => res.sg721_token?.token_id) ?? [])]
+  );
+  if (
+    search &&
+    !tokens?.some(
+      (res) =>
+        res?.token?.name
+          ?.toLocaleLowerCase()
+          ?.includes(search?.toLocaleLowerCase()) ||
+        res?.token?.description
+          ?.toLocaleLowerCase()
+          ?.includes(search?.toLocaleLowerCase())
+    )
+  )
+    return <></>;
+  return (
+    <Box
+      key={raffle_id + `${raffle_info?.assets?.at(0)?.sg721_token?.address}`}
+    >
+      <StargazeListingCard
+        imageUrl={tokens?.at(0)?.token?.imageUrl!}
+        state={raffle_state as RAFFLE_STATE}
+        winner={_winner!}
+        onLike={toggleLike}
+        description={raffle_options?.comment ?? ""}
+        // attributes={raffle_options?.cw721Coin?.attributes ?? []}
+        tokenId={`${raffle_id}` ?? ""}
+        collectionAddress={collectionAddr?.[0] ?? ""}
+        href={`${ROUTES.RAFFLE_LISTING_DETAILS}?raffleId=${raffle_id}`}
+        nfts={tokens!}
+        id={assets?.at(0)?.sg721_token?.token_id!}
+        name={tokens?.at(0)?.token?.name ?? ""}
+        liked={liked}
+        verified={verifiedCollections?.some(
+          ({ collectionAddress }) =>
+            tokens?.at(0)?.token?.collectionAddr === collectionAddress
+        )}
+        collectionName={"" ?? tokens?.at(0)?.token?.description ?? ""}
+        ticketPrice={ticketPrice}
+        ticketCurrency={ticketCurrency}
+        ticketNumber={raffle_options?.max_participant_number!}
+        totalVolume={totalVolume}
+        ticketsRemaining={ticketsRemaining}
+        endsIn={moment(
+          convertTimestampToDate(+raffle_options?.raffle_start_timestamp)
+        )
+          .add(raffle_options?.raffle_duration ?? 0, "seconds")
+          .toDate()}
+        isSmall={gridType === GRID_TYPE.BIG}
+      />
+    </Box>
+  );
+};
 function OLD_GridController({
   raffles,
   gridType = GRID_TYPE.SMALL,

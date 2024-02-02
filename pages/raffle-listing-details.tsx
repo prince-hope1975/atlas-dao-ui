@@ -304,8 +304,13 @@ export default function ListingDetails() {
       raffleId: [Number(raffleId)],
       user: myAddress,
     }));
-  const { purchaseRaffleTickets, drawRaffle, provideRandomness } =
-    useRafflesContract();
+  const {
+    purchaseRaffleTickets,
+    drawRaffle,
+    provideRandomness,
+    determineWinner,
+    cancelRaffleListing,
+  } = useRafflesContract();
   const purchaseTicket = async () => {
     if (!raffle || !raffle_info) {
       return;
@@ -349,6 +354,19 @@ export default function ListingDetails() {
     });
 
     refetch();
+  };
+  const handleDetermineWinner = async () => {
+    if (!raffle) {
+      return;
+    }
+    await NiceModal.show(TxBroadcastingModal, {
+      transactionAction: determineWinner({
+        raffleId: raffle?.raffle_id,
+      }),
+      // transactionAction: cancelRaffleListing(raffle?.raffle_id),
+      closeOnFinish: true,
+    });
+    await refetch();
   };
   const handleProvideRandomness = async () => {
     if (!raffle) {
@@ -405,7 +423,7 @@ export default function ListingDetails() {
       +raffle_info?.raffle_options?.raffle_start_timestamp!
     )
   ).add(raffle_info?.raffle_options?.raffle_duration ?? 0, "seconds");
-
+  console.log({ raffle });
   return (
     <Page
       title="Title" //{t('title')}
@@ -648,7 +666,7 @@ export default function ListingDetails() {
                 {!(
                   !raffle?.raffle_info?.winner &&
                   myAddress &&
-                  [RAFFLE_STATE.Closed].includes(
+                  [RAFFLE_STATE.Finished].includes(
                     raffle?.raffle_state as RAFFLE_STATE
                   )
                 ) ? (
@@ -656,13 +674,13 @@ export default function ListingDetails() {
                 ) : (
                   <Row>
                     <Button
+                      size="extraLarge"
                       fullWidth
                       variant="gradient"
-                      onClick={handleProvideRandomness}
-                      // onClick={handleViewAllNFTs}
+                      onClick={handleDetermineWinner}
                     >
                       <Flex sx={{ alignItems: "center" }}>
-                        <div>Provide Randomness</div>
+                        <div>Determine Winner</div>
                       </Flex>
                     </Button>
                   </Row>
@@ -696,7 +714,7 @@ export default function ListingDetails() {
                   [RAFFLE_STATE.Finished].includes(
                     raffle?.raffle_state as RAFFLE_STATE
                   ) &&
-                  !raffle_info?.winner && (
+                  raffle_info?.winner && (
                     <Row>
                       <Button
                         size="extraLarge"
@@ -710,14 +728,13 @@ export default function ListingDetails() {
                   )}
 
                 {raffle &&
-                  randomnessProvider &&
                   [RAFFLE_STATE.Closed].includes(
                     raffle?.raffle_state as RAFFLE_STATE
                   ) && (
                     <Row>
                       <Button
                         size="extraLarge"
-                        // onClick={provideRandomness}
+                        onClick={handleProvideRandomness}
                         fullWidth
                         variant="gradient"
                       >

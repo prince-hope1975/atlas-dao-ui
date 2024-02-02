@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-// import { useTranslation } from 'next-i18next'
 import { useDebounce } from "react-use";
 import NiceModal from "@ebay/nice-modal-react";
 import { useQuery } from "@tanstack/react-query";
@@ -126,7 +125,11 @@ export default function RaffleListings() {
       listingsType === RAFFLE_LISTINGS_TYPE.ALL_LISTINGS &&
       _raffles?.raffles?.length
     ) {
-      setRaffleListing(_raffles);
+      setRaffleListing({
+        raffles: _raffles?.raffles?.filter(
+          (val) => !(val?.raffle_state == RAFFLE_STATE.Claimed)
+        ),
+      });
     }
     if (
       listingsType === RAFFLE_LISTINGS_TYPE.MY_LISTINGS &&
@@ -145,12 +148,13 @@ export default function RaffleListings() {
       setRaffleListing({
         raffles: _raffles?.raffles?.filter(
           (val) =>
-            val?.raffle_state == RAFFLE_STATE.Finished ||
+            val?.raffle_state == RAFFLE_STATE.Claimed ||
             val?.raffle_state == RAFFLE_STATE.Cancelled
         ),
       });
     }
   }, [listingsType, _raffles?.raffles?.length, myAddress]);
+
   const networkName = getNetworkName();
 
   const isTablet = useIsTablet();
@@ -171,7 +175,7 @@ export default function RaffleListings() {
     finishedStatusLabel,
     cancelledStatusLabel,
     claimedStatusLabel,
-  ]: Array<string> = ["Started", "Closed", "Finished", "Cancelled", "Claimed"];
+  ] = ["Started", "Closed", "Finished", "Cancelled", "Claimed"] as const;
 
   // t('raffle-listings:statuses', {
   // 	returnObjects: true,
@@ -476,6 +480,7 @@ export default function RaffleListings() {
             )}
             <Box sx={{ width: "100%" }}>
               <RaffleGridController
+                search={debouncedSearch}
                 raffles={raffleListing?.raffles!}
                 isLoading={!raffleListing?.raffles?.length && rafflesLoading}
                 verifiedCollections={verifiedCollections}

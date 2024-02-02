@@ -56,12 +56,13 @@ import { NFT } from "@/services/api/walletNFTsService";
 import { gql, useQuery } from "@apollo/client";
 import { getImageUrl } from "@/lib/getImageUrl";
 import { DEFAULT_CURRENCY } from "@/constants/core";
+import { TokenResponse } from "@/hooks/useTokens";
 
 interface StargazeListingCardProps extends NFT {
   liked?: boolean;
   verified?: boolean;
   name?: string;
-  nfts: Sg721Token[];
+  nfts: TokenResponse[];
   href: string;
   onLike: (nft: AssetInfo) => void;
   disabled?: boolean;
@@ -75,7 +76,7 @@ interface StargazeListingCardProps extends NFT {
   ticketsRemaining: number;
   endsIn: Date;
   isSmall?: boolean;
-  state: RaffleState;
+  state: RAFFLE_STATE;
 }
 interface ListingCardProps extends NFT {
   liked?: boolean;
@@ -126,7 +127,6 @@ export function StargazeListingCard({
     token: {
       imageUrl: string;
     };
-    
   }>(
     gql`
       query Collection($collectionAddr: String!, $tokenId: String!) {
@@ -136,14 +136,12 @@ export function StargazeListingCard({
       }
     `,
     {
-      
       variables: {
-        collectionAddr: imageUrl?.[0]?.sg721_token?.address,
-        tokenId: imageUrl?.[0]?.sg721_token?.token_id,
+        collectionAddr: nfts?.[0]?.token?.collectionAddr,
+        tokenId: nfts?.[0]?.token?.tokenId,
       },
     }
   );
-  const img = data ?? imageUrl;
 
   return (
     <Box sx={{ overflow: "hidden" }}>
@@ -180,12 +178,12 @@ export function StargazeListingCard({
                 <PreviewNFTsSection>
                   {(nfts || []).slice(0, previewItemsLimit).map((nft) => (
                     <PreviewImageContainer
-                      key={`${nft.collectionAddress}_${nft.tokenId}`}
+                      key={`${nft?.token?.collectionAddr}_${nft.token?.tokenId}`}
                     >
-                      {nft?.imageUrl?.every((img) => img === "") ? (
+                      {!(nft?.token?.imageUrl )? (
                         <ImagePlaceholder width="18px" height="18px" />
                       ) : (
-                        <PreviewImage src={nft?.imageUrl ?? []} />
+                        <PreviewImage src={getImageUrl(nft?.token?.imageUrl )?? []} />
                       )}
                     </PreviewImageContainer>
                   ))}
@@ -220,12 +218,12 @@ export function StargazeListingCard({
                 </Box>
               )}
               <Flex sx={{ ml: "auto" }}>
-                {Boolean(nfts.length > 1) && (
+                {Boolean(nfts?.length > 1) && (
                   <Flex sx={{ ml: "4px", maxHeight: "18px" }}>
                     <OverflowTip>
                       <Badge bg="primary200">
-                        {/* {t('common:more-nfts', { count: nfts.length })} */}
-                        {nfts.length} NFTs
+                        {/* {t('common:more-nfts', { count: nfts?.length })} */}
+                        {nfts?.length} NFTs
                       </Badge>
                     </OverflowTip>
                   </Flex>
@@ -362,7 +360,6 @@ function ListingCard({
 }: ListingCardProps) {
   const { name, collectionName, id: imageUrl } = NFTProps;
   // 	const { t } = useTranslation(['common', 'raffle-listings'])
-
   const [nameServiceResolution] = useNameService(winner ? [winner] : []);
 
   return (
@@ -436,12 +433,12 @@ function ListingCard({
                 </Box>
               )}
               <Flex sx={{ ml: "auto" }}>
-                {Boolean(nfts.length > 1) && (
+                {Boolean(nfts?.length > 1) && (
                   <Flex sx={{ ml: "4px", maxHeight: "18px" }}>
                     <OverflowTip>
                       <Badge bg="primary200">
-                        {/* {t('common:more-nfts', { count: nfts.length })} */}
-                        {nfts.length} NFTs
+                        {/* {t('common:more-nfts', { count: nfts?.length })} */}
+                        {nfts?.length} NFTs
                       </Badge>
                     </OverflowTip>
                   </Flex>

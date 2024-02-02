@@ -13,10 +13,11 @@ import { keysToCamel } from "@/utils/js/keysToCamel";
 import { useChain, useWallet, walletContext } from "@cosmos-kit/react";
 import {
   CosmWasmClient,
+  ExecuteResult,
   SigningCosmWasmClient,
 } from "@cosmjs/cosmwasm-stargate";
 import { ExecuteMsg } from "../Raffle.types";
-import { coin, coins } from "@cosmjs/amino";
+import { Coin, StdFee, coin, coins } from "@cosmjs/amino";
 
 const amountConverter = converter.default;
 export interface ContractInfo {
@@ -44,13 +45,52 @@ export const useRafflesContract = () => {
     nftContractAddress: string
   ): Promise<ContractInfo> {
     const client = await getCosmWasmClient();
-    console.log({ nftContractAddress });
     const result = client.getContracts(2595);
     return keysToCamel(result);
   }
-  async function provideRandomness(
-    raffleId: number,
-  ) {
+  const determineWinner = async (
+    {
+      raffleId,
+    }: {
+      raffleId: number;
+    },
+    fee: number | StdFee | "auto" = "auto",
+    memo?: string,
+    funds?: Coin[]
+  ): Promise<any> => {
+    const client = await getSigningCosmWasmClient();
+    const raffleContractAddress = networkUtils.getContractAddress(
+      CONTRACT_NAME.raffle
+    );
+      return networkUtils.postTransaction(
+        {
+          contractAddress: raffleContractAddress,
+          message: {
+            determine_winner: keysToSnake({
+              raffleId,
+            }),
+          },
+        },
+        getSigningCosmWasmClient,
+        {
+          gas: 1_000_000,
+          address: address!,
+        }
+      );
+    return await client.execute(
+      address!,
+      raffleContractAddress,
+      {
+        determine_winner: {
+          raffle_id: raffleId,
+        },
+      },
+      fee,
+      memo,
+      funds!
+    );
+  };
+  async function provideRandomness(raffleId: number) {
     const raffleContractAddress = networkUtils.getContractAddress(
       CONTRACT_NAME.raffle
     );
@@ -268,11 +308,11 @@ export const useRafflesContract = () => {
     );
   }
   async function cancelRaffleListing(raffleId: number) {
-		const raffleContractAddress = networkUtils.getContractAddress(
-			CONTRACT_NAME.raffle
-		)
+    const raffleContractAddress = networkUtils.getContractAddress(
+      CONTRACT_NAME.raffle
+    );
 
-		return networkUtils.postTransaction(
+    return networkUtils.postTransaction(
       {
         contractAddress: raffleContractAddress,
         message: {
@@ -287,7 +327,7 @@ export const useRafflesContract = () => {
         address: address!,
       }
     );
-	}
+  }
   return {
     provideRandomness,
     getContractInfo,
@@ -296,6 +336,7 @@ export const useRafflesContract = () => {
     drawRaffle,
     purchaseRaffleTickets,
     cancelRaffleListing,
+    determineWinner,
   };
 };
 
